@@ -6,13 +6,15 @@ import com.pblogteam.pblog.vo.UserVO;
 
 import java.util.List;
 
-public interface UserService
-{
+public interface UserService {
     UserVO findByUserName(String username);
+
     boolean checkPassword(UserVO userVO, String password);
+
     UserVO findByUserId(Integer id, Integer signedinUserId);
 
     boolean signup(String username, String password, String email);
+
     List<UserVO> myAttentionList(Integer followerId);
 
     void changeAttention(Integer id, Integer signedinUserId);
@@ -22,5 +24,10 @@ public interface UserService
     void changePhoto(Integer userId, String photoUrl);
 
     boolean checkNewUsernameLegality(Integer userId, UserNewVO userNewVO);
+
     void updateInfo(Integer userId, UserNewVO userNewVO);
+
+    boolean isAdmin(Integer userId);
+
+    void becomeAdmin(Integer userId);
 }

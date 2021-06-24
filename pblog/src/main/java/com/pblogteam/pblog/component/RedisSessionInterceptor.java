@@ -2,7 +2,7 @@ package com.pblogteam.pblog.component;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.pblogteam.pblog.vo.ResultVO;
+//import com.pblogteam.pblog.vo.ResultVO;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;

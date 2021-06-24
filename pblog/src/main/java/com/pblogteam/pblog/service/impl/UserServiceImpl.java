@@ -1,5 +1,6 @@
 package com.pblogteam.pblog.service.impl;
 
+import com.pblogteam.pblog.constant.Privilege;
 import com.pblogteam.pblog.entity.User;
 import com.pblogteam.pblog.entity.UserExample;
 import com.pblogteam.pblog.entity.UserFollowerRela;
@@ -163,6 +164,19 @@ public class UserServiceImpl implements UserService
         user.setDescription(userNewVO.getDescription());
         System.out.println(user);
         userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    @Override
+    public boolean isAdmin(Integer userId) {
+        User user = userMapper.selectByPrimaryKey(userId);
+        return user.getPrivilege() == 1;
+    }
+
+    @Override
+    public void becomeAdmin(Integer userId) {
+        User user = userMapper.selectByPrimaryKey(userId);
+        user.setPrivilege((byte)Privilege.ADMIN.getPrivilege().intValue());
+        userMapper.updateByPrimaryKey(user);
     }
 
     public static UserVO createUserVOByUser(User user)
