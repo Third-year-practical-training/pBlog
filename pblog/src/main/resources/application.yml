@@ -1,0 +1,62 @@
+spring:
+  datasource:
+    #   数据源基本配置
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://120.27.239.4:3306/pblogdb?serverTimezone=Asia/Shanghai
+
+    type: com.alibaba.druid.pool.DruidDataSource
+    #   数据源其他配置
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    #   配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+    filters: stat,wall,log4j
+    maxPoolPreparedStatementPerConnectionSize: 20
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+
+  redis:
+    host: 120.27.239.4
+    port: 6379
+    password: 123456
+    #database: 0
+    pool:
+      max-active: 0
+      max-idle: 8
+      max-wait: -1
+      min-idle: 0
+    #timeout: 3000
+  session:
+    store-type: redis
+
+
+    #initialization-mode: always
+    #schema:
+    #  - classpath:sql/pblogdb.sql
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+
+#  mvc:
+#    hiddenmethod:
+#      filter:
+#        enabled: true
+# 可以发送put请求的设置开启
+
+
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml
+
