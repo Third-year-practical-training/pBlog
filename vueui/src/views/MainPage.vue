@@ -127,7 +127,7 @@ export default {
         this.logout();
       }
       if (tab.name == 'self') {
-        this.$router.push('/selfpage');
+        this.$router.push('/user-center/selfinformation');
       }
     }
   }
