@@ -39,6 +39,14 @@ public class TypeServiceImpl implements TypeService {
 
     @Override
     public ArticleType findTypeByName(String typeName) {
-        return null;
+        ArticleTypeExample articleTypeExample = new ArticleTypeExample();
+        ArticleTypeExample.Criteria criteria = articleTypeExample.createCriteria();
+        criteria.andNameEqualTo(typeName);
+        return articleTypeMapper.selectByExample(articleTypeExample).get(0);
+    }
+
+    @Override
+    public ArticleType findTypeById(Integer id) {
+        return articleTypeMapper.selectByPrimaryKey(id);
     }
 }

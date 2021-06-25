@@ -11,4 +11,5 @@ public interface TypeService {
     boolean updateTypeById(String type,Integer id);
     boolean deleteTypeById(Integer id);
     ArticleType findTypeByName(String typeName);
+    ArticleType findTypeById(Integer id);
 }

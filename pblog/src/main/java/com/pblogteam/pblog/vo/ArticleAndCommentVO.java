@@ -4,6 +4,7 @@ package com.pblogteam.pblog.vo;
 
 
 import com.pblogteam.pblog.entity.ArticleTag;
+import com.pblogteam.pblog.entity.ArticleType;
 import lombok.Data;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +20,7 @@ public class ArticleAndCommentVO {
     private Integer collectCount;
     private boolean myCollection;
     private boolean published;
+    private ArticleType articleType;
     private List<ArticleTag> tagList;
     private List<CommentVO> commentList;
 }

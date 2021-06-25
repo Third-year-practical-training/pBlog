@@ -13,11 +13,11 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ArticleServiceImplTest {
 
-//    @Autowired
-//    private ArticleServiceImpl articleService;
+    @Autowired
+    private ArticleServiceImpl articleService;
 //    @Test
 //    public void selectByUserId() {
-//        List<ArticleTitleVO> articleTitleVOList = articleService.selectArtOrDraListByUserId(1, 0);
+//        List<ArticleTitleVO> articleTitleVOList = articleService.selectArtOrDraListByUserId(1, 0, 1);
 //        for (ArticleTitleVO a :
 //                articleTitleVOList) {
 //            System.out.println(a.getTitle());

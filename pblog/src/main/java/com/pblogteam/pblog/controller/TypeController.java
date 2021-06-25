@@ -50,4 +50,9 @@ public class TypeController {
             return ResultVO.throwError(ResponseState.UNKNOWN_ERROR);
         }
     }
+
+    @GetMapping("/type/findTypeByName")
+    public ResultVO<ArticleType> findTypeByName(String type) {
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, typeServiceImpl.findTypeByName(type));
+    }
 }

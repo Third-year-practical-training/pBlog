@@ -1,5 +1,8 @@
 package com.pblogteam.pblog.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.pblogteam.pblog.config.Config;
 import com.pblogteam.pblog.entity.Comment;
 import com.pblogteam.pblog.entity.CommentExample;
 import com.pblogteam.pblog.mapper.CommentMapper;
@@ -46,10 +49,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> selectByUserId(Integer id) {
+    public PageInfo<Comment> selectByUserId(Integer id, int pageNum) {
         CommentExample commentExample = new CommentExample();
         CommentExample.Criteria commentEx = commentExample.createCriteria();
         commentEx.andUserIdEqualTo(id);
-        return commentMapper.selectByExampleWithBLOBs(commentExample);
+        PageHelper.startPage(pageNum, Config.PAGE_SIZE);
+        List<Comment> commentList = commentMapper.selectByExampleWithBLOBs(commentExample);
+        return new PageInfo<>(commentList);
     }
 }
