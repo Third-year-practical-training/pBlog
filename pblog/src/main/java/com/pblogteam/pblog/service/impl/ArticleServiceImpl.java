@@ -1,5 +1,8 @@
 package com.pblogteam.pblog.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.pblogteam.pblog.config.Config;
 import com.pblogteam.pblog.entity.*;
 import com.pblogteam.pblog.mapper.*;
 import com.pblogteam.pblog.service.ArticleService;
@@ -29,6 +32,8 @@ public class ArticleServiceImpl implements ArticleService {
     private CommentServiceImpl commentServiceImpl;
 
 
+
+
     private static final Integer ARTICLE_SUMMARY_LENGTH = 50;
 
     // 查询文章列表
@@ -39,12 +44,14 @@ public class ArticleServiceImpl implements ArticleService {
      * @return     需要的列表信息
      */
     @Override
-    public List<ArticleTitleVO> selectArtOrDraListByUserId(Integer id, int flag) {
+    public PageInfo<ArticleTitleVO> selectArtOrDraListByUserId(Integer id, int flag, int pageNum) {
         ArticleExample articleExample = new ArticleExample();
         ArticleExample.Criteria articleEx = articleExample.createCriteria();
         articleEx.andUserIdEqualTo(id);
         articleEx.andPublishedEqualTo((byte) flag);
-        return fillArtTitVOByArtList(articleMapper.selectByExampleWithBLOBs(articleExample));
+        PageHelper.startPage(pageNum, Config.PAGE_SIZE);
+        List<Article> articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
+        return new PageInfo<>(fillArtTitVOByArtList(articleList));
     }
 
     @Override
@@ -73,7 +80,7 @@ public class ArticleServiceImpl implements ArticleService {
                 articleTitleVO.setCollectCount(a.getCollectionCount());
                 articleTitleVO.setCommentCount(a.getCommentCount());
 
-                articleTitleVO.setArticleTagList(selectTagListByArticleId(a.getId()));
+//                articleTitleVO.setArticleTagList(selectTagListByArticleId(a.getId()));
                 articleTitleVOList.add(articleTitleVO);
             }
         }

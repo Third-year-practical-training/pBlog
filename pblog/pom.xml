@@ -116,7 +116,12 @@
             <artifactId>commons-net</artifactId>
             <version>3.6</version>
         </dependency>
-
+<!--        分页查询，分页查询依赖-->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.2.5</version>
+        </dependency>
         <!-- 邮箱验证（未生效）-->
         <dependency>
             <groupId>org.hibernate.validator</groupId>
