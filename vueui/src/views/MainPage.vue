@@ -144,6 +144,9 @@ export default {
       if (tab.name == 'self') {
         this.$router.push('/user-center/selfinformation');
       }
+      if (tab.name == 'notice') {
+        this.$router.push('/comments');
+      }
     }
   }
 }
