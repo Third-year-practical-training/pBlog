@@ -9,6 +9,9 @@ import Attention from "../views/UserCenter/Attention";
 import ContentManage from "../views/UserCenter/ContentManage";
 import NewBlog from "../views/NewBlog";
 import BlogShow from "../views/BlogShow";
+import Comments from "../views/Notice/Comments";
+import PersonalMessage from "../views/Notice/PersonalMessage";
+import SystemNotice from "../views/Notice/SystemNotice";
 
 Vue.use(VueRouter)
 
@@ -32,6 +35,21 @@ const routes = [
     path: '/mainpage',
     name: 'MainPage',
     component: MainPage
+  },
+  {
+    path: '/comments',
+    name: 'Comments',
+    component: Comments
+  },
+  {
+    path: '/personalmessage',
+    name: 'PersonalMessage',
+    component: PersonalMessage
+  },
+  {
+    path: '/systemnotice',
+    name: 'SystemNotice',
+    component: SystemNotice
   },
   {
     path: '/user-center/selfinformation',
