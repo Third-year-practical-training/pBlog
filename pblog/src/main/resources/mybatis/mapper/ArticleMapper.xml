@@ -25,6 +25,10 @@
       #{collectionCount,jdbcType=INTEGER}, #{commentCount,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}
       )
   </insert>
+
+  <select id="selectByTitleKeyWord" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from article where title REGEXP #{title}
+  </select>
   <!--  my own end-->
 
   <sql id="Example_Where_Clause" >

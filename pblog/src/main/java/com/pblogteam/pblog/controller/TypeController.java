@@ -3,12 +3,14 @@ package com.pblogteam.pblog.controller;
 import com.pblogteam.pblog.constant.ResponseState;
 import com.pblogteam.pblog.entity.ArticleType;
 import com.pblogteam.pblog.service.impl.TypeServiceImpl;
+import com.pblogteam.pblog.service.impl.UserServiceImpl;
 import com.pblogteam.pblog.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 
@@ -17,6 +19,8 @@ import java.util.List;
 public class TypeController {
     @Autowired
     private TypeServiceImpl typeServiceImpl;
+    @Autowired
+    private UserServiceImpl userService;
 
     @GetMapping("/type/findall")
     public ResultVO<List<ArticleType>> getArticleTypeList() {
@@ -25,7 +29,9 @@ public class TypeController {
     }
 
     @GetMapping("/type/updateTypeById")
-    public ResultVO updateTypeById(Integer id, String type) {
+    public ResultVO updateTypeById(Integer id, String type, HttpSession session) {
+        int userId = (int) session.getAttribute("userId");
+        if(!userService.isAdmin(userId)) return ResultVO.throwError(ResponseState.SIGNATURE_NOT_MATCH);
         if(typeServiceImpl.updateTypeById(type, id)) {
             return ResultVO.throwSuccess(ResponseState.SUCCESS);
         } else {
@@ -42,8 +48,11 @@ public class TypeController {
         }
     }
 
+    // 增加type
     @GetMapping("/type/saveType")
-    public ResultVO saveType(String type) {
+    public ResultVO saveType(String type, HttpSession session) {
+        int userId = (int) session.getAttribute("userId");
+        if(!userService.isAdmin(userId)) return ResultVO.throwError(ResponseState.SIGNATURE_NOT_MATCH);
         if(typeServiceImpl.saveType(type)) {
             return ResultVO.throwSuccess(ResponseState.SUCCESS);
         } else {

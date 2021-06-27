@@ -2,6 +2,8 @@ package com.pblogteam.pblog.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.hankcs.hanlp.seg.common.Term;
+import com.hankcs.hanlp.tokenizer.StandardTokenizer;
 import com.pblogteam.pblog.config.Config;
 import com.pblogteam.pblog.entity.*;
 import com.pblogteam.pblog.mapper.*;
@@ -245,5 +247,26 @@ public class ArticleServiceImpl implements ArticleService {
         article.setId(id);
         article.setPublished((byte) 1);
         articleMapper.updateByPrimaryKeySelective(article);
+    }
+
+    @Override
+    public PageInfo<ArticleTitleVO> selectArticleByKeyWord(String keyWord, int type, int pageNum) {
+        List<Term> termList = StandardTokenizer.segment(keyWord);
+
+        System.out.println(termList);
+        // 拼接正则字符串
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < termList.size(); i++) {
+            String word = termList.get(i).word;
+            if (i != termList.size() - 1) {
+                sb.append(word + "|");
+            } else {
+                sb.append(word);
+            }
+        }
+
+        System.out.println(sb);
+
+        return null;
     }
 }

@@ -23,4 +23,8 @@ public class ArticleServiceImplTest {
 //            System.out.println(a.getTitle());
 //        }
 //    }
+        @Test
+    public void selectByUserId() {
+        articleService.selectArticleByKeyWord("我和我的祖国", 1, 1);
+    }
 }

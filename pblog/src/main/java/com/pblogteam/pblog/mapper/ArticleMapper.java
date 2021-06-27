@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 public interface ArticleMapper {
     //    my own start
     int insertAndReturnPrimaryKey(Article record);
+
+    List<Article> selectByTitleKeyWord(String title);
     //    my own end
     int countByExample(ArticleExample example);
 
