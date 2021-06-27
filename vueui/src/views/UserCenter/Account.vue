@@ -23,7 +23,7 @@
       <el-form :model="user" label-width="80px">
         <el-form-item label="邮箱">
           <el-input v-model="user.email" :disabled="true" style="width: 40%;float: left"></el-input>
-          <el-link type="primary"style="float: left;margin-left: 5px" @click="updateEmail">修改邮箱</el-link>
+          <el-link type="primary" style="float: left;margin-left: 5px" @click="updateEmail">修改邮箱</el-link>
         </el-form-item>
         <el-form-item label="用户名">
           <el-input v-model="user.username" :disabled="true" style="width: 40%;float: left"></el-input>
