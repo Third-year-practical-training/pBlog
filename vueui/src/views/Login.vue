@@ -22,7 +22,6 @@
 </template>
 
 <script>
-import axios from "_axios@0.21.1@axios";
 
 export default {
   name: "Login",
@@ -43,7 +42,7 @@ export default {
         this.loading = true;
         data.append('username',this.loginForm.username);
         data.append('password',this.loginForm.password);
-        axios.post('http://localhost:8080/user/signin',data).then(res=>{
+        this.$axios.post('http://localhost:8080/user/signin',data).then(res=>{
           if(res.data.code == 100){
             _this.loading = false;
             _this.$message("登录成功");
