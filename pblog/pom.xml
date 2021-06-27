@@ -59,6 +59,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+<!--        使用haNLP实现搜索功能-->
+        <dependency>
+            <groupId>com.hankcs</groupId>
+            <artifactId>hanlp</artifactId>
+            <version>portable-1.7.4</version>
+        </dependency>
+
         <!--引入druid数据源-->
         <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
         <dependency>
@@ -109,7 +116,12 @@
             <artifactId>commons-net</artifactId>
             <version>3.6</version>
         </dependency>
-
+<!--        分页查询，分页查询依赖-->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.2.5</version>
+        </dependency>
         <!-- 邮箱验证（未生效）-->
         <dependency>
             <groupId>org.hibernate.validator</groupId>

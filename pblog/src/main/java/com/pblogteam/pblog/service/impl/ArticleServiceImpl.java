@@ -1,5 +1,10 @@
 package com.pblogteam.pblog.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.hankcs.hanlp.seg.common.Term;
+import com.hankcs.hanlp.tokenizer.StandardTokenizer;
+import com.pblogteam.pblog.config.Config;
 import com.pblogteam.pblog.entity.*;
 import com.pblogteam.pblog.mapper.*;
 import com.pblogteam.pblog.service.ArticleService;
@@ -27,6 +32,10 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleCollRelaServiceImpl articleCollRelaServiceImpl;
     @Autowired
     private CommentServiceImpl commentServiceImpl;
+    @Autowired
+    private TypeServiceImpl typeServiceImpl;
+
+
 
 
     private static final Integer ARTICLE_SUMMARY_LENGTH = 50;
@@ -39,12 +48,14 @@ public class ArticleServiceImpl implements ArticleService {
      * @return     需要的列表信息
      */
     @Override
-    public List<ArticleTitleVO> selectArtOrDraListByUserId(Integer id, int flag) {
+    public PageInfo<ArticleTitleVO> selectArtOrDraListByUserId(Integer id, int flag, int pageNum) {
         ArticleExample articleExample = new ArticleExample();
         ArticleExample.Criteria articleEx = articleExample.createCriteria();
         articleEx.andUserIdEqualTo(id);
         articleEx.andPublishedEqualTo((byte) flag);
-        return fillArtTitVOByArtList(articleMapper.selectByExampleWithBLOBs(articleExample));
+        PageHelper.startPage(pageNum, Config.PAGE_SIZE);
+        List<Article> articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
+        return new PageInfo<>(fillArtTitVOByArtList(articleList));
     }
 
     @Override
@@ -73,7 +84,7 @@ public class ArticleServiceImpl implements ArticleService {
                 articleTitleVO.setCollectCount(a.getCollectionCount());
                 articleTitleVO.setCommentCount(a.getCommentCount());
 
-                articleTitleVO.setArticleTagList(selectTagListByArticleId(a.getId()));
+//                articleTitleVO.setArticleTagList(selectTagListByArticleId(a.getId()));
                 articleTitleVOList.add(articleTitleVO);
             }
         }
@@ -182,6 +193,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleAndCommentVO.setMyCollection(articleCollRelaServiceImpl.isExist(new ArticleCollectorRela(curUserId, article.getId())));
         articleAndCommentVO.setPublished(article.getPublished() != 0x00);
         articleAndCommentVO.setTagList(selectTagListByArticleId(article.getId()));
+        articleAndCommentVO.setArticleType(typeServiceImpl.findTypeById(article.getId()));
         List<Comment> commentList = commentServiceImpl.selectByArticleId(id);
         List<CommentVO> commentVOList = new ArrayList<>();
         if(article.getPublished() == 0x00) {
@@ -235,5 +247,26 @@ public class ArticleServiceImpl implements ArticleService {
         article.setId(id);
         article.setPublished((byte) 1);
         articleMapper.updateByPrimaryKeySelective(article);
+    }
+
+    @Override
+    public PageInfo<ArticleTitleVO> selectArticleByKeyWord(String keyWord, int type, int pageNum) {
+        List<Term> termList = StandardTokenizer.segment(keyWord);
+
+        System.out.println(termList);
+        // 拼接正则字符串
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < termList.size(); i++) {
+            String word = termList.get(i).word;
+            if (i != termList.size() - 1) {
+                sb.append(word + "|");
+            } else {
+                sb.append(word);
+            }
+        }
+
+        System.out.println(sb);
+
+        return null;
     }
 }

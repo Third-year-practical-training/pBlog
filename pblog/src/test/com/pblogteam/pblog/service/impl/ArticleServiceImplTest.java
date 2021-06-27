@@ -15,12 +15,16 @@ public class ArticleServiceImplTest {
 
     @Autowired
     private ArticleServiceImpl articleService;
-    @Test
+//    @Test
+//    public void selectByUserId() {
+//        List<ArticleTitleVO> articleTitleVOList = articleService.selectArtOrDraListByUserId(1, 0, 1);
+//        for (ArticleTitleVO a :
+//                articleTitleVOList) {
+//            System.out.println(a.getTitle());
+//        }
+//    }
+        @Test
     public void selectByUserId() {
-        List<ArticleTitleVO> articleTitleVOList = articleService.selectArtOrDraListByUserId(1, 0);
-        for (ArticleTitleVO a :
-                articleTitleVOList) {
-            System.out.println(a.getTitle());
-        }
+        articleService.selectArticleByKeyWord("我和我的祖国", 1, 1);
     }
 }

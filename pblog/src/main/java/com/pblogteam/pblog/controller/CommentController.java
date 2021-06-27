@@ -1,6 +1,7 @@
 package com.pblogteam.pblog.controller;
 
 
+import com.github.pagehelper.PageInfo;
 import com.pblogteam.pblog.constant.ResponseState;
 import com.pblogteam.pblog.entity.Comment;
 import com.pblogteam.pblog.service.ArticleService;
@@ -29,7 +30,7 @@ public class CommentController {
 
     @RequestMapping(value = "/comment/new", method = {RequestMethod.POST})
     public ResultVO<String> addComment(@RequestParam("userId") Integer userId, @RequestParam("articleId") Integer articleId,
-                                       @RequestParam("date") @DateTimeFormat(pattern = "yyyy/MM/dd HH:mm:ss") Date date,
+                                       @RequestParam("date") @DateTimeFormat(pattern = "yyyy/MM/dd") Date date,
                                        @RequestParam("content") String content, Comment comment, HttpSession session) {
         if (userId != null & articleId != null & date != null & content != null) {
             commentService.insertComment(comment);
@@ -50,12 +51,12 @@ public class CommentController {
     }
 
     @GetMapping("/comment/selectById")
-    public ResultVO<List<Comment>> getCommentListByUserId(Integer id) {
+    public ResultVO<PageInfo<Comment>> getCommentListByUserId(Integer id, int pageNum) {
         if(id == null) ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
-        List<Comment> commentList = commentService.selectByUserId(id);
+        PageInfo<Comment> commentList = commentService.selectByUserId(id, pageNum);
         if(commentList != null) {
             for (Comment a :
-                    commentList) {
+                    commentList.getList()) {
                 a.setContent(a.getContent().length() > 100 ? a.getContent().substring(0, 100) : a.getContent());
             }
         }

@@ -3,7 +3,6 @@ package com.pblogteam.pblog.controller;
 import com.pblogteam.pblog.constant.ResponseState;
 import com.pblogteam.pblog.service.UserService;
 import com.pblogteam.pblog.util.FtpUtil;
-import com.pblogteam.pblog.vo.ArticleNewVO;
 import com.pblogteam.pblog.vo.ResultVO;
 import com.pblogteam.pblog.vo.UserNewVO;
 import com.pblogteam.pblog.vo.UserVO;

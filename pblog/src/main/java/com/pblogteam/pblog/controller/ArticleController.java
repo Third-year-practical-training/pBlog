@@ -1,5 +1,7 @@
 package com.pblogteam.pblog.controller;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageInfo;
 import com.pblogteam.pblog.constant.ResponseState;
 import com.pblogteam.pblog.service.impl.ArticleServiceImpl;
 import com.pblogteam.pblog.vo.ArticleAndCommentVO;
@@ -19,19 +21,19 @@ public class ArticleController {
     @Autowired
     private ArticleServiceImpl articleServiceImpl;
     @GetMapping("/articles/findByUserId")
-    public ResultVO<List<ArticleTitleVO>> getArticleListByUser(Integer id) {
+    public ResultVO<PageInfo<ArticleTitleVO>> getArticleListByUser(Integer id, int pageNum) {
         if(id != null) {
-            List<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectArtOrDraListByUserId(id, 1);
+            PageInfo<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectArtOrDraListByUserId(id, 1, pageNum);
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleTitleVOList);
         }
         return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
     }
 
     @GetMapping("/drafts/findByUserId")
-    public ResultVO<List<ArticleTitleVO>> getDraftListByUser(Integer id) {
+    public ResultVO<PageInfo<ArticleTitleVO>> getDraftListByUser(Integer id, int pageNum) {
         ResultVO<List<ArticleTitleVO>> resultVO = new ResultVO<>();
         if(id != null) {
-            List<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectArtOrDraListByUserId(id, 0);
+            PageInfo<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectArtOrDraListByUserId(id, 0, pageNum  );
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleTitleVOList);
         }
         return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
@@ -60,6 +62,7 @@ public class ArticleController {
 
     @GetMapping("/article/findById")
     public ResultVO<ArticleAndCommentVO> getArticleContentById(Integer id, HttpServletRequest request) {
+        request.getSession().setAttribute("userId", 15);
         if(!articleServiceImpl.isArticle(id) || id == null) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         int userId = (int) request.getSession().getAttribute("userId");
         if(id == null) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
