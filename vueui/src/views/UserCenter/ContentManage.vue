@@ -2,7 +2,7 @@
   <el-container>
     <el-aside width="200px">
       <el-col :span="12">
-        <el-menu default-active="1" class="el-menu-vertical-demo">
+        <el-menu default-active="4" class="el-menu-vertical-demo">
           <el-menu-item index="1" @click="menuClick">
             <span slot="title">个人信息</span>
           </el-menu-item>
