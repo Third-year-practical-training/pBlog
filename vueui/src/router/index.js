@@ -4,6 +4,11 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import MainPage from "../views/MainPage";
 import SelfInformation from "../views/UserCenter/SelfInformation";
+import Account from "../views/UserCenter/Account";
+import Attention from "../views/UserCenter/Attention";
+import ContentManage from "../views/UserCenter/ContentManage";
+import NewBlog from "../views/NewBlog";
+import BlogShow from "../views/BlogShow";
 
 Vue.use(VueRouter)
 
@@ -32,6 +37,31 @@ const routes = [
     path: '/user-center/selfinformation',
     name: 'selfinformation',
     component: SelfInformation
+  },
+  {
+    path: '/user-center/account',
+    name: 'Account',
+    component: Account
+  },
+  {
+    path: '/user-center/attention',
+    name: 'Attention',
+    component: Attention
+  },
+  {
+    path: '/user-center/contentmanage',
+    name: 'ContentManage',
+    component: ContentManage
+  },
+  {
+    path: '/newblog',
+    name: 'NewBlog',
+    component: NewBlog
+  },
+  {
+    path: '/blogshow',
+    name: 'BlogShow',
+    component: BlogShow
   },
 
 ]
