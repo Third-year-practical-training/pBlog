@@ -129,12 +129,12 @@ public class UserController
     }
 
     @PutMapping("/user/updateinfo")
-    public ResultVO updateInfo(@RequestBody UserNewVO userNewVO, HttpSession session)
+    public ResultVO<UserVO> updateInfo(@RequestBody UserNewVO userNewVO, HttpSession session)
     {
         Integer userId = (Integer) session.getAttribute("userId");
         System.out.println("userId= " +userId);
         System.out.println(userNewVO);
-        if(userService.checkNewUsernameLegality(userId, userNewVO) == false)
+        if(!userService.checkNewUsernameLegality(userId, userNewVO))
         {
             return ResultVO.throwError(400, "用户名已存在");
         }
@@ -142,8 +142,8 @@ public class UserController
     }
 
     @PostMapping("/user/changePhoto")
-    public ResultVO changePhoto(@RequestParam("photo") MultipartFile file,
-                                HttpSession session) throws IOException
+    public ResultVO<Boolean> changePhoto(@RequestParam("photo") MultipartFile file,
+                                         HttpSession session) throws IOException
     {
         InputStream inputStream = file.getInputStream();
 

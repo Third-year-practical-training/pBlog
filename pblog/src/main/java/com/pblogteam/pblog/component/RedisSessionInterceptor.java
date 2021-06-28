@@ -68,14 +68,6 @@ public class RedisSessionInterceptor implements HandlerInterceptor
         {
             e.printStackTrace();
         }
-        //try
-        //{
-        //    response.getWriter().print(new ResultVO(401, "用户未登录"));
-        //}
-        //catch (IOException e)
-        //{
-        //    e.printStackTrace();
-        //}
     }
 
 

@@ -58,7 +58,6 @@ public class ArticleServiceImpl implements ArticleService {
         articleEx.andUserIdEqualTo(id);
         articleEx.andPublishedEqualTo((byte) flag);
         PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
-//        Pageable pageable = new PageRequest(pageNum, Config.PAGE_SIZE, new Sort(Sort.Direction.DESC, "gmt_update"));
         List<Article> articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
         return new PageInfo<>(fillArtTitVOByArtList(articleList));
     }
@@ -235,7 +234,7 @@ public class ArticleServiceImpl implements ArticleService {
     public PageInfo<ArticleTitleVO> selectCollectListByUserId(Integer id, int pageNum) {
         ArticleExample articleExample = new ArticleExample();
         List<Article> articleList = new ArrayList<>();
-        List<ArticleCollectorRela> artCollRelaList = new ArrayList<>();
+        List<ArticleCollectorRela> artCollRelaList = null;
         PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
         artCollRelaList = articleCollRelaServiceImpl.selectByUserId(id);
         if(artCollRelaList != null) {

@@ -144,10 +144,8 @@ public class UserServiceImpl implements UserService
     public boolean checkNewUsernameLegality(Integer userId, UserNewVO userNewVO)
     {
         User user = userMapper.selectByUsername(userNewVO.getUsername());
-        if (user == null || user.getId().equals(userId) )       //数据库中没有新的用户名或新的用户名和该用户原用户名相等
-            return true;
-        else
-            return false;
+        //数据库中没有新的用户名或新的用户名和该用户原用户名相等
+        return user == null || user.getId().equals(userId);
     }
 
     @Override
