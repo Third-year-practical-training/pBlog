@@ -12,6 +12,8 @@ import java.util.List;
 public interface ArticleService {
     PageInfo<ArticleTitleVO> selectArtOrDraListByUserId(Integer id, int flag, int pageNum);
 
+    PageInfo<ArticleTitleVO> showAllArticle(int pageNum);
+
     List<ArticleTitleVO> selectByTypeId(Integer id);
 
     boolean deleteArticleById(Integer id);
@@ -28,11 +30,13 @@ public interface ArticleService {
 
     void publishDraft(Integer id);
 
+
+
     /**
      *
      * @param keyWord 查询需要的关键字
      * @param type 在什么范围内查询
      * @return 查询结果
      */
-    PageInfo<ArticleTitleVO> selectArticleByKeyWord(String keyWord, int type, int pageNum);
+    PageInfo<ArticleTitleVO> selectArticleByKeyWord(String keyWord, int type, int id, int pageNum);
 }

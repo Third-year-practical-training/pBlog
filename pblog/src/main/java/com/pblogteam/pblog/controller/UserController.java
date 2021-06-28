@@ -137,8 +137,7 @@ public class UserController
         {
             return ResultVO.throwError(400, "用户名已存在");
         }
-        userService.updateInfo(userId, userNewVO);
-        return ResultVO.throwSuccess(ResponseState.SUCCESS);
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.updateInfo(userId, userNewVO));
     }
 
     @PostMapping("/user/changePhoto")

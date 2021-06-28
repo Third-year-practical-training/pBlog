@@ -147,4 +147,17 @@ public class ArticleController {
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
+    /**
+     *
+     * @param keyWord   要查询的关键字
+     * @param pageNum   分页
+     * @param type  查询的范围 0 全站，1类型，2标签
+     * @param id    类型id或tag id
+     * @return 查询结果
+     */
+    @GetMapping("/article/searchByKeyWord")
+    public ResultVO<PageInfo<ArticleTitleVO>> searchByKeyWord(String keyWord, int pageNum, int type, int id) {
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.selectArticleByKeyWord(keyWord, type, id, pageNum));
+    }
+
 }

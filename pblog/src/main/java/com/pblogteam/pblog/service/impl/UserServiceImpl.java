@@ -147,8 +147,7 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public void updateInfo(Integer userId, UserNewVO userNewVO)
-    {
+    public UserVO updateInfo(Integer userId, UserNewVO userNewVO) {
         User user = new User();
         user.setId(userId);
         user.setUsername(userNewVO.getUsername());
@@ -162,8 +161,9 @@ public class UserServiceImpl implements UserService
         user.setEduBg(userNewVO.getEdu_bg());
         user.setEmail(userNewVO.getEmail());
         user.setDescription(userNewVO.getDescription());
-        System.out.println(user);
+//        System.out.println(user);
         userMapper.updateByPrimaryKeySelective(user);
+        return findByUserId(userId, userId);
     }
 
     @Override

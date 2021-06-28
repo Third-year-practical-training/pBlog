@@ -2,6 +2,7 @@ package com.pblogteam.pblog.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.seg.common.Term;
 import com.hankcs.hanlp.tokenizer.StandardTokenizer;
 import com.pblogteam.pblog.config.Config;
@@ -13,6 +14,9 @@ import com.pblogteam.pblog.vo.ArticleNewVO;
 import com.pblogteam.pblog.vo.ArticleTitleVO;
 import com.pblogteam.pblog.vo.CommentVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -53,7 +57,16 @@ public class ArticleServiceImpl implements ArticleService {
         ArticleExample.Criteria articleEx = articleExample.createCriteria();
         articleEx.andUserIdEqualTo(id);
         articleEx.andPublishedEqualTo((byte) flag);
-        PageHelper.startPage(pageNum, Config.PAGE_SIZE);
+        PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
+//        Pageable pageable = new PageRequest(pageNum, Config.PAGE_SIZE, new Sort(Sort.Direction.DESC, "gmt_update"));
+        List<Article> articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
+        return new PageInfo<>(fillArtTitVOByArtList(articleList));
+    }
+
+    @Override
+    public PageInfo<ArticleTitleVO> showAllArticle(int pageNum) {
+        ArticleExample articleExample = new ArticleExample();
+        PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
         List<Article> articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
         return new PageInfo<>(fillArtTitVOByArtList(articleList));
     }
@@ -250,23 +263,55 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public PageInfo<ArticleTitleVO> selectArticleByKeyWord(String keyWord, int type, int pageNum) {
-        List<Term> termList = StandardTokenizer.segment(keyWord);
-
-        System.out.println(termList);
-        // 拼接正则字符串
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < termList.size(); i++) {
-            String word = termList.get(i).word;
-            if (i != termList.size() - 1) {
-                sb.append(word + "|");
-            } else {
-                sb.append(word);
-            }
+    public PageInfo<ArticleTitleVO> selectArticleByKeyWord(String keyWord, int type, int id, int pageNum) {
+        ArticleExample articleExample = new ArticleExample();
+        ArticleExample.Criteria criteria = articleExample.createCriteria();
+        criteria.andTitleLike(keyWord);
+        if(type == 1) {
+            criteria.andArticleTypeIdEqualTo(id);
+        } else if(type == 2) {
+            criteria.andIdIn(articleTagRelaServiceImpl.selectArticleIdsByTagId(id));
         }
-
-        System.out.println(sb);
-
-        return null;
+        int cnt = articleMapper.countByExample(articleExample);
+        List<Article> articleList = null;
+        if(cnt == 0) {
+            // 提取短语查询
+            List<String> termList = HanLP.extractPhrase(keyWord, 1);
+            if(termList.size() == 0) {
+                termList = HanLP.extractKeyword(keyWord, keyWord.length() / 2);
+            }
+            // 拼接正则字符串
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < termList.size(); i++) {
+                String word = termList.get(i);
+                if (i != termList.size() - 1) {
+                    sb.append(word + "|");
+                } else {
+                    sb.append(word);
+                }
+            }
+            String regex = sb.toString();
+            sb.insert(0, ".*(");
+            sb.append(").*");
+            PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
+            articleList = articleMapper.selectByTitleKeyWord(sb.toString());
+            articleList.forEach(article -> {
+                String title = article.getTitle();
+                // 利用正则替换
+                String newTitle = title.replaceAll(regex, "<font style='color:red;'>$0</font>");
+                article.setTitle(newTitle);
+            });
+        } else {
+//            直接查询
+            PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
+            articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
+            articleList.forEach(article -> {
+                String title = article.getTitle();
+                // 利用正则替换
+                String newTitle = title.replaceAll(title, "<font style='color:red;'>$0</font>");
+                article.setTitle(newTitle);
+            });
+        }
+        return new PageInfo<>(fillArtTitVOByArtList(articleList));
     }
 }

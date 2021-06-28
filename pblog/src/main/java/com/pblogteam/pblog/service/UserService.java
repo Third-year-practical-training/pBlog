@@ -25,7 +25,7 @@ public interface UserService {
 
     boolean checkNewUsernameLegality(Integer userId, UserNewVO userNewVO);
 
-    void updateInfo(Integer userId, UserNewVO userNewVO);
+    UserVO updateInfo(Integer userId, UserNewVO userNewVO);
 
     boolean isAdmin(Integer userId);
 
