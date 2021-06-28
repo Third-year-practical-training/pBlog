@@ -19,8 +19,7 @@ import java.io.IOException;
  * 登录检查, 在MyMvcConfig类中配置注册
  */
 
-public class RedisSessionInterceptor implements HandlerInterceptor
-{
+public class RedisSessionInterceptor implements HandlerInterceptor {
 
     //@Autowired
     //StringRedisTemplate stringRedisTemplate;
@@ -29,11 +28,10 @@ public class RedisSessionInterceptor implements HandlerInterceptor
 
     //目标方法执行之前
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
-    {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
-        response.setHeader("Access-Control-Allow-Credentials","true");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
         response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
@@ -41,11 +39,9 @@ public class RedisSessionInterceptor implements HandlerInterceptor
         System.out.println("Interceptor: " + session.getId());
         Integer userId = (Integer)session.getAttribute("userId");
         System.out.println(session.getAttribute("userId"));
-        if (userId != null)
-        {
+        if (userId != null) {
             String signedSessionId = stringRedisTemplate.opsForValue().get("User" + session.getAttribute("userId"));
-            if (signedSessionId != null && signedSessionId.equals(session.getId()))
-            {
+            if (signedSessionId != null && signedSessionId.equals(session.getId())) {
                 return true;
             }
         }
@@ -53,19 +49,15 @@ public class RedisSessionInterceptor implements HandlerInterceptor
         return false;
     }
 
-    private void response401(HttpServletResponse response)
-    {
+    private void response401(HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
         JSONObject result = new JSONObject();
         result.put("code", 401);
         result.put("msg", "用户未登录");
-        try
-        {
+        try {
             response.getWriter().print(result);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         //try
