@@ -72,12 +72,14 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleTitleVO> selectByTypeId(Integer id) {
+    public PageInfo<ArticleTitleVO> selectByTypeId(Integer id, int pageNum) {
         ArticleExample articleExample = new ArticleExample();
         ArticleExample.Criteria articleEx = articleExample.createCriteria();
         articleEx.andArticleTypeIdEqualTo(id);
         articleEx.andPublishedEqualTo((byte) 1);
-        return fillArtTitVOByArtList(articleMapper.selectByExampleWithBLOBs(articleExample));
+        PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
+        List<Article> articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
+        return new PageInfo<>(fillArtTitVOByArtList(articleList));
     }
 
     public List<ArticleTitleVO> fillArtTitVOByArtList(List<Article> articleList) {
@@ -230,10 +232,11 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleTitleVO> selectCollectListByUserId(Integer id) {
+    public PageInfo<ArticleTitleVO> selectCollectListByUserId(Integer id, int pageNum) {
         ArticleExample articleExample = new ArticleExample();
         List<Article> articleList = new ArrayList<>();
         List<ArticleCollectorRela> artCollRelaList = new ArrayList<>();
+        PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
         artCollRelaList = articleCollRelaServiceImpl.selectByUserId(id);
         if(artCollRelaList != null) {
             for (ArticleCollectorRela a :
@@ -241,7 +244,7 @@ public class ArticleServiceImpl implements ArticleService {
                 articleList.add(articleMapper.selectByPrimaryKey(a.getArticleId()));
             }
         }
-        return fillArtTitVOByArtList(articleList);
+        return new PageInfo<>(fillArtTitVOByArtList(articleList));
     }
 
     @Override

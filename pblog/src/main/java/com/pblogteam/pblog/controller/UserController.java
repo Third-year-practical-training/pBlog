@@ -1,5 +1,6 @@
 package com.pblogteam.pblog.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.pblogteam.pblog.constant.ResponseState;
 import com.pblogteam.pblog.service.UserService;
 import com.pblogteam.pblog.util.FtpUtil;
@@ -114,9 +115,9 @@ public class UserController
     }
 
     @GetMapping("/users/attentionList")
-    public ResultVO<List<UserVO>> attentionList(@RequestParam("id") Integer id)
+    public ResultVO<PageInfo<UserVO>> attentionList(@RequestParam("id") Integer id, int pageNum)
     {
-        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.myAttentionList(id));
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.myAttentionList(id, pageNum));
     }
 
     @PutMapping("/user/changeAttention")

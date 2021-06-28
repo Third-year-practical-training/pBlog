@@ -40,19 +40,19 @@ public class ArticleController {
     }
 
     @GetMapping("/articles/findByType")
-    public ResultVO<List<ArticleTitleVO>> getArticleListByType(Integer id) {
+    public ResultVO<PageInfo<ArticleTitleVO>> getArticleListByType(Integer id, int pageNum) {
         if(id != null) {
-            List<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectByTypeId(id);
+            PageInfo<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectByTypeId(id, pageNum);
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleTitleVOList);
         }
         return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
     }
 
     @GetMapping("/articles/collectList")
-    public ResultVO<List<ArticleTitleVO>> getCollArtByUserId(Integer id) {
-        ResultVO<List<ArticleTitleVO>> resultVO = new ResultVO<>();
+    public ResultVO<PageInfo<ArticleTitleVO>> getCollArtByUserId(Integer id, int pageNum) {
+        ResultVO<PageInfo<ArticleTitleVO>> resultVO = new ResultVO<>();
         if(id != null) {
-            List<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectCollectListByUserId(id);
+            PageInfo<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectCollectListByUserId(id, pageNum);
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleTitleVOList);
         }
         return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);

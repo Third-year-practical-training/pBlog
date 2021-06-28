@@ -1,5 +1,8 @@
 package com.pblogteam.pblog.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.pblogteam.pblog.config.Config;
 import com.pblogteam.pblog.constant.Privilege;
 import com.pblogteam.pblog.entity.User;
 import com.pblogteam.pblog.entity.UserExample;
@@ -88,9 +91,10 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public List<UserVO> myAttentionList(Integer followerId)
+    public PageInfo<UserVO> myAttentionList(Integer followerId, int pageNum)
     {
         List<UserVO> attentionList = new ArrayList<>();
+        PageHelper.startPage(pageNum, Config.PAGE_SIZE);
         List<Integer> attenionUserIds = userFollowerRelaMapper.selectByFollowerId(followerId);
         UserVO userVO = null;
         for (Integer i : attenionUserIds)
@@ -99,7 +103,7 @@ public class UserServiceImpl implements UserService
             userVO.setMyAttention(true);
             attentionList.add(userVO);
         }
-        return attentionList;
+        return new PageInfo<>(attentionList);
     }
 
     @Override

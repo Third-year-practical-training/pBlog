@@ -14,7 +14,7 @@ public interface ArticleService {
 
     PageInfo<ArticleTitleVO> showAllArticle(int pageNum);
 
-    List<ArticleTitleVO> selectByTypeId(Integer id);
+    PageInfo<ArticleTitleVO> selectByTypeId(Integer id, int pageNum);
 
     boolean deleteArticleById(Integer id);
 
@@ -22,7 +22,7 @@ public interface ArticleService {
 
     ArticleAndCommentVO selectByArticleId(Integer id, Integer curUserId);
 
-    List<ArticleTitleVO> selectCollectListByUserId(Integer id);
+    PageInfo<ArticleTitleVO> selectCollectListByUserId(Integer id, int pageNum);
 
     void changeCollection(Integer userId, Integer articleId);
 
