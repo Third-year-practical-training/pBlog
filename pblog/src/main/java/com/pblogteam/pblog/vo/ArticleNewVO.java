@@ -12,7 +12,7 @@ public class ArticleNewVO {
     private Integer userId;
     private Integer articleTypeId;
     private String title;
-    @JsonFormat(pattern = "yyyy/MM/dd", timezone = "Asia/Shanghai")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Shanghai")
     private Date date;
     private String content;
     private List<ArticleTag> tag;

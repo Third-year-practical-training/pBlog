@@ -45,7 +45,10 @@
           <div class="block">
             <el-pagination
                 layout="prev, pager, next"
-                :total="50">
+                :current-page="currentPage"
+                :page-size="pageSize"
+                :total="total"
+                @current-change="page">
             </el-pagination>
           </div>
         </div>
@@ -89,7 +92,7 @@ export default {
     return {
       blogs: {},
       currentPage: 1,
-      total: 0,
+      total: 25,
       pageSize: 5,
       loading: false,
       user: {
@@ -123,6 +126,9 @@ export default {
     this.loading = false;
   },
   methods: {
+    page(currentPage){
+
+    },
     logout() {
       this.$alert('确定要退出登录吗？', '退出确认', {
         confirmButtonText: '确定',

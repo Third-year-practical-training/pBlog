@@ -127,8 +127,7 @@ public class UserController
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
-
-    @PostMapping("/user/updateinfo")
+    @PutMapping("/user/updateinfo")
     public ResultVO updateInfo(@RequestBody UserNewVO userNewVO, HttpSession session)
     {
         Integer userId = (Integer) session.getAttribute("userId");

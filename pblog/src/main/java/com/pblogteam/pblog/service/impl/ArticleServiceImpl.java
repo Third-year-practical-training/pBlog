@@ -98,7 +98,7 @@ public class ArticleServiceImpl implements ArticleService {
                 articleTitleVO.setCollectCount(a.getCollectionCount());
                 articleTitleVO.setCommentCount(a.getCommentCount());
 
-//                articleTitleVO.setArticleTagList(selectTagListByArticleId(a.getId()));
+                articleTitleVO.setArticleTagList(selectTagListByArticleId(a.getId()));
                 articleTitleVOList.add(articleTitleVO);
             }
         }

@@ -4,32 +4,29 @@
       <el-form-item label="标题" prop="title" style="margin-top: 10px">
         <el-input v-model="editForm.title"></el-input>
       </el-form-item>
-      <el-form-item label="摘要" prop="description">
-        <el-input type="textarea" v-model="editForm.description"></el-input>
-      </el-form-item>
-      <el-form-item label="分类" prop="classify">
-        <el-select v-model="select.name" placeholder="请选择">
+      <el-form-item label="分类" prop="articleTypeId">
+        <el-select v-model="editForm.articleTypeId" placeholder="请选择">
           <el-option
               v-for="item in select"
               :key="item.id"
               :label="item.name"
-              :value="item.name">
+              :value="item.id">
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="标签" prop="tags">
+      <el-form-item label="标签" prop="tag">
         <el-tag
             :key="tag"
-            v-for="tag in editForm.tags"
+            v-for="tag in editForm.tag"
             closable
             :disable-transitions="false"
             @close="handleClose(tag)">
-          {{ tag }}
+          {{ tag.name }}
         </el-tag>
         <el-input
             class="input-new-tag"
-            v-if="editForm.inputVisible"
-            v-model="editForm.inputValue"
+            v-if="inputVisible"
+            v-model="inputValue"
             ref="saveTagInput"
             size="small"
             @keyup.enter.native="handleInputConfirm"
@@ -42,7 +39,9 @@
         <mavon-editor style="height:500px;width: 1200px" v-model="editForm.content"/>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm('editForm')" style="margin-left: 550px">立即创建</el-button>
+        <el-button type="primary" v-loading.fullscreen.lock="loading" @click="submitForm('editForm')"
+                   style="margin-left: 550px">立即创建
+        </el-button>
 
       </el-form-item>
     </el-form>
@@ -54,15 +53,18 @@ export default {
   name: "NewBlog",
   data() {
     return {
+      inputVisible: true,
+      inputValue: '',
+      loading: false,
       editForm: {
-        blogid: null,
+        id: null,
+        userId: '',
+        articleTypeId: '',
         title: '',
-        description: '',
+        date: '',
         content: '',
-        tags: [],
-        classify: '',
-        inputVisible: true,
-        inputValue: ''
+        tag: [],
+
       },
       select: [],
       rules: {
@@ -70,52 +72,74 @@ export default {
           {required: true, message: '请输入标题', trigger: 'blur'},
           {min: 3, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur'}
         ],
-        description: [
-          {required: true, message: '请输入摘要', trigger: 'blur'}
-        ]
       }
     }
   },
   created() {
+    if (this.$store.getters.getUser.id) {
+      this.editForm.userId = this.$store.getters.getUser.id;
+    }
     const _this = this;
     this.$axios.get('http://localhost:8080/type/findall').then(res => {
       if (res.data.code == 100) {
-          _this.select = JSON.parse(JSON.stringify(res.data.data));
+        _this.select = JSON.parse(JSON.stringify(res.data.data));
       }
     })
   },
   methods: {
     submitForm(formName) {
       const _this = this
+      this.loading = true;
       this.$refs[formName].validate((valid) => {
-        if (valid) {
-          let data = new FormData();
-
-        } else {
-          console.log('error submit!!');
-          return false;
-        }
-      });
+            if (valid) {
+              let time = new Date();
+              let y = time.getFullYear();
+              let m = time.getMonth() + 1;
+              let d = time.getDate();
+              this.editForm.date = `${y}-${m}-${d}`;
+              this.$axios({
+                    url: 'http://localhost:8080/article/new',
+                    method: 'post',
+                    data: JSON.stringify(this.editForm),
+                    headers:
+                        {
+                          'Content-Type': 'application/json'
+                        }
+                  }
+              ).then(res => {
+                _this.loading = false;
+                _this.$message("创建成功");
+                _this.$router.push('/user-center/contentmanage');
+              });
+            } else {
+              console.log('error submit!!');
+              return false;
+            }
+          }
+      )
+      ;
     },
 
     handleClose(tag) {
-      this.editForm.tags.splice(this.editForm.tags.indexOf(tag), 1);
-    },
+      this.editForm.tag.splice(this.editForm.tag.indexOf(tag), 1);
+    }
+    ,
 
     showInput() {
-      this.editForm.inputVisible = true;
+      this.inputVisible = true;
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus();
       });
-    },
+    }
+    ,
 
     handleInputConfirm() {
-      let inputValue = this.editForm.inputValue;
+      let inputValue = this.inputValue;
       if (inputValue) {
-        this.editForm.tags.push(inputValue);
+        this.editForm.tag.push({id:null,name:inputValue});
       }
-      this.editForm.inputVisible = false;
-      this.editForm.inputValue = '';
+      this.inputVisible = false;
+      this.inputValue = '';
     }
   }
 }

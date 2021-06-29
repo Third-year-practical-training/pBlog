@@ -20,17 +20,17 @@
     </el-aside>
 
     <el-main>
-      <el-form :model="user" label-width="80px" :rules="rules" ref="user">
+      <el-form :model="account" label-width="80px" :rules="rules" ref="account">
         <el-form-item label="邮箱" prop="email">
-          <el-input v-model="user.email" style="width: 40%;float: left"></el-input>
-          <el-link type="primary" style="float: left;margin-left: 5px" @click="updateEmail('user')">修改邮箱</el-link>
+          <el-input v-model="account.email" style="width: 40%;float: left"></el-input>
+          <el-button type="primary" v-loading="loading" style="float: left;margin-left: 5px" @click="updateEmail('account')">修改邮箱</el-button>
         </el-form-item>
         <el-form-item label="用户名">
-          <el-input v-model="user.username" :disabled="true" style="width: 40%;float: left"></el-input>
+          <el-input v-model="account.username" :disabled="true" style="width: 40%;float: left"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="user.password" style="width: 40%;float: left" type="password"></el-input>
-          <el-link type="primary" style="float: left;margin-left: 5px" @click="updatePassword('user')">修改密码</el-link>
+          <el-input v-model="account.password" :disabled="true" style="width: 40%;float: left" type="password"></el-input>
+          <el-button type="text" disabled style="float: left;margin-left: 5px" @click="updatePassword('user')">修改密码</el-button>
         </el-form-item>
       </el-form>
     </el-main>
@@ -42,11 +42,21 @@ export default {
   name: "Account",
   data() {
     return {
-      user: {
-        id: '',
+      loading:false,
+      account: {
         username: '',
         password: '********',
         email: '',
+      },
+      user:{
+        username: '',
+        nickname: '',
+        real_name: '',
+        email: '',
+        sex: '',
+        birthday: '',
+        edu_bg: '',
+        description: '',
       },
       rules: {
         email: [
@@ -55,29 +65,41 @@ export default {
             pattern: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/,
             message: '邮箱格式要正确',
           }],
-        password: [
-          {required: true, message: '请输入密码', trigger: 'blur'},
-          {min: 8, max: 15, message: '长度在 8 到 15 个字符', trigger: 'blur'},
-          {pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]/, message: '至少含有数字和字母'}
-        ],
       }
     }
   },
   created() {
     if (this.$store.getters.getUser.id) {
-      this.user.id = this.$store.getters.getUser.id;
       this.user.username = this.$store.getters.getUser.username;
+      this.user.nickname = this.$store.getters.getUser.nickname;
+      this.user.real_name = this.$store.getters.getUser.real_name;
       this.user.email = this.$store.getters.getUser.email;
+      this.user.sex = this.$store.getters.getUser.sex;
+      this.user.birthday = this.$store.getters.getUser.birthday;
+      this.user.edu_bg = this.$store.getters.getUser.edu_bg;
+      this.user.description = this.$store.getters.getUser.description;
+      this.account.username = this.user.username;
+      this.account.email = this.user.email;
     }
   },
   methods: {
     updateEmail(formName) {
       if(this.$refs[formName].validate((valid)=>{
         if(valid){
-          let data = new FormData();
-          data.append('email', this.user.email);
+          this.loading = true;
+          this.user.email = this.account.email;
           const _this = this;
-          this.$axios.put('http://localhost:8080/user/updateinfo', data).then(res => {
+          this.$axios({
+                url: 'http://localhost:8080/user/updateinfo',
+                method: 'put',
+                data: JSON.stringify(this.user),
+                headers:
+                    {
+                      'Content-Type': 'application/json'
+                    }
+              }
+          ).then(res => {
+            _this.loading = false;
             _this.$message('修改成功');
           });
         }else {

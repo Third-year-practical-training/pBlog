@@ -32,47 +32,36 @@
           </div>
         </el-col>
       </el-row>
-      <div v-clickoutside="hideReplyBtn" @click="inputFocus" class="my-reply">
-        <el-avatar class="header-img" :size="40" :src="user.url"></el-avatar>
-        <div class="reply-info">
-          <div
-              tabindex="0"
-              contenteditable="true"
-              id="replyInput"
-              spellcheck="false"
-              placeholder="输入评论..."
-              class="reply-input"
-          >
-          </div>
+      <div style="margin-top: 10px;text-align: left">
+        <el-avatar :size="40" :src="user.url" style="margin-left: 22px;float: left;margin-left: 50px"></el-avatar>
+        <div>
+          <el-input type="textarea" autosize contenteditable="true" placeholder="请输入内容"
+                    style="max-width: 1000px;margin-left: 10px"></el-input>
         </div>
-        <div class="reply-btn-box">
-          <el-button class="reply-btn" size="medium" type="primary">发表评论</el-button>
+        <div style="float: right;margin-right: 380px;margin-top: 5px">
+          <el-button size="medium" type="primary">发表评论</el-button>
         </div>
       </div>
-      <div v-for="(item,i) in comments" :key="i" class="author-title">
-        <el-avatar class="header-img" :size="40" :src="item.headImg"
-                   style="float: left;display: inline-block;margin-left: 50px"></el-avatar>
-        <div class="author-info">
-          <span class="author-name">{{ item.name }}</span>
-          <span class="author-time">{{ item.time }}</span>
+      <div v-for="item in comments" :key="item" style="text-align: left;margin-top: 0px;margin-left: 50px;width: 1060px" class="el-card">
+        <div>
+          <el-avatar size="large" :src="item.headImg" style="margin-top: 10px;margin-left: 10px"></el-avatar>
+          <span style=" color: black;font-size: 18px;font-weight: bold;margin-left: 2px;">{{ item.name }}</span>
+          <span style="color: #7d7d7d;font-size: 5px;margin-left: 5px">{{ item.time }}</span>
         </div>
-        <div class="talk-box">
-          <span class="reply">{{ item.comment }}</span>
+        <div style="margin-top: 10px;margin-left: 10px">
+          <span>{{ item.comment }}</span>
         </div>
-        <div class="reply-box">
-          <div v-for="(reply,j) in item.reply" :key="j" class="author-title">
-            <el-avatar class="header-img" :size="40" :src="reply.fromHeadImg"></el-avatar>
-            <div class="author-info">
-              <span class="author-name">{{ reply.from }}</span>
-              <span class="author-time">{{ reply.time }}</span>
+        <div>
+          <div v-for="reply in item.reply" :key="reply" class="el-card" style="margin-left: 20px">
+            <div>
+              <el-avatar size="large" :src="reply.fromHeadImg" style="margin-top: 10px;margin-left: 10px"></el-avatar>
+              <span style=" color: black;font-size: 18px;font-weight: bold;margin-left: 2px;">{{ reply.from }}</span>
+              <span style="color: #7d7d7d;font-size: 5px;margin-left: 5px">{{ reply.time }}</span>
             </div>
-            <div class="talk-box">
-              <span class="reply">回复 {{ reply.to }}: {{ reply.comment }}</span>
+            <div style="margin-top: 10px;margin-left: 10px">
+              <span>{{ reply.comment }}</span>
             </div>
-            <el-divider></el-divider>
-            <div class="reply-box"></div>
           </div>
-          <el-divider></el-divider>
         </div>
       </div>
 
@@ -200,20 +189,7 @@ export default {
       ]
     }
   },
-  methods: {
-    inputFocus() {
-      let replyInput = document.getElementById('replyInput');
-      replyInput.style.padding = "8px 8px"
-      replyInput.style.border = "2px solid blue"
-      replyInput.focus()
-    },
-    hideReplyBtn() {
-      this.btnShow = false
-      let replyInput = document.getElementById('replyInput');
-      replyInput.style.padding = "10px"
-      replyInput.style.border = "none"
-    },
-  },
+  methods: {},
 
 }
 </script>
@@ -235,10 +211,6 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
 }
 
-.my-reply {
-  padding: 10px;
-  background-color: #fafbfc;
-}
 
 .header-img {
   display: inline-block;
@@ -246,52 +218,6 @@ export default {
   float: left;
   margin-left: 10px;
   margin-top: 5px;;
-}
-
-.reply-info {
-  display: inline-block;
-  margin-left: 5px;
-  width: 90%;
-}
-
-.reply-input {
-  min-height: 20px;
-  line-height: 22px;
-  text-align: left;
-  padding: 10px 10px;
-  color: black;
-  background-color: darkgray;
-  border-radius: 5px;
-}
-
-.reply-btn-box {
-  height: 25px;
-  margin: 10px 0;
-}
-
-.reply-btn {
-  position: relative;
-  float: right;
-  margin-right: 15px;
-}
-
-.talk-box {
-  position: relative;
-}
-
-.reply-box {
-  margin: 10px 0 0 50px;
-  background-color: #efefef;
-}
-
-.reply {
-  font-size: 16px;
-  color: #000;
-  margin-top: 45px;
-  display: flex;
-  justify-content: left;
-  align-items: flex-start;
-
 }
 
 .author-name {
