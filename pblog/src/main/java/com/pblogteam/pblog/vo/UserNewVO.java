@@ -14,7 +14,7 @@ public class UserNewVO
     private String real_name;
     private String email;
     private String sex;
-    @JsonFormat(pattern = "yyyy/MM/dd", timezone = "Asia/Shanghai")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Shanghai")
     private Date birthday;
     private String edu_bg;
     private String description;

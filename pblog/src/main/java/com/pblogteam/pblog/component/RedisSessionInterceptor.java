@@ -2,7 +2,7 @@ package com.pblogteam.pblog.component;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import com.fasterxml.jackson.databind.util.JSONPObject;
-//import com.pblogteam.pblog.vo.ResultVO;
+import com.pblogteam.pblog.vo.ResultVO;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -38,6 +38,7 @@ public class RedisSessionInterceptor implements HandlerInterceptor
         response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
         HttpSession session = request.getSession();
+        System.out.println("请求的链接是：" + request.getRequestURI());
         System.out.println("Interceptor: " + session.getId());
         Integer userId = (Integer)session.getAttribute("userId");
         System.out.println(session.getAttribute("userId"));

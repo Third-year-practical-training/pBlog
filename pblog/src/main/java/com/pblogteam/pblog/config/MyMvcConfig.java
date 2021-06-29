@@ -23,7 +23,6 @@ public class MyMvcConfig implements WebMvcConfigurer
     {
         registry.addInterceptor(new RedisSessionInterceptor()).addPathPatterns("/**") //拦截任意多层路径下的任意请求
             .excludePathPatterns("/user/signin","/user/signup");    //放行登录页面
-
     }
 
 
