@@ -41,9 +41,9 @@ public class UserController
     //@RequestMapping(value = "/user/login", method = RequestMethod.POST)  等价于@PostMapping
     @PostMapping("/user/signin")
     public ResultVO<UserVO> signin(@RequestParam("username") String username,
-                        @RequestParam("password") String password,
-                        Map<String, Object> map,
-                        HttpServletRequest request, HttpServletResponse response)
+                                   @RequestParam("password") String password,
+                                   Map<String, Object> map,
+                                   HttpServletRequest request, HttpServletResponse response)
     {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
@@ -69,7 +69,6 @@ public class UserController
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userVO);
         }
     }
-
     @GetMapping("/user/findByUserId")
     public ResultVO<UserVO> findByUserId(@RequestParam("id") Integer id,
                                          HttpSession session)
@@ -87,7 +86,7 @@ public class UserController
     public ResultVO signout(HttpServletRequest request)
     {
         // 退出登录
-        request.getSession().invalidate();
+        request.getSession().removeAttribute("userId");
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
@@ -127,7 +126,7 @@ public class UserController
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
-    @PutMapping("/user/updateinfo")
+    @PostMapping("/user/updateinfo")
     public ResultVO updateInfo(@RequestBody UserNewVO userNewVO, HttpSession session)
     {
         Integer userId = (Integer) session.getAttribute("userId");
