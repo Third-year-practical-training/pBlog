@@ -114,7 +114,7 @@ export default {
       this.infoLoading = true;
       let data = JSON.stringify(this.user);
       const _this = this;
-      this.$axios.put('http://localhost:8080/user/updateinfo', data).then(res => {
+      this.$axios.post('http://localhost:8080/user/updateinfo', data).then(res => {
         _this.infoLoading = false;
         _this.$message('修改成功');
       });
