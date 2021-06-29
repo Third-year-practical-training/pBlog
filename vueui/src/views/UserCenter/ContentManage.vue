@@ -25,50 +25,33 @@
     <el-main>
       <el-tabs v-model="activeName">
         <el-tab-pane label="我的文章" name="MyArticle">
-          <div v-for="o in 4" :key="o" class="block">
-            <el-card>
-              <h4>
-                <p>博客标题</p>
-              </h4>
-              <p>博客简介</p>
-              <el-tag>标签一</el-tag>
-              <el-tag type="success">标签二</el-tag>
-              <el-tag type="info">标签三</el-tag>
-              <el-tag type="warning">标签四</el-tag>
-              <el-tag type="danger">标签五</el-tag>
-              <el-button type="danger" icon="el-icon-delete" circle style="display: inline-block;float: right"
-                         @click="deleteArticle"></el-button>
-            </el-card>
+          <div v-for="item in blogs" :key="item" class="el-card" style="text-align: left">
+            <h4>
+              <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
+                           style="font-size: large;font-family: 'Arial Black';text-align: center;margin-left: 30px">{{ item.title }}
+              </router-link>
+            </h4>
+            <span style="margin-left: 30px">{{formatDate(item.date)}}</span>
+            <span style="font-size: small;color: gray;margin-left: 10px">标签: </span>
+            <div style="display: inline" v-for="tag in item.articleTagList" :key="tag" class="el-tag">
+              {{ tag.name }}
+            </div>
+            <el-button type="danger" icon="el-icon-delete" circle style="display: inline-block;float: right"
+                       @click="deleteArticle"></el-button>
+          </div>
+          <div class="block">
+            <el-pagination
+                layout="prev, pager, next"
+                :current-page="pageNum"
+                :page-size="pageSize"
+                :total="total"
+                @current-change="pageChange">
+            </el-pagination>
           </div>
         </el-tab-pane>
         <el-tab-pane label="我的收藏" name="MyCollection">
-          <div v-for="o in 4" :key="o" class="block">
-            <el-card>
-              <h4>
-                <p>博客标题</p>
-              </h4>
-              <p>博客简介</p>
-              <el-tag>标签一</el-tag>
-              <el-tag type="success">标签二</el-tag>
-              <el-tag type="info">标签三</el-tag>
-              <el-tag type="warning">标签四</el-tag>
-              <el-tag type="danger">标签五</el-tag>
-              <el-button type="warning" icon="el-icon-star-off" circle style="display: inline;float: right"
-                         @click="cancelCollection"></el-button>
-            </el-card>
 
-          </div>
-        </el-tab-pane>
-        <el-tab-pane label="我的评论" name="MyComment">
-          <div v-for="o in 4" :key="o" class="el-card">
-            <el-link type="primary" style="font-size: medium">博客标题</el-link>
-            <div type="text" style="margin-top: 30px">默认评论</div>
-            <div type="text" v-text="timestamp" style="margin-top: 10px"></div>
-            <el-button type="danger" icon="el-icon-delete" circle
-                       style="float: right;margin-top: 50px;margin-right: 5px"
-                       @click="deleteComment"></el-button>
 
-          </div>
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -82,7 +65,10 @@ export default {
 
   data() {
     return {
-      timestamp: '2018-04-15',
+      blogs: [],
+      pageNum: 1,
+      pageSize: 0,
+      total: 0,
       activeName: 'MyArticle',
       user: {
         id: '',
@@ -93,16 +79,39 @@ export default {
     if (this.$store.getters.getUser.id) {
       this.user.id = this.$store.getters.getUser.id;
     }
+    const _this = this;
+    this.$axios.get('http://localhost:8080/articles/findByUserId', {
+      params: {
+        id: this.user.id,
+        pageNum: this.pageNum,
+      }
+    }).then(res => {
+      if (res.data.code == 100) {
+        _this.blogs = res.data.data.list;
+        _this.pageNum = res.data.data.pageNum;
+        _this.total = res.data.data.total;
+        _this.pageSize = res.data.data.size;
+      } else {
+        console.log(res.data.msg);
+      }
+    });
   },
   methods: {
+    pageChange(pageNum) {
+
+    },
     deleteArticle() {
       this.$message("删除成功");
     },
     cancelCollection() {
       this.$message("取消收藏");
     },
-    deleteComment() {
-      this.$message("删除成功");
+    formatDate(date){
+      let time = new Date(date);
+      let y = time.getFullYear();
+      let m = time.getMonth() + 1;
+      let d = time.getDate();
+      return `${y}-${m}-${d}`;
     },
     menuClick(menuItem) {
       if (menuItem.index == 1) {
