@@ -8,19 +8,19 @@
         <el-input type="textarea" v-model="editForm.description"></el-input>
       </el-form-item>
       <el-form-item label="分类" prop="classify">
-        <el-select v-model="select.values.value" placeholder="请选择">
+        <el-select v-model="select.name" placeholder="请选择">
           <el-option
-              v-for="item in select.values"
-              :key="item.value"
-              :label="item.value"
-              :value="item.value">
+              v-for="item in select"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name">
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="标签" prop="tags">
         <el-tag
             :key="tag"
-            v-for="tag in tags.dynamicTags"
+            v-for="tag in editForm.tags"
             closable
             :disable-transitions="false"
             @close="handleClose(tag)">
@@ -28,8 +28,8 @@
         </el-tag>
         <el-input
             class="input-new-tag"
-            v-if="tags.inputVisible"
-            v-model="tags.inputValue"
+            v-if="editForm.inputVisible"
+            v-model="editForm.inputValue"
             ref="saveTagInput"
             size="small"
             @keyup.enter.native="handleInputConfirm"
@@ -42,7 +42,7 @@
         <mavon-editor style="height:500px;width: 1200px" v-model="editForm.content"/>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm()" style="margin-left: 550px">立即创建</el-button>
+        <el-button type="primary" @click="submitForm('editForm')" style="margin-left: 550px">立即创建</el-button>
 
       </el-form-item>
     </el-form>
@@ -55,27 +55,16 @@ export default {
   data() {
     return {
       editForm: {
-        id: null,
+        blogid: null,
         title: '',
         description: '',
         content: '',
-        tags:[],
-        classify:'',
-      },
-      select: {
-        values: [{
-          value: '学习'
-        }, {
-          value: '笔记'
-        }, {
-          value: '感悟'
-        },],
-      },
-      tags: {
-        dynamicTags: [],
+        tags: [],
+        classify: '',
         inputVisible: true,
         inputValue: ''
       },
+      select: [],
       rules: {
         title: [
           {required: true, message: '请输入标题', trigger: 'blur'},
@@ -88,17 +77,19 @@ export default {
     }
   },
   created() {
-    const blogId = this.$route.params.blogId
-    const _this = this
-    if (blogId) {
-
-    }
+    const _this = this;
+    this.$axios.get('http://localhost:8080/type/findall').then(res => {
+      if (res.data.code == 100) {
+          _this.select = JSON.parse(JSON.stringify(res.data.data));
+      }
+    })
   },
   methods: {
-    submitForm() {
+    submitForm(formName) {
       const _this = this
-      this.$refs.editForm.validate((valid) => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
+          let data = new FormData();
 
         } else {
           console.log('error submit!!');
@@ -108,33 +99,29 @@ export default {
     },
 
     handleClose(tag) {
-      this.tags.dynamicTags.splice(this.tags.dynamicTags.indexOf(tag), 1);
+      this.editForm.tags.splice(this.editForm.tags.indexOf(tag), 1);
     },
 
     showInput() {
-      this.tags.inputVisible = true;
+      this.editForm.inputVisible = true;
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus();
       });
     },
 
     handleInputConfirm() {
-      let inputValue = this.tags.inputValue;
+      let inputValue = this.editForm.inputValue;
       if (inputValue) {
-        this.tags.dynamicTags.push(inputValue);
+        this.editForm.tags.push(inputValue);
       }
-      this.tags.inputVisible = false;
-      this.tags.inputValue = '';
+      this.editForm.inputVisible = false;
+      this.editForm.inputValue = '';
     }
   }
 }
 </script>
 
 <style>
-
-.el-tag {
-  margin-left: 10px;
-}
 
 .button-new-tag {
   margin-left: 10px;

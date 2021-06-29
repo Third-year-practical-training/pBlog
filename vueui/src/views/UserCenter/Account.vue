@@ -20,17 +20,17 @@
     </el-aside>
 
     <el-main>
-      <el-form :model="user" label-width="80px">
-        <el-form-item label="邮箱">
-          <el-input v-model="user.email" :disabled="true" style="width: 40%;float: left"></el-input>
-          <el-link type="primary" style="float: left;margin-left: 5px" @click="updateEmail">修改邮箱</el-link>
+      <el-form :model="user" label-width="80px" :rules="rules" ref="user">
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="user.email" style="width: 40%;float: left"></el-input>
+          <el-link type="primary" style="float: left;margin-left: 5px" @click="updateEmail('user')">修改邮箱</el-link>
         </el-form-item>
         <el-form-item label="用户名">
           <el-input v-model="user.username" :disabled="true" style="width: 40%;float: left"></el-input>
         </el-form-item>
-        <el-form-item label="密码">
-          <el-input v-model="user.password" :disabled="true" style="width: 40%;float: left"></el-input>
-          <el-link type="primary" style="float: left;margin-left: 5px" @click="updatePassword">修改密码</el-link>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="user.password" style="width: 40%;float: left" type="password"></el-input>
+          <el-link type="primary" style="float: left;margin-left: 5px" @click="updatePassword('user')">修改密码</el-link>
         </el-form-item>
       </el-form>
     </el-main>
@@ -47,6 +47,19 @@ export default {
         username: '',
         password: '********',
         email: '',
+      },
+      rules: {
+        email: [
+          {required: true, message: '邮箱不能为空', trigger: 'blur'},
+          {
+            pattern: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/,
+            message: '邮箱格式要正确',
+          }],
+        password: [
+          {required: true, message: '请输入密码', trigger: 'blur'},
+          {min: 8, max: 15, message: '长度在 8 到 15 个字符', trigger: 'blur'},
+          {pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]/, message: '至少含有数字和字母'}
+        ],
       }
     }
   },
@@ -58,11 +71,22 @@ export default {
     }
   },
   methods: {
-    updateEmail() {
-      this.$message("修改完成");
+    updateEmail(formName) {
+      if(this.$refs[formName].validate((valid)=>{
+        if(valid){
+          let data = new FormData();
+          data.append('email', this.user.email);
+          const _this = this;
+          this.$axios.put('http://localhost:8080/user/updateinfo', data).then(res => {
+            _this.$message('修改成功');
+          });
+        }else {
+          this.$message('请注意格式');
+        }
+      }));
     },
-    updatePassword() {
-      this.$message("修改完成");
+    updatePassword(formName) {
+
     },
     menuClick(menuItem) {
       if (menuItem.index == 1) {

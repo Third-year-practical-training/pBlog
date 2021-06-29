@@ -77,15 +77,16 @@
 </template>
 
 <script>
+
 export default {
   name: "SelfPage",
   data() {
     return {
       user: {
-        username:'',
+        username: '',
         nickname: '',
         real_name: '',
-        email:'',
+        email: '',
         sex: '',
         birthday: '',
         edu_bg: '',
@@ -112,9 +113,22 @@ export default {
   methods: {
     updateInformation() {
       this.infoLoading = true;
-      let data = JSON.stringify(this.user);
+      let time = new Date(this.user.birthday);
+      let y = time.getFullYear();
+      let m = time.getMonth() + 1;
+      let d = time.getDate();
+      this.user.birthday = `${y}-${m}-${d}`;
       const _this = this;
-      this.$axios.post('http://localhost:8080/user/updateinfo', data).then(res => {
+      this.$axios({
+            url: 'http://localhost:8080/user/updateinfo',
+            method: 'put',
+            data: JSON.stringify(this.user),
+            headers:
+                {
+                  'Content-Type': 'application/json'
+                }
+          }
+      ).then(res => {
         _this.infoLoading = false;
         _this.$message('修改成功');
       });

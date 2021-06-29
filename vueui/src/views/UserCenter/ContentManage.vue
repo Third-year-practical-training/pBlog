@@ -79,6 +79,7 @@
 <script>
 export default {
   name: "ContentManage",
+
   data() {
     return {
       timestamp: '2018-04-15',
