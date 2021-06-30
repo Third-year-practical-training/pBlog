@@ -15,4 +15,5 @@ public interface TagService {
     List<ArticleTag> selectByTagName(String name);
     void insertAndReturnPrimaryKey(ArticleTag articleTag);
     ArticleTag selectByPrimaryKey(Integer id);
+    List<ArticleTag> getHotTag();
 }

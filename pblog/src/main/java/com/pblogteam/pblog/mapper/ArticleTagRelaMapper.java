@@ -6,7 +6,11 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface ArticleTagRelaMapper {
-    long countByExample(ArticleTagRelaExample example);
+    // my own start
+    List<ArticleTagRela> getHotTagList();
+    // my own end
+
+    int countByExample(ArticleTagRelaExample example);
 
     int deleteByExample(ArticleTagRelaExample example);
 
