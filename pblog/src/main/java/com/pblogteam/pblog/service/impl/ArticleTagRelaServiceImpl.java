@@ -62,5 +62,10 @@ public class ArticleTagRelaServiceImpl implements ArticleTagRelaService {
         return list;
     }
 
+    @Override
+    public List<ArticleTagRela> getHotTagList() {
+        return null;
+    }
+
 
 }

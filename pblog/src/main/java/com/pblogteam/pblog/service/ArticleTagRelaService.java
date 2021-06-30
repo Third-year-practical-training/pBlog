@@ -11,4 +11,5 @@ public interface ArticleTagRelaService {
     List<ArticleTagRela> selectByArticleId(Integer id);
     void deleteByArticleId(Integer id);
     List<Integer> selectArticleIdsByTagId(int tagId);
+    List<ArticleTagRela> getHotTagList();
 }

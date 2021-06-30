@@ -148,6 +148,8 @@ public class ArticleController {
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
+
+
     /**
      *
      * @param keyWord   要查询的关键字
@@ -161,4 +163,8 @@ public class ArticleController {
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.selectArticleByKeyWord(keyWord, type, id, pageNum));
     }
 
+    @GetMapping("/article/findAllArticle")
+    public ResultVO<PageInfo<ArticleTitleVO>> findAllArticle(int pageNum) {
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.showAllArticle(pageNum));
+    }
 }
