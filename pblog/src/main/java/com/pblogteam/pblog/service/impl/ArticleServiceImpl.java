@@ -193,7 +193,6 @@ public class ArticleServiceImpl implements ArticleService {
         }
     }
 
-
     @Override
     public ArticleAndCommentVO selectByArticleId(Integer id, Integer curUserId) {
         Article article = articleMapper.selectByPrimaryKey(id);
@@ -209,25 +208,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleAndCommentVO.setPublished(article.getPublished() != 0x00);
         articleAndCommentVO.setTagList(selectTagListByArticleId(article.getId()));
         articleAndCommentVO.setArticleType(typeServiceImpl.findTypeById(article.getArticleTypeId()));
-        List<Comment> commentList = commentServiceImpl.selectByArticleId(id);
-        List<CommentVO> commentVOList = new ArrayList<>();
-        if(article.getPublished() == 0x00) {
-            commentVOList = null;
-        } else {
-            if(commentList != null) {
-                for (Comment a :
-                        commentList) {
-                    CommentVO commentVO = new CommentVO();
-                    commentVO.setCommentId(a.getId());
-                    commentVO.setUserId(a.getUserId());
-                    commentVO.setUserNickname(userServiceImpl.selectByPrimaryKey(a.getUserId()).getNickname());
-                    commentVO.setDate(a.getDate());
-                    commentVO.setContent(a.getContent());
-                    commentVOList.add(commentVO);
-                }
-            }
-        }
-        articleAndCommentVO.setCommentList(commentVOList);
+        articleAndCommentVO.setCommentList(commentServiceImpl.selectByArticleId(id));
         return articleAndCommentVO;
     }
 
