@@ -1,12 +1,8 @@
 package com.pblogteam.pblog.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 import java.io.Serializable;
 import java.util.Date;
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class User implements Serializable {
     private Integer id;
 

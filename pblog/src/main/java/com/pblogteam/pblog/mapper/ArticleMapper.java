@@ -3,20 +3,10 @@ package com.pblogteam.pblog.mapper;
 import com.pblogteam.pblog.entity.Article;
 import com.pblogteam.pblog.entity.ArticleExample;
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-@Mapper
 public interface ArticleMapper {
-    //    my own start
-    int insertAndReturnPrimaryKey(Article record);
-
-    List<Article> selectByTitleKeyWord(String title);
-    //    my own end
-    int countByExample(ArticleExample example);
+    long countByExample(ArticleExample example);
 
     int deleteByExample(ArticleExample example);
 

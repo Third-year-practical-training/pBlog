@@ -3,15 +3,10 @@ package com.pblogteam.pblog.mapper;
 import com.pblogteam.pblog.entity.Comment;
 import com.pblogteam.pblog.entity.CommentExample;
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-@Mapper
 public interface CommentMapper {
-    int countByExample(CommentExample example);
+    long countByExample(CommentExample example);
 
     int deleteByExample(CommentExample example);
 
@@ -27,15 +22,11 @@ public interface CommentMapper {
 
     Comment selectByPrimaryKey(Integer id);
 
-    List<Comment> listCommentByArticleId(@Param(value = "id") Integer id);
-
     int updateByExampleSelective(@Param("record") Comment record, @Param("example") CommentExample example);
 
     int updateByExampleWithBLOBs(@Param("record") Comment record, @Param("example") CommentExample example);
 
     int updateByExample(@Param("record") Comment record, @Param("example") CommentExample example);
-
-    Comment getCommentById(Integer commentId);
 
     int updateByPrimaryKeySelective(Comment record);
 

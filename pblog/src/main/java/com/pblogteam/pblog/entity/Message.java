@@ -3,20 +3,14 @@ package com.pblogteam.pblog.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Comment implements Serializable {
+public class Message implements Serializable {
     private Integer id;
 
-    private Integer articleId;
+    private Integer fromId;
 
-    private Integer userId;
+    private Integer toId;
 
     private Date date;
-
-    private String from;
-
-    private String to;
-
-    private Integer replyId;
 
     private String content;
 
@@ -30,20 +24,20 @@ public class Comment implements Serializable {
         this.id = id;
     }
 
-    public Integer getArticleId() {
-        return articleId;
+    public Integer getFromId() {
+        return fromId;
     }
 
-    public void setArticleId(Integer articleId) {
-        this.articleId = articleId;
+    public void setFromId(Integer fromId) {
+        this.fromId = fromId;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getToId() {
+        return toId;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setToId(Integer toId) {
+        this.toId = toId;
     }
 
     public Date getDate() {
@@ -52,30 +46,6 @@ public class Comment implements Serializable {
 
     public void setDate(Date date) {
         this.date = date;
-    }
-
-    public String getFrom() {
-        return from;
-    }
-
-    public void setFrom(String from) {
-        this.from = from == null ? null : from.trim();
-    }
-
-    public String getTo() {
-        return to;
-    }
-
-    public void setTo(String to) {
-        this.to = to == null ? null : to.trim();
-    }
-
-    public Integer getReplyId() {
-        return replyId;
-    }
-
-    public void setReplyId(Integer replyId) {
-        this.replyId = replyId;
     }
 
     public String getContent() {
@@ -93,12 +63,9 @@ public class Comment implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", articleId=").append(articleId);
-        sb.append(", userId=").append(userId);
+        sb.append(", fromId=").append(fromId);
+        sb.append(", toId=").append(toId);
         sb.append(", date=").append(date);
-        sb.append(", from=").append(from);
-        sb.append(", to=").append(to);
-        sb.append(", replyId=").append(replyId);
         sb.append(", content=").append(content);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

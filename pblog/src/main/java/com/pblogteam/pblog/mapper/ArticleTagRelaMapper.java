@@ -3,15 +3,10 @@ package com.pblogteam.pblog.mapper;
 import com.pblogteam.pblog.entity.ArticleTagRela;
 import com.pblogteam.pblog.entity.ArticleTagRelaExample;
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-@Mapper
 public interface ArticleTagRelaMapper {
-    int countByExample(ArticleTagRelaExample example);
+    long countByExample(ArticleTagRelaExample example);
 
     int deleteByExample(ArticleTagRelaExample example);
 
