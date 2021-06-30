@@ -1,7 +1,11 @@
 package com.pblogteam.pblog.entity;
 
-import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+@AllArgsConstructor
+@NoArgsConstructor
 public class ArticleTag implements Serializable {
     private Integer id;
 

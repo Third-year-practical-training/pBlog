@@ -13,6 +13,7 @@ import com.pblogteam.pblog.mapper.UserMapper;
 import com.pblogteam.pblog.service.UserService;
 import com.pblogteam.pblog.vo.UserNewVO;
 import com.pblogteam.pblog.vo.UserVO;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.support.CustomSQLErrorCodesTranslation;
 import org.springframework.stereotype.Service;

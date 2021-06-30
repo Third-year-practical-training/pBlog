@@ -11,6 +11,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Mapper
 public interface ArticleTagMapper {
+
+    //    my own start
+    int insertAndReturnPrimaryKey(ArticleTag record);
+//    my own end
+
     long countByExample(ArticleTagExample example);
 
     int deleteByExample(ArticleTagExample example);

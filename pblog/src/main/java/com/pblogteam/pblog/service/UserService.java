@@ -31,4 +31,6 @@ public interface UserService {
     boolean isAdmin(Integer userId);
 
     void becomeAdmin(Integer userId);
+
+
 }

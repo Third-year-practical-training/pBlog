@@ -6,11 +6,16 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @Mapper
 public interface UserFollowerRelaMapper {
+
+    @Select("SELECT user_id FROM user_follower_rela WHERE follower_id=#{id}")
+    List<Integer> selectByFollowerId(Integer id);
+
     long countByExample(UserFollowerRelaExample example);
 
     int deleteByExample(UserFollowerRelaExample example);

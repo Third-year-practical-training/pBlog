@@ -14,6 +14,24 @@
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.pblogteam.pblog.entity.Article">
     <result column="content" jdbcType="LONGVARCHAR" property="content" />
   </resultMap>
+
+  <!--  my own start-->
+  <insert id="insertAndReturnPrimaryKey" parameterType="com.pblogteam.pblog.entity.Article" useGeneratedKeys="true" keyProperty="id">
+    insert into article (user_id, article_type_id,
+                         title, date, published,
+                         collection_count, comment_count, content
+    )
+    values (#{userId,jdbcType=INTEGER}, #{articleTypeId,jdbcType=INTEGER},
+            #{title,jdbcType=VARCHAR}, #{date,jdbcType=TIMESTAMP}, #{published,jdbcType=TINYINT},
+            #{collectionCount,jdbcType=INTEGER}, #{commentCount,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}
+           )
+  </insert>
+
+  <select id="selectByTitleKeyWord" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from article where title REGEXP #{title}
+  </select>
+  <!--  my own end-->
+
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">

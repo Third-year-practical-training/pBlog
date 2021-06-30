@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -32,4 +33,7 @@ public interface UserMapper {
     int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
+
+    @Select("SELECT * FROM user WHERE username = #{username}")
+    User selectByUsername(String username);
 }

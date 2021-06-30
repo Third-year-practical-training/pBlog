@@ -24,6 +24,7 @@ import java.util.List;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
+
     @Autowired
     private UserServiceImpl userServiceImpl;
     @Autowired
@@ -274,7 +275,7 @@ public class ArticleServiceImpl implements ArticleService {
         } else if(type == 2) {
             criteria.andIdIn(articleTagRelaServiceImpl.selectArticleIdsByTagId(id));
         }
-        int cnt = articleMapper.countByExample(articleExample);
+        int cnt = (int)articleMapper.countByExample(articleExample);
         List<Article> articleList = null;
         if(cnt == 0) {
             // 提取短语查询
