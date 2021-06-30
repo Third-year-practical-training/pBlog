@@ -193,7 +193,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleAndCommentVO.setMyCollection(articleCollRelaServiceImpl.isExist(new ArticleCollectorRela(curUserId, article.getId())));
         articleAndCommentVO.setPublished(article.getPublished() != 0x00);
         articleAndCommentVO.setTagList(selectTagListByArticleId(article.getId()));
-        articleAndCommentVO.setArticleType(typeServiceImpl.findTypeById(article.getId()));
+        articleAndCommentVO.setArticleType(typeServiceImpl.findTypeById(article.getArticleTypeId()));
         List<Comment> commentList = commentServiceImpl.selectByArticleId(id);
         List<CommentVO> commentVOList = new ArrayList<>();
         if(article.getPublished() == 0x00) {

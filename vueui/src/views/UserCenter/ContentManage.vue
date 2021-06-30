@@ -28,10 +28,11 @@
           <div v-for="item in blogs" :key="item" class="el-card" style="text-align: left">
             <h4>
               <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
-                           style="font-size: large;font-family: 'Arial Black';text-align: center;margin-left: 30px">{{ item.title }}
+                           style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
+                {{ item.title }}
               </router-link>
             </h4>
-            <span style="margin-left: 30px">{{formatDate(item.date)}}</span>
+            <span style="margin-left: 30px">{{ formatDate(item.date) }}</span>
             <span style="font-size: small;color: gray;margin-left: 10px">标签: </span>
             <div style="display: inline" v-for="tag in item.articleTagList" :key="tag" class="el-tag">
               {{ tag.name }}
@@ -106,7 +107,7 @@ export default {
     cancelCollection() {
       this.$message("取消收藏");
     },
-    formatDate(date){
+    formatDate(date) {
       let time = new Date(date);
       let y = time.getFullYear();
       let m = time.getMonth() + 1;

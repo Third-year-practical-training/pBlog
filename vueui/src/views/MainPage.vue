@@ -91,6 +91,7 @@ export default {
   data() {
     return {
       blogs: {},
+      tag:{},
       currentPage: 1,
       total: 25,
       pageSize: 5,
@@ -114,6 +115,7 @@ export default {
   },
   created() {
     this.loading = true;
+    const _this = this;
     if (this.$store.getters.getUser.id) {
       this.user.id = this.$store.getters.getUser.id;
       this.user.url = 'http://localhost:8080/user/showPhotoById?userId=' + this.user.id;
@@ -123,6 +125,7 @@ export default {
       this.$message("请先登录");
       this.$router.push('/');
     }
+
     this.loading = false;
   },
   methods: {

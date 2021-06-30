@@ -15,12 +15,12 @@
                 }}</span>
               <el-divider direction="vertical"></el-divider>
               <span style="color: #7d7d7d;font-size: small"><i class="el-icon-document"></i> 分类：{{
-                  blog.classify
+                  blog.classify.name
                 }}</span>
               <br>
               <span style="color: #7d7d7d;font-size: small"><i class="el-icon-collection-tag"></i> 标签：</span>
               <div style="display: inline" v-for="tag in blog.tags" :key="tag" class="el-tag">
-                {{ tag }}
+                {{ tag.name }}
               </div>
               <br>
               <article class="markdown-body" style="text-align: left;line-height: 2em;font-size: 17px"
@@ -36,13 +36,14 @@
         <el-avatar :size="40" :src="user.url" style="margin-left: 22px;float: left;margin-left: 50px"></el-avatar>
         <div>
           <el-input type="textarea" autosize contenteditable="true" placeholder="请输入内容"
-                    style="max-width: 1000px;margin-left: 10px"></el-input>
+                    style="max-width: 1000px;margin-left: 10px" v-model="mycomment"></el-input>
         </div>
         <div style="float: right;margin-right: 380px;margin-top: 5px">
-          <el-button size="medium" type="primary">发表评论</el-button>
+          <el-button size="medium" type="primary" @click="pushComment">发表评论</el-button>
         </div>
       </div>
-      <div v-for="item in comments" :key="item" style="text-align: left;margin-top: 0px;margin-left: 50px;width: 1060px" class="el-card">
+      <div v-for="item in comments" :key="item" style="text-align: left;margin-top: 0px;margin-left: 50px;width: 1060px"
+           class="el-card">
         <div>
           <el-avatar size="large" :src="item.headImg" style="margin-top: 10px;margin-left: 10px"></el-avatar>
           <span style=" color: black;font-size: 18px;font-weight: bold;margin-left: 2px;">{{ item.name }}</span>
@@ -89,28 +90,18 @@ export default {
   name: "BlogShow",
   data() {
     return {
-      btnShow: false,
-
+      mycomment:'',
       blog: {
         id: null,
-        nickname: 'cy1798',
-        title: 'markdown文件示例',
-        classify: '学习',
-        tags: ['前端', '语法'],
-        description: 'markdown文件示例',
-        timestamp: '2020-5-21',
-        content: '<h2><a id="CSS_0"></a>CSS入门属性</h2> <h3><a id="1css__1"></a>1.css 是什么</h3>'
+        nickname: '',
+        title: '',
+        classify: {},
+        tags: [],
+        timestamp: '',
+        content: ''
       },
       user: {
-        id: '',
-        username: '',
-        nickname: '',
-        real_name: '',
-        email: '',
-        sex: '',
-        birthday: '',
-        edu_bg: '',
-        description: '',
+        id:'',
         url: 'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
       },
       comments: [
@@ -189,7 +180,51 @@ export default {
       ]
     }
   },
-  methods: {},
+  created() {
+    this.getBlog();
+  },
+  methods: {
+    getBlog() {
+      this.blog.id = this.$route.params.blogId;
+      this.user.id = this.$store.getters.getUser.id;
+      const _this = this
+      this.$axios.get('http://localhost:8080/article/findById', {
+        params: {
+          id: this.blog.id,
+        }
+      }).then(res => {
+        if (res.data.code == 100) {
+          _this.blog.nickname = res.data.data.userNickname;
+          _this.user.url = 'http://localhost:8080/user/showPhotoById?userId=' + res.data.data.userId;
+          _this.blog.title = res.data.data.title;
+          _this.blog.classify = res.data.data.articleType;
+          _this.blog.tags = res.data.data.tagList;
+          _this.blog.timestamp = _this.formatDate(res.data.data.date);
+          _this.blog.content = marked(res.data.data.content);
+        }
+      });
+    },
+    formatDate(date) {
+      let time = new Date(date);
+      let y = time.getFullYear();
+      let m = time.getMonth() + 1;
+      let d = time.getDate();
+      return `${y}-${m}-${d}`;
+    },
+    pushComment(){
+      const _this = this;
+      this.$axios.post('http://localhost:8080/comment/new',{
+        params:{
+          userId: this.user.id,
+          articleId: this.blog.id,
+          date:this.formatDate(new Date()),
+          content:this.mycomment,
+        }
+      }).then(res =>{
+        _this.$message('评论成功');
+      })
+    }
+  },
 
 }
 </script>
@@ -211,36 +246,4 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
 }
 
-
-.header-img {
-  display: inline-block;
-  vertical-align: top;
-  float: left;
-  margin-left: 10px;
-  margin-top: 5px;;
-}
-
-.author-name {
-  color: black;
-  font-size: 18px;
-  font-weight: bold;
-  margin-left: 2px;
-}
-
-.author-time {
-  color: #7d7d7d;
-  font-size: 5px;
-  display: flex;
-}
-
-.author-title {
-  padding: 10px;
-}
-
-.author-info {
-  margin-left: 5px;
-  line-height: 20px;
-  float: left;
-  margin-top: 5px;
-}
 </style>
