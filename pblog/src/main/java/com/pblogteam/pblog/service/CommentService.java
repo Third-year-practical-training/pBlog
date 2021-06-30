@@ -2,14 +2,15 @@ package com.pblogteam.pblog.service;
 
 import com.github.pagehelper.PageInfo;
 import com.pblogteam.pblog.entity.Comment;
+import com.pblogteam.pblog.vo.CommentVO;
 
 import java.util.List;
 
 public interface CommentService {
     void deleteCommentById(Integer id);
     void insertComment(Comment comment);
-    void updateComment(Comment comment);
-    List<Comment> selectByArticleId(Integer id);
+//    void updateComment(Comment comment);
+    List<CommentVO> selectByArticleId(Integer id);
     boolean deleteByArticleId(Integer id);
     PageInfo<Comment> selectByUserId(Integer id, int pageNum);
 }
