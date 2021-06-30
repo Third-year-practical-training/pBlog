@@ -1,7 +1,10 @@
 package com.pblogteam.pblog.entity;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
+@Data
 public class ArticleType implements Serializable {
     private Integer id;
 

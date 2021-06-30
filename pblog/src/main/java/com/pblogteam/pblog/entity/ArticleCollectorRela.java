@@ -1,7 +1,9 @@
 package com.pblogteam.pblog.entity;
 
-import java.io.Serializable;
+import lombok.Data;
 
+import java.io.Serializable;
+@Data
 public class ArticleCollectorRela implements Serializable {
     private Integer userId;
 
