@@ -10,6 +10,6 @@ public interface CommentService {
     void insertComment(Comment comment);
     void updateComment(Comment comment);
     List<Comment> selectByArticleId(Integer id);
-    public boolean deleteByArticleId(Integer id);
+    boolean deleteByArticleId(Integer id);
     PageInfo<Comment> selectByUserId(Integer id, int pageNum);
 }

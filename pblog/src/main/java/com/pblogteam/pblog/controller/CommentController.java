@@ -28,6 +28,7 @@ public class CommentController {
     private ArticleService articleService;
 
 
+
     @RequestMapping(value = "/comment/new", method = {RequestMethod.POST})
     public ResultVO<String> addComment(@RequestParam("userId") Integer userId, @RequestParam("articleId") Integer articleId,
                                        @RequestParam("date") @DateTimeFormat(pattern = "yyyy/MM/dd") Date date,
