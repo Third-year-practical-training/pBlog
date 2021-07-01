@@ -21,4 +21,9 @@ public class ArticleTagMapperTest {
         articleTagMapper.insertAndReturnPrimaryKey(articleTag);
         System.out.println(articleTag.getId());
     }
+
+    @Test
+    public void getHotTagList() {
+
+    }
 }

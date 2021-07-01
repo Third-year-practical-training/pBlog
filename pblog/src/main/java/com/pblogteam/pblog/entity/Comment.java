@@ -1,12 +1,8 @@
 package com.pblogteam.pblog.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 import java.io.Serializable;
 import java.util.Date;
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class Comment implements Serializable {
     private Integer id;
 
@@ -15,6 +11,14 @@ public class Comment implements Serializable {
     private Integer userId;
 
     private Date date;
+
+    private String fromName;
+
+    private String toName;
+
+    private Integer toId;
+
+    private Integer fatherId;
 
     private String content;
 
@@ -52,6 +56,38 @@ public class Comment implements Serializable {
         this.date = date;
     }
 
+    public String getFromName() {
+        return fromName;
+    }
+
+    public void setFromName(String fromName) {
+        this.fromName = fromName == null ? null : fromName.trim();
+    }
+
+    public String getToName() {
+        return toName;
+    }
+
+    public void setToName(String toName) {
+        this.toName = toName == null ? null : toName.trim();
+    }
+
+    public Integer getToId() {
+        return toId;
+    }
+
+    public void setToId(Integer toId) {
+        this.toId = toId;
+    }
+
+    public Integer getFatherId() {
+        return fatherId;
+    }
+
+    public void setFatherId(Integer fatherId) {
+        this.fatherId = fatherId;
+    }
+
     public String getContent() {
         return content;
     }
@@ -70,6 +106,10 @@ public class Comment implements Serializable {
         sb.append(", articleId=").append(articleId);
         sb.append(", userId=").append(userId);
         sb.append(", date=").append(date);
+        sb.append(", fromName=").append(fromName);
+        sb.append(", toName=").append(toName);
+        sb.append(", toId=").append(toId);
+        sb.append(", fatherId=").append(fatherId);
         sb.append(", content=").append(content);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

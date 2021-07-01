@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Mapper
 public interface UserMapper {
-    int countByExample(UserExample example);
+    long countByExample(UserExample example);
 
     int deleteByExample(UserExample example);
 

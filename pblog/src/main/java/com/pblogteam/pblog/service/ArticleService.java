@@ -12,7 +12,9 @@ import java.util.List;
 public interface ArticleService {
     PageInfo<ArticleTitleVO> selectArtOrDraListByUserId(Integer id, int flag, int pageNum);
 
-    List<ArticleTitleVO> selectByTypeId(Integer id);
+    PageInfo<ArticleTitleVO> showAllArticle(int pageNum);
+
+    PageInfo<ArticleTitleVO> selectByTypeId(Integer id, int pageNum);
 
     boolean deleteArticleById(Integer id);
 
@@ -20,7 +22,7 @@ public interface ArticleService {
 
     ArticleAndCommentVO selectByArticleId(Integer id, Integer curUserId);
 
-    List<ArticleTitleVO> selectCollectListByUserId(Integer id);
+    PageInfo<ArticleTitleVO> selectCollectListByUserId(Integer id, int pageNum);
 
     void changeCollection(Integer userId, Integer articleId);
 
@@ -28,11 +30,13 @@ public interface ArticleService {
 
     void publishDraft(Integer id);
 
+
+
     /**
      *
      * @param keyWord 查询需要的关键字
      * @param type 在什么范围内查询
      * @return 查询结果
      */
-    PageInfo<ArticleTitleVO> selectArticleByKeyWord(String keyWord, int type, int pageNum);
+    PageInfo<ArticleTitleVO> selectArticleByKeyWord(String keyWord, int type, int id, int pageNum);
 }

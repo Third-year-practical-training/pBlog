@@ -2,16 +2,14 @@ package com.pblogteam.pblog.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.hankcs.hanlp.seg.common.Term;
-import com.hankcs.hanlp.tokenizer.StandardTokenizer;
+import com.hankcs.hanlp.HanLP;
 import com.pblogteam.pblog.config.Config;
 import com.pblogteam.pblog.entity.*;
-import com.pblogteam.pblog.mapper.*;
+import com.pblogteam.pblog.mapper.ArticleMapper;
 import com.pblogteam.pblog.service.ArticleService;
 import com.pblogteam.pblog.vo.ArticleAndCommentVO;
 import com.pblogteam.pblog.vo.ArticleNewVO;
 import com.pblogteam.pblog.vo.ArticleTitleVO;
-import com.pblogteam.pblog.vo.CommentVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +18,7 @@ import java.util.List;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
+
     @Autowired
     private UserServiceImpl userServiceImpl;
     @Autowired
@@ -34,8 +33,6 @@ public class ArticleServiceImpl implements ArticleService {
     private CommentServiceImpl commentServiceImpl;
     @Autowired
     private TypeServiceImpl typeServiceImpl;
-
-
 
 
     private static final Integer ARTICLE_SUMMARY_LENGTH = 50;
@@ -53,18 +50,28 @@ public class ArticleServiceImpl implements ArticleService {
         ArticleExample.Criteria articleEx = articleExample.createCriteria();
         articleEx.andUserIdEqualTo(id);
         articleEx.andPublishedEqualTo((byte) flag);
-        PageHelper.startPage(pageNum, Config.PAGE_SIZE);
+        PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
         List<Article> articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
         return new PageInfo<>(fillArtTitVOByArtList(articleList));
     }
 
     @Override
-    public List<ArticleTitleVO> selectByTypeId(Integer id) {
+    public PageInfo<ArticleTitleVO> showAllArticle(int pageNum) {
+        ArticleExample articleExample = new ArticleExample();
+        PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
+        List<Article> articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
+        return new PageInfo<>(fillArtTitVOByArtList(articleList));
+    }
+
+    @Override
+    public PageInfo<ArticleTitleVO> selectByTypeId(Integer id, int pageNum) {
         ArticleExample articleExample = new ArticleExample();
         ArticleExample.Criteria articleEx = articleExample.createCriteria();
         articleEx.andArticleTypeIdEqualTo(id);
         articleEx.andPublishedEqualTo((byte) 1);
-        return fillArtTitVOByArtList(articleMapper.selectByExampleWithBLOBs(articleExample));
+        PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
+        List<Article> articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
+        return new PageInfo<>(fillArtTitVOByArtList(articleList));
     }
 
     public List<ArticleTitleVO> fillArtTitVOByArtList(List<Article> articleList) {
@@ -178,7 +185,6 @@ public class ArticleServiceImpl implements ArticleService {
         }
     }
 
-
     @Override
     public ArticleAndCommentVO selectByArticleId(Integer id, Integer curUserId) {
         Article article = articleMapper.selectByPrimaryKey(id);
@@ -194,33 +200,16 @@ public class ArticleServiceImpl implements ArticleService {
         articleAndCommentVO.setPublished(article.getPublished() != 0x00);
         articleAndCommentVO.setTagList(selectTagListByArticleId(article.getId()));
         articleAndCommentVO.setArticleType(typeServiceImpl.findTypeById(article.getArticleTypeId()));
-        List<Comment> commentList = commentServiceImpl.selectByArticleId(id);
-        List<CommentVO> commentVOList = new ArrayList<>();
-        if(article.getPublished() == 0x00) {
-            commentVOList = null;
-        } else {
-            if(commentList != null) {
-                for (Comment a :
-                        commentList) {
-                    CommentVO commentVO = new CommentVO();
-                    commentVO.setCommentId(a.getId());
-                    commentVO.setUserId(a.getUserId());
-                    commentVO.setUserNickname(userServiceImpl.selectByPrimaryKey(a.getUserId()).getNickname());
-                    commentVO.setDate(a.getDate());
-                    commentVO.setContent(a.getContent());
-                    commentVOList.add(commentVO);
-                }
-            }
-        }
-        articleAndCommentVO.setCommentList(commentVOList);
+        articleAndCommentVO.setCommentList(commentServiceImpl.selectByArticleId(id));
         return articleAndCommentVO;
     }
 
     @Override
-    public List<ArticleTitleVO> selectCollectListByUserId(Integer id) {
+    public PageInfo<ArticleTitleVO> selectCollectListByUserId(Integer id, int pageNum) {
         ArticleExample articleExample = new ArticleExample();
         List<Article> articleList = new ArrayList<>();
-        List<ArticleCollectorRela> artCollRelaList = new ArrayList<>();
+        List<ArticleCollectorRela> artCollRelaList = null;
+        PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
         artCollRelaList = articleCollRelaServiceImpl.selectByUserId(id);
         if(artCollRelaList != null) {
             for (ArticleCollectorRela a :
@@ -228,7 +217,7 @@ public class ArticleServiceImpl implements ArticleService {
                 articleList.add(articleMapper.selectByPrimaryKey(a.getArticleId()));
             }
         }
-        return fillArtTitVOByArtList(articleList);
+        return new PageInfo<>(fillArtTitVOByArtList(articleList));
     }
 
     @Override
@@ -250,23 +239,55 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public PageInfo<ArticleTitleVO> selectArticleByKeyWord(String keyWord, int type, int pageNum) {
-        List<Term> termList = StandardTokenizer.segment(keyWord);
-
-        System.out.println(termList);
-        // 拼接正则字符串
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < termList.size(); i++) {
-            String word = termList.get(i).word;
-            if (i != termList.size() - 1) {
-                sb.append(word + "|");
-            } else {
-                sb.append(word);
-            }
+    public PageInfo<ArticleTitleVO> selectArticleByKeyWord(String keyWord, int type, int id, int pageNum) {
+        ArticleExample articleExample = new ArticleExample();
+        ArticleExample.Criteria criteria = articleExample.createCriteria();
+        criteria.andTitleLike(keyWord);
+        if(type == 1) {
+            criteria.andArticleTypeIdEqualTo(id);
+        } else if(type == 2) {
+            criteria.andIdIn(articleTagRelaServiceImpl.selectArticleIdsByTagId(id));
         }
-
-        System.out.println(sb);
-
-        return null;
+        int cnt = (int)articleMapper.countByExample(articleExample);
+        List<Article> articleList = null;
+        if(cnt == 0) {
+            // 提取短语查询
+            List<String> termList = HanLP.extractPhrase(keyWord, 1);
+            if(termList.size() == 0) {
+                termList = HanLP.extractKeyword(keyWord, keyWord.length() / 2);
+            }
+            // 拼接正则字符串
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < termList.size(); i++) {
+                String word = termList.get(i);
+                if (i != termList.size() - 1) {
+                    sb.append(word + "|");
+                } else {
+                    sb.append(word);
+                }
+            }
+            String regex = sb.toString();
+            sb.insert(0, ".*(");
+            sb.append(").*");
+            PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
+            articleList = articleMapper.selectByTitleKeyWord(sb.toString());
+            articleList.forEach(article -> {
+                String title = article.getTitle();
+                // 利用正则替换
+                String newTitle = title.replaceAll(regex, "<font style='color:red;'>$0</font>");
+                article.setTitle(newTitle);
+            });
+        } else {
+//            直接查询
+            PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
+            articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
+            articleList.forEach(article -> {
+                String title = article.getTitle();
+                // 利用正则替换
+                String newTitle = title.replaceAll(title, "<font style='color:red;'>$0</font>");
+                article.setTitle(newTitle);
+            });
+        }
+        return new PageInfo<>(fillArtTitVOByArtList(articleList));
     }
 }
