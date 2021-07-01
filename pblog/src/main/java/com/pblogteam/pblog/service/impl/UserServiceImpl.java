@@ -1,5 +1,8 @@
 package com.pblogteam.pblog.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.pblogteam.pblog.config.Config;
 import com.pblogteam.pblog.constant.Privilege;
 import com.pblogteam.pblog.entity.User;
 import com.pblogteam.pblog.entity.UserExample;
@@ -10,6 +13,7 @@ import com.pblogteam.pblog.mapper.UserMapper;
 import com.pblogteam.pblog.service.UserService;
 import com.pblogteam.pblog.vo.UserNewVO;
 import com.pblogteam.pblog.vo.UserVO;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.support.CustomSQLErrorCodesTranslation;
 import org.springframework.stereotype.Service;
@@ -88,9 +92,10 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public List<UserVO> myAttentionList(Integer followerId)
+    public PageInfo<UserVO> myAttentionList(Integer followerId, int pageNum)
     {
         List<UserVO> attentionList = new ArrayList<>();
+        PageHelper.startPage(pageNum, Config.PAGE_SIZE);
         List<Integer> attenionUserIds = userFollowerRelaMapper.selectByFollowerId(followerId);
         UserVO userVO = null;
         for (Integer i : attenionUserIds)
@@ -99,7 +104,7 @@ public class UserServiceImpl implements UserService
             userVO.setMyAttention(true);
             attentionList.add(userVO);
         }
-        return attentionList;
+        return new PageInfo<>(attentionList);
     }
 
     @Override
@@ -140,15 +145,12 @@ public class UserServiceImpl implements UserService
     public boolean checkNewUsernameLegality(Integer userId, UserNewVO userNewVO)
     {
         User user = userMapper.selectByUsername(userNewVO.getUsername());
-        if (user == null || user.getId().equals(userId) )       //数据库中没有新的用户名或新的用户名和该用户原用户名相等
-            return true;
-        else
-            return false;
+        //数据库中没有新的用户名或新的用户名和该用户原用户名相等
+        return user == null || user.getId().equals(userId);
     }
 
     @Override
-    public void updateInfo(Integer userId, UserNewVO userNewVO)
-    {
+    public UserVO updateInfo(Integer userId, UserNewVO userNewVO) {
         User user = new User();
         user.setId(userId);
         user.setUsername(userNewVO.getUsername());
@@ -162,8 +164,9 @@ public class UserServiceImpl implements UserService
         user.setEduBg(userNewVO.getEdu_bg());
         user.setEmail(userNewVO.getEmail());
         user.setDescription(userNewVO.getDescription());
-        System.out.println(user);
+//        System.out.println(user);
         userMapper.updateByPrimaryKeySelective(user);
+        return findByUserId(userId, userId);
     }
 
     @Override

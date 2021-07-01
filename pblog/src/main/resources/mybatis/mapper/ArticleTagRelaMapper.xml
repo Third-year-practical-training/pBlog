@@ -5,6 +5,18 @@
     <result column="article_id" property="articleId" jdbcType="INTEGER" />
     <result column="tag_id" property="tagId" jdbcType="INTEGER" />
   </resultMap>
+
+  <resultMap id="GroupByTagId" type="com.pblogteam.pblog.entity.ArticleTagRela">
+    <result column="count(*)" property="articleId" javaType="Integer"/>
+    <result column="tag_id" property="tagId" jdbcType="INTEGER"/>
+  </resultMap>
+<!--  my own start-->
+  <select id="getHotTagList" resultMap="GroupByTagId">
+    select count(*), tag_id from article_tag_rela group by tag_id;
+  </select>
+<!--  my own end-->
+  
+  
   <sql id="Example_Where_Clause" >
     <where >
       <foreach collection="oredCriteria" item="criteria" separator="or" >

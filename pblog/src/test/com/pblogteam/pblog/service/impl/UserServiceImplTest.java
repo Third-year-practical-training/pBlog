@@ -41,18 +41,18 @@ class UserServiceImplTest
     }
 
 
-    void myAttentionList(int id)
-    {
-        List<UserVO> attentions = userService.myAttentionList(id);
-        for (UserVO uVO : attentions)
-            System.out.println(uVO.getUsername());
-    }
+//    void myAttentionList(int id)
+//    {
+//        List<UserVO> attentions = userService.myAttentionList(id);
+//        for (UserVO uVO : attentions)
+//            System.out.println(uVO.getUsername());
+//    }
 
-    @Test
-    void changeAttention()
-    {
-        myAttentionList(2);
-        userService.changeAttention(3, 2);
-        myAttentionList(2);
-    }
+//    @Test
+//    void changeAttention()
+//    {
+//        myAttentionList(2);
+//        userService.changeAttention(3, 2);
+//        myAttentionList(2);
+//    }
 }

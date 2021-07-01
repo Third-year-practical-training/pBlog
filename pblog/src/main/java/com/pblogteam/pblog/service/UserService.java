@@ -1,5 +1,6 @@
 package com.pblogteam.pblog.service;
 
+import com.github.pagehelper.PageInfo;
 import com.pblogteam.pblog.entity.User;
 import com.pblogteam.pblog.vo.UserNewVO;
 import com.pblogteam.pblog.vo.UserVO;
@@ -15,7 +16,7 @@ public interface UserService {
 
     boolean signup(String username, String password, String email);
 
-    List<UserVO> myAttentionList(Integer followerId);
+    PageInfo<UserVO> myAttentionList(Integer followerId, int pageNum);
 
     void changeAttention(Integer id, Integer signedinUserId);
 
@@ -25,9 +26,11 @@ public interface UserService {
 
     boolean checkNewUsernameLegality(Integer userId, UserNewVO userNewVO);
 
-    void updateInfo(Integer userId, UserNewVO userNewVO);
+    UserVO updateInfo(Integer userId, UserNewVO userNewVO);
 
     boolean isAdmin(Integer userId);
 
     void becomeAdmin(Integer userId);
+
+
 }

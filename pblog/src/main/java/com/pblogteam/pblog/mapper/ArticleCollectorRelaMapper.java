@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Mapper
 public interface ArticleCollectorRelaMapper {
-    int countByExample(ArticleCollectorRelaExample example);
+    long countByExample(ArticleCollectorRelaExample example);
 
     int deleteByExample(ArticleCollectorRelaExample example);
 

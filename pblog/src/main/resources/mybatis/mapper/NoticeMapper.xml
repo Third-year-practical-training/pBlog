@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pblogteam.pblog.mapper.CommentMapper">
-  <resultMap id="BaseResultMap" type="com.pblogteam.pblog.entity.Comment">
+<mapper namespace="com.pblogteam.pblog.mapper.NoticeMapper">
+  <resultMap id="BaseResultMap" type="com.pblogteam.pblog.entity.Notice">
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="article_id" jdbcType="INTEGER" property="articleId" />
-    <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="date" jdbcType="DATE" property="date" />
-    <result column="from_name" jdbcType="VARCHAR" property="fromName" />
-    <result column="to_name" jdbcType="VARCHAR" property="toName" />
-    <result column="to_id" jdbcType="INTEGER" property="toId" />
-    <result column="father_id" jdbcType="INTEGER" property="fatherId" />
+    <result column="is_read" jdbcType="INTEGER" property="isRead" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.pblogteam.pblog.entity.Comment">
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.pblogteam.pblog.entity.Notice">
     <result column="content" jdbcType="LONGVARCHAR" property="content" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -73,12 +68,12 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, article_id, user_id, date, from_name, to_name, to_id, father_id
+    id, date, is_read
   </sql>
   <sql id="Blob_Column_List">
     content
   </sql>
-  <select id="selectByExampleWithBLOBs" parameterType="com.pblogteam.pblog.entity.CommentExample" resultMap="ResultMapWithBLOBs">
+  <select id="selectByExampleWithBLOBs" parameterType="com.pblogteam.pblog.entity.NoticeExample" resultMap="ResultMapWithBLOBs">
     select
     <if test="distinct">
       distinct
@@ -86,7 +81,7 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from comment
+    from notice
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -94,13 +89,13 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByExample" parameterType="com.pblogteam.pblog.entity.CommentExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.pblogteam.pblog.entity.NoticeExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from comment
+    from notice
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -113,55 +108,36 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from comment
+    from notice
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from comment
+    delete from notice
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="com.pblogteam.pblog.entity.CommentExample">
-    delete from comment
+  <delete id="deleteByExample" parameterType="com.pblogteam.pblog.entity.NoticeExample">
+    delete from notice
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.pblogteam.pblog.entity.Comment">
-    insert into comment (id, article_id, user_id, 
-      date, from_name, to_name, 
-      to_id, father_id, content
-      )
-    values (#{id,jdbcType=INTEGER}, #{articleId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
-      #{date,jdbcType=DATE}, #{fromName,jdbcType=VARCHAR}, #{toName,jdbcType=VARCHAR}, 
-      #{toId,jdbcType=INTEGER}, #{fatherId,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}
-      )
+  <insert id="insert" parameterType="com.pblogteam.pblog.entity.Notice">
+    insert into notice (id, date, is_read, 
+      content)
+    values (#{id,jdbcType=INTEGER}, #{date,jdbcType=DATE}, #{isRead,jdbcType=INTEGER}, 
+      #{content,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.pblogteam.pblog.entity.Comment">
-    insert into comment
+  <insert id="insertSelective" parameterType="com.pblogteam.pblog.entity.Notice">
+    insert into notice
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
       </if>
-      <if test="articleId != null">
-        article_id,
-      </if>
-      <if test="userId != null">
-        user_id,
-      </if>
       <if test="date != null">
         date,
       </if>
-      <if test="fromName != null">
-        from_name,
-      </if>
-      <if test="toName != null">
-        to_name,
-      </if>
-      <if test="toId != null">
-        to_id,
-      </if>
-      <if test="fatherId != null">
-        father_id,
+      <if test="isRead != null">
+        is_read,
       </if>
       <if test="content != null">
         content,
@@ -171,64 +147,34 @@
       <if test="id != null">
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="articleId != null">
-        #{articleId,jdbcType=INTEGER},
-      </if>
-      <if test="userId != null">
-        #{userId,jdbcType=INTEGER},
-      </if>
       <if test="date != null">
         #{date,jdbcType=DATE},
       </if>
-      <if test="fromName != null">
-        #{fromName,jdbcType=VARCHAR},
-      </if>
-      <if test="toName != null">
-        #{toName,jdbcType=VARCHAR},
-      </if>
-      <if test="toId != null">
-        #{toId,jdbcType=INTEGER},
-      </if>
-      <if test="fatherId != null">
-        #{fatherId,jdbcType=INTEGER},
+      <if test="isRead != null">
+        #{isRead,jdbcType=INTEGER},
       </if>
       <if test="content != null">
         #{content,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.pblogteam.pblog.entity.CommentExample" resultType="java.lang.Long">
-    select count(*) from comment
+  <select id="countByExample" parameterType="com.pblogteam.pblog.entity.NoticeExample" resultType="java.lang.Long">
+    select count(*) from notice
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update comment
+    update notice
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.articleId != null">
-        article_id = #{record.articleId,jdbcType=INTEGER},
-      </if>
-      <if test="record.userId != null">
-        user_id = #{record.userId,jdbcType=INTEGER},
-      </if>
       <if test="record.date != null">
         date = #{record.date,jdbcType=DATE},
       </if>
-      <if test="record.fromName != null">
-        from_name = #{record.fromName,jdbcType=VARCHAR},
-      </if>
-      <if test="record.toName != null">
-        to_name = #{record.toName,jdbcType=VARCHAR},
-      </if>
-      <if test="record.toId != null">
-        to_id = #{record.toId,jdbcType=INTEGER},
-      </if>
-      <if test="record.fatherId != null">
-        father_id = #{record.fatherId,jdbcType=INTEGER},
+      <if test="record.isRead != null">
+        is_read = #{record.isRead,jdbcType=INTEGER},
       </if>
       <if test="record.content != null">
         content = #{record.content,jdbcType=LONGVARCHAR},
@@ -239,57 +185,32 @@
     </if>
   </update>
   <update id="updateByExampleWithBLOBs" parameterType="map">
-    update comment
+    update notice
     set id = #{record.id,jdbcType=INTEGER},
-      article_id = #{record.articleId,jdbcType=INTEGER},
-      user_id = #{record.userId,jdbcType=INTEGER},
       date = #{record.date,jdbcType=DATE},
-      from_name = #{record.fromName,jdbcType=VARCHAR},
-      to_name = #{record.toName,jdbcType=VARCHAR},
-      to_id = #{record.toId,jdbcType=INTEGER},
-      father_id = #{record.fatherId,jdbcType=INTEGER},
+      is_read = #{record.isRead,jdbcType=INTEGER},
       content = #{record.content,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update comment
+    update notice
     set id = #{record.id,jdbcType=INTEGER},
-      article_id = #{record.articleId,jdbcType=INTEGER},
-      user_id = #{record.userId,jdbcType=INTEGER},
       date = #{record.date,jdbcType=DATE},
-      from_name = #{record.fromName,jdbcType=VARCHAR},
-      to_name = #{record.toName,jdbcType=VARCHAR},
-      to_id = #{record.toId,jdbcType=INTEGER},
-      father_id = #{record.fatherId,jdbcType=INTEGER}
+      is_read = #{record.isRead,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.pblogteam.pblog.entity.Comment">
-    update comment
+  <update id="updateByPrimaryKeySelective" parameterType="com.pblogteam.pblog.entity.Notice">
+    update notice
     <set>
-      <if test="articleId != null">
-        article_id = #{articleId,jdbcType=INTEGER},
-      </if>
-      <if test="userId != null">
-        user_id = #{userId,jdbcType=INTEGER},
-      </if>
       <if test="date != null">
         date = #{date,jdbcType=DATE},
       </if>
-      <if test="fromName != null">
-        from_name = #{fromName,jdbcType=VARCHAR},
-      </if>
-      <if test="toName != null">
-        to_name = #{toName,jdbcType=VARCHAR},
-      </if>
-      <if test="toId != null">
-        to_id = #{toId,jdbcType=INTEGER},
-      </if>
-      <if test="fatherId != null">
-        father_id = #{fatherId,jdbcType=INTEGER},
+      <if test="isRead != null">
+        is_read = #{isRead,jdbcType=INTEGER},
       </if>
       <if test="content != null">
         content = #{content,jdbcType=LONGVARCHAR},
@@ -297,27 +218,17 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.pblogteam.pblog.entity.Comment">
-    update comment
-    set article_id = #{articleId,jdbcType=INTEGER},
-      user_id = #{userId,jdbcType=INTEGER},
-      date = #{date,jdbcType=DATE},
-      from_name = #{fromName,jdbcType=VARCHAR},
-      to_name = #{toName,jdbcType=VARCHAR},
-      to_id = #{toId,jdbcType=INTEGER},
-      father_id = #{fatherId,jdbcType=INTEGER},
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.pblogteam.pblog.entity.Notice">
+    update notice
+    set date = #{date,jdbcType=DATE},
+      is_read = #{isRead,jdbcType=INTEGER},
       content = #{content,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.pblogteam.pblog.entity.Comment">
-    update comment
-    set article_id = #{articleId,jdbcType=INTEGER},
-      user_id = #{userId,jdbcType=INTEGER},
-      date = #{date,jdbcType=DATE},
-      from_name = #{fromName,jdbcType=VARCHAR},
-      to_name = #{toName,jdbcType=VARCHAR},
-      to_id = #{toId,jdbcType=INTEGER},
-      father_id = #{fatherId,jdbcType=INTEGER}
+  <update id="updateByPrimaryKey" parameterType="com.pblogteam.pblog.entity.Notice">
+    update notice
+    set date = #{date,jdbcType=DATE},
+      is_read = #{isRead,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

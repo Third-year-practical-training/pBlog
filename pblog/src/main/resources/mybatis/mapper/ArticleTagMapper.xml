@@ -5,10 +5,15 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="name" property="name" jdbcType="VARCHAR" />
   </resultMap>
+
+
 <!--  my own start-->
   <insert id="insertAndReturnPrimaryKey" parameterType="com.pblogteam.pblog.entity.ArticleTag" useGeneratedKeys="true" keyProperty="id">
     insert into article_tag (name) values (#{name,jdbcType=VARCHAR});
   </insert>
+
+
+
 <!--  my own end-->
 
   <sql id="Example_Where_Clause" >

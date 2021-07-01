@@ -11,6 +11,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Mapper
 public interface ArticleTagRelaMapper {
+    // my own start
+    List<ArticleTagRela> getHotTagList();
+    // my own end
+
     int countByExample(ArticleTagRelaExample example);
 
     int deleteByExample(ArticleTagRelaExample example);

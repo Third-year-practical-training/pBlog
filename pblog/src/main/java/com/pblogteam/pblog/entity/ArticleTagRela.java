@@ -4,9 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class ArticleTagRela implements Serializable {
     private Integer articleId;
 

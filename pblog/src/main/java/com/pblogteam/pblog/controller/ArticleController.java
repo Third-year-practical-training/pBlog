@@ -9,9 +9,11 @@ import com.pblogteam.pblog.vo.ArticleNewVO;
 import com.pblogteam.pblog.vo.ArticleTitleVO;
 import com.pblogteam.pblog.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
@@ -40,29 +42,27 @@ public class ArticleController {
     }
 
     @GetMapping("/articles/findByType")
-    public ResultVO<List<ArticleTitleVO>> getArticleListByType(Integer id) {
+    public ResultVO<PageInfo<ArticleTitleVO>> getArticleListByType(Integer id, int pageNum) {
         if(id != null) {
-            List<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectByTypeId(id);
+            PageInfo<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectByTypeId(id, pageNum);
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleTitleVOList);
         }
         return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
     }
 
     @GetMapping("/articles/collectList")
-    public ResultVO<List<ArticleTitleVO>> getCollArtByUserId(Integer id) {
-        ResultVO<List<ArticleTitleVO>> resultVO = new ResultVO<>();
+    public ResultVO<PageInfo<ArticleTitleVO>> getCollArtByUserId(Integer id, int pageNum) {
+        ResultVO<PageInfo<ArticleTitleVO>> resultVO = new ResultVO<>();
         if(id != null) {
-            List<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectCollectListByUserId(id);
+            PageInfo<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectCollectListByUserId(id, pageNum);
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleTitleVOList);
         }
         return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
     }
 
 
-
     @GetMapping("/article/findById")
     public ResultVO<ArticleAndCommentVO> getArticleContentById(Integer id, HttpServletRequest request) {
-        //request.getSession().setAttribute("userId", 15);
         if(!articleServiceImpl.isArticle(id) || id == null) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         int userId = (int) request.getSession().getAttribute("userId");
         if(id == null) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
@@ -147,4 +147,23 @@ public class ArticleController {
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
+
+
+    /**
+     *
+     * @param keyWord   要查询的关键字
+     * @param pageNum   分页
+     * @param type  查询的范围 0 全站，1类型，2标签
+     * @param id    类型id或tag id
+     * @return 查询结果
+     */
+    @GetMapping("/article/searchByKeyWord")
+    public ResultVO<PageInfo<ArticleTitleVO>> searchByKeyWord(String keyWord, int pageNum, int type, int id) {
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.selectArticleByKeyWord(keyWord, type, id, pageNum));
+    }
+
+    @GetMapping("/article/findAllArticle")
+    public ResultVO<PageInfo<ArticleTitleVO>> findAllArticle(int pageNum) {
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.showAllArticle(pageNum));
+    }
 }

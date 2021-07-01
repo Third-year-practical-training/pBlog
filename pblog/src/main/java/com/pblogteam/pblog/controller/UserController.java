@@ -1,5 +1,6 @@
 package com.pblogteam.pblog.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.pblogteam.pblog.constant.ResponseState;
 import com.pblogteam.pblog.service.UserService;
 import com.pblogteam.pblog.util.FtpUtil;
@@ -113,9 +114,9 @@ public class UserController
     }
 
     @GetMapping("/users/attentionList")
-    public ResultVO<List<UserVO>> attentionList(@RequestParam("id") Integer id)
+    public ResultVO<PageInfo<UserVO>> attentionList(@RequestParam("id") Integer id, int pageNum)
     {
-        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.myAttentionList(id));
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.myAttentionList(id, pageNum));
     }
 
     @PutMapping("/user/changeAttention")
@@ -132,17 +133,16 @@ public class UserController
         Integer userId = (Integer) session.getAttribute("userId");
         System.out.println("userId= " +userId);
         System.out.println(userNewVO);
-        if(userService.checkNewUsernameLegality(userId, userNewVO) == false)
+        if(!userService.checkNewUsernameLegality(userId, userNewVO))
         {
             return ResultVO.throwError(400, "用户名已存在");
         }
-        userService.updateInfo(userId, userNewVO);
-        return ResultVO.throwSuccess(ResponseState.SUCCESS);
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.updateInfo(userId, userNewVO));
     }
 
     @PostMapping("/user/changePhoto")
-    public ResultVO changePhoto(@RequestParam("photo") MultipartFile file,
-                                HttpSession session) throws IOException
+    public ResultVO<Boolean> changePhoto(@RequestParam("photo") MultipartFile file,
+                                         HttpSession session) throws IOException
     {
         InputStream inputStream = file.getInputStream();
 
