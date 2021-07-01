@@ -76,9 +76,9 @@ public class CommentServiceImpl implements CommentService {
         commentVO.setFromUserNickName(fromUser.getNickname());
         commentVO.setFromUserId(fromUser.getId());
         commentVO.setChildList(null);
-        if(comment.getReplyId() != null) {
-            commentVO.setToUserId(comment.getReplyId());
-            User toUser = userMapper.selectByPrimaryKey(comment.getReplyId());
+        if(comment.getToId() != null) {
+            commentVO.setToUserId(comment.getToId());
+            User toUser = userMapper.selectByPrimaryKey(comment.getToId());
             commentVO.setToUserNickName(toUser.getNickname());
         }
         return commentVO;

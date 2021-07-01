@@ -12,11 +12,11 @@ public class Comment implements Serializable {
 
     private Date date;
 
-    private String from;
+    private String fromName;
 
-    private String to;
+    private String toName;
 
-    private Integer replyId;
+    private Integer toId;
 
     private Integer fatherId;
 
@@ -56,28 +56,28 @@ public class Comment implements Serializable {
         this.date = date;
     }
 
-    public String getFrom() {
-        return from;
+    public String getFromName() {
+        return fromName;
     }
 
-    public void setFrom(String from) {
-        this.from = from == null ? null : from.trim();
+    public void setFromName(String fromName) {
+        this.fromName = fromName == null ? null : fromName.trim();
     }
 
-    public String getTo() {
-        return to;
+    public String getToName() {
+        return toName;
     }
 
-    public void setTo(String to) {
-        this.to = to == null ? null : to.trim();
+    public void setToName(String toName) {
+        this.toName = toName == null ? null : toName.trim();
     }
 
-    public Integer getReplyId() {
-        return replyId;
+    public Integer getToId() {
+        return toId;
     }
 
-    public void setReplyId(Integer replyId) {
-        this.replyId = replyId;
+    public void setToId(Integer toId) {
+        this.toId = toId;
     }
 
     public Integer getFatherId() {
@@ -106,9 +106,9 @@ public class Comment implements Serializable {
         sb.append(", articleId=").append(articleId);
         sb.append(", userId=").append(userId);
         sb.append(", date=").append(date);
-        sb.append(", from=").append(from);
-        sb.append(", to=").append(to);
-        sb.append(", replyId=").append(replyId);
+        sb.append(", fromName=").append(fromName);
+        sb.append(", toName=").append(toName);
+        sb.append(", toId=").append(toId);
         sb.append(", fatherId=").append(fatherId);
         sb.append(", content=").append(content);
         sb.append(", serialVersionUID=").append(serialVersionUID);
