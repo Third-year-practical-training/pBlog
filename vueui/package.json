@@ -17,6 +17,7 @@
     "scss-loader": "0.0.1",
     "vue": "^2.6.11",
     "vue-axios": "^3.2.4",
+    "vue-juejin-comment": "^0.1.6",
     "vue-router": "^3.2.0",
     "vuex": "^3.6.2"
   },
@@ -25,6 +26,7 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
+    "hbl-comment": "^1.2.3",
     "vue-template-compiler": "^2.6.11"
   },
   "browserslist": [

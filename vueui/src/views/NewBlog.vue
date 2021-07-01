@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-form ref="editForm" status-icon :model="editForm" :rules="rules" label-width="100px">
+    <el-form v-loading.fullscreen.lock="loading" ref="editForm" status-icon :model="editForm" :rules="rules" label-width="100px">
       <el-form-item label="标题" prop="title" style="margin-top: 10px">
         <el-input v-model="editForm.title"></el-input>
       </el-form-item>
@@ -76,49 +76,87 @@ export default {
     }
   },
   created() {
+    this.loading = true;
     if (this.$store.getters.getUser.id) {
       this.editForm.userId = this.$store.getters.getUser.id;
+    }
+    if (this.$route.params.blogId) {
+      this.editForm.id = this.$route.params.blogId;
     }
     const _this = this;
     this.$axios.get('http://localhost:8080/type/findall').then(res => {
       if (res.data.code == 100) {
         _this.select = JSON.parse(JSON.stringify(res.data.data));
       }
-    })
+    });
+    if (this.editForm.id != null) {
+      this.$axios.get('http://localhost:8080/article/findById', {
+        params: {
+          id: this.editForm.id,
+        }
+      }).then(res => {
+        _this.editForm.userId = res.data.data.userId;
+        _this.editForm.articleTypeId = res.data.data.articleType.id;
+        _this.editForm.title = res.data.data.title;
+        _this.editForm.date = _this.formatDate(res.data.data.date);
+        _this.editForm.content = res.data.data.content;
+        _this.editForm.tag = res.data.data.tagList;
+      });
+    }
+    this.loading = false;
   },
   methods: {
     submitForm(formName) {
       const _this = this
       this.loading = true;
       this.$refs[formName].validate((valid) => {
-            if (valid) {
-              let time = new Date();
-              let y = time.getFullYear();
-              let m = time.getMonth() + 1;
-              let d = time.getDate();
-              this.editForm.date = `${y}-${m}-${d}`;
-              this.$axios({
-                    url: 'http://localhost:8080/article/new',
-                    method: 'post',
-                    data: JSON.stringify(this.editForm),
-                    headers:
-                        {
-                          'Content-Type': 'application/json'
-                        }
-                  }
-              ).then(res => {
-                _this.loading = false;
-                _this.$message("创建成功");
-                _this.$router.push('/user-center/contentmanage');
-              });
-            } else {
-              console.log('error submit!!');
-              return false;
-            }
+        if (valid) {
+          if (this.editForm.id == null) {
+            this.editForm.date = this.formatDate(this.editForm.date);
+            this.$axios({
+                  url: 'http://localhost:8080/article/new',
+                  method: 'post',
+                  data: JSON.stringify(this.editForm),
+                  headers:
+                      {
+                        'Content-Type': 'application/json'
+                      }
+                }
+            ).then(res => {
+              _this.loading = false;
+              _this.$message("创建成功");
+              _this.$router.push('/user-center/contentmanage');
+            });
+          } else {
+            this.$axios({
+                  url: 'http://localhost:8080/article/update',
+                  method: 'put',
+                  data: JSON.stringify(this.editForm),
+                  headers:
+                      {
+                        'Content-Type': 'application/json'
+                      }
+                }
+            ).then(res => {
+              _this.loading = false;
+              _this.$message("修改成功");
+              _this.$router.push('/user-center/contentmanage');
+            });
           }
-      )
-      ;
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
     },
+    formatDate(date) {
+      let time = new Date(date);
+      let y = time.getFullYear();
+      let m = time.getMonth() + 1;
+      let d = time.getDate();
+      return `${y}-${m}-${d}`;
+    }
+    ,
 
     handleClose(tag) {
       this.editForm.tag.splice(this.editForm.tag.indexOf(tag), 1);
@@ -136,12 +174,13 @@ export default {
     handleInputConfirm() {
       let inputValue = this.inputValue;
       if (inputValue) {
-        this.editForm.tag.push({id:null,name:inputValue});
+        this.editForm.tag.push({id: null, name: inputValue});
       }
       this.inputVisible = false;
       this.inputValue = '';
     }
-  }
+  },
+
 }
 </script>
 

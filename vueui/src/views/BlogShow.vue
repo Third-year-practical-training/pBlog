@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-main>
+    <el-main v-loading="loading">
       <el-row type="flex" class="row-bg" justify="space-around">
         <el-col :span="21">
           <div class="grid-content bg-purple-light">
@@ -17,6 +17,10 @@
               <span style="color: #7d7d7d;font-size: small"><i class="el-icon-document"></i> 分类：{{
                   blog.classify.name
                 }}</span>
+              <el-divider direction="vertical"></el-divider>
+              <el-button type="text" style="color: #7d7d7d;font-size: small" @click="collectArticle"><i
+                  class="el-icon-collection"></i> 收藏
+              </el-button>
               <br>
               <span style="color: #7d7d7d;font-size: small"><i class="el-icon-collection-tag"></i> 标签：</span>
               <div style="display: inline" v-for="tag in blog.tags" :key="tag" class="el-tag">
@@ -33,40 +37,55 @@
         </el-col>
       </el-row>
       <div style="margin-top: 10px;text-align: left">
-        <el-avatar :size="40" :src="user.url" style="margin-left: 22px;float: left;margin-left: 50px"></el-avatar>
+        <el-avatar :size="40" :src="user.avatar" style="margin-left: 22px;float: left;margin-left: 50px"></el-avatar>
         <div>
           <el-input type="textarea" autosize contenteditable="true" placeholder="请输入内容"
                     style="max-width: 1000px;margin-left: 10px" v-model="mycomment"></el-input>
         </div>
         <div style="float: right;margin-right: 380px;margin-top: 5px">
-          <el-button size="medium" type="primary" @click="pushComment">发表评论</el-button>
+          <el-button size="medium" type="primary" @click="addComment">发表评论</el-button>
         </div>
       </div>
-      <div v-for="item in comments" :key="item" style="text-align: left;margin-top: 0px;margin-left: 50px;width: 1060px"
+      <div v-for="(item,i) in comments" :key="i"
+           style="text-align: left;margin-top: 0px;margin-left: 50px;width: 1060px"
            class="el-card">
         <div>
           <el-avatar size="large" :src="item.headImg" style="margin-top: 10px;margin-left: 10px"></el-avatar>
           <span style=" color: black;font-size: 18px;font-weight: bold;margin-left: 2px;">{{ item.name }}</span>
           <span style="color: #7d7d7d;font-size: 5px;margin-left: 5px">{{ item.time }}</span>
+          <el-button type="text" style="color: #409EFF;float: right;margin-right: 10px" @click="showCommentInput(i)">
+            回复
+          </el-button>
         </div>
         <div style="margin-top: 10px;margin-left: 10px">
-          <span>{{ item.comment }}</span>
+          <span>{{ item.content }}</span>
+        </div>
+        <div v-show="item.inputShow">
+          <el-input type="textarea" autosize contenteditable="true" placeholder="请输入内容"
+                    style="max-width: 500px;margin-left: 10px" v-model="comment1"></el-input>
+          <el-button size="small" type="primary" @click="pushComment(i)" style="margin-left: 10px">发表评论</el-button>
         </div>
         <div>
-          <div v-for="reply in item.reply" :key="reply" class="el-card" style="margin-left: 20px">
+          <div v-for="(reply,j) in item.reply" :key="j" class="el-card" style="margin-left: 20px">
             <div>
               <el-avatar size="large" :src="reply.fromHeadImg" style="margin-top: 10px;margin-left: 10px"></el-avatar>
               <span style=" color: black;font-size: 18px;font-weight: bold;margin-left: 2px;">{{ reply.from }}</span>
               <span style="color: #7d7d7d;font-size: 5px;margin-left: 5px">{{ reply.time }}</span>
+              <el-button type="text" style="color: #409EFF;float: right;margin-right: 10px"
+                         @click="showReplyCommentInput(i,reply.from)">回复
+              </el-button>
             </div>
             <div style="margin-top: 10px;margin-left: 10px">
-              <span>{{ reply.comment }}</span>
+              <span>{{ reply.content }}</span>
             </div>
+          </div>
+          <div v-show="replyInputShow">
+            <el-input type="textarea" autosize contenteditable="true" placeholder="请输入内容"
+                      style="max-width: 500px;margin-left: 30px;margin-top: 5px" v-model="comment2"></el-input>
+            <el-button size="small" type="primary" @click="pushCommentReply()" style="margin-left: 10px">发表评论</el-button>
           </div>
         </div>
       </div>
-
-
     </el-main>
   </el-container>
 
@@ -74,6 +93,7 @@
 
 <script>
 import marked from "marked";
+
 
 let rendererMD = new marked.Renderer();
 marked.setOptions({
@@ -86,11 +106,18 @@ marked.setOptions({
   smartLists: true,
   smartypants: false,
 });
+
 export default {
   name: "BlogShow",
   data() {
     return {
-      mycomment:'',
+      loading: false,
+      mycomment: '',
+      comment1:'',
+      comment2:'',
+      replyInputShow:false,
+      from:'',
+      to:'',
       blog: {
         id: null,
         nickname: '',
@@ -100,82 +127,28 @@ export default {
         timestamp: '',
         content: ''
       },
+      data: [],
       user: {
-        id:'',
-        url: 'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
+        id: '',
+        nickName: '',
+        avatar: 'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
       },
       comments: [
         {
-          name: 'Lana Del Rey',
-          id: 19870621,
-          headImg: 'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
-          comment: '我发布一张新专辑Norman Fucking Rockwell,大家快来听啊',
-          time: '2019年9月16日 18:43',
-          commentNum: 2,
-          like: 15,
-          inputShow: false,
-          reply: [
-            {
-              from: 'Taylor Swift',
-              fromId: 19891221,
-              fromHeadImg: 'https://ae01.alicdn.com/kf/H94c78935ffa64e7e977544d19ecebf06L.jpg',
-              to: 'Lana Del Rey',
-              toId: 19870621,
-              comment: '我很喜欢你的新专辑！！',
-              time: '2019年9月16日 18:43',
-              commentNum: 1,
-              like: 15,
-              inputShow: false
-            },
-            {
-              from: 'Ariana Grande',
-              fromId: 1123,
-              fromHeadImg: 'https://ae01.alicdn.com/kf/Hf6c0b4a7428b4edf866a9fbab75568e6U.jpg',
-              to: 'Lana Del Rey',
-              toId: 19870621,
-              comment: '别忘记宣传我们的合作单曲啊',
-              time: '2019年9月16日 18:43',
-              commentNum: 0,
-              like: 5,
-              inputShow: false
-
-            }
-          ]
-        },
-        {
           name: 'Taylor Swift',
-          id: 19891221,
           headImg: 'https://ae01.alicdn.com/kf/H94c78935ffa64e7e977544d19ecebf06L.jpg',
-          comment: '我发行了我的新专辑Lover',
+          content: '我发行了我的新专辑Lover',
           time: '2019年9月16日 18:43',
-          commentNum: 1,
-          like: 5,
           inputShow: false,
           reply: [
             {
               from: 'Lana Del Rey',
-              fromId: 19870621,
+              to: '',
               fromHeadImg: 'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
-              to: 'Taylor Swift',
-              toId: 19891221,
-              comment: '新专辑和speak now 一样棒！',
+              content: '新专辑和speak now 一样棒！',
               time: '2019年9月16日 18:43',
-              commentNum: 25,
-              like: 5,
-              inputShow: false
             }
           ]
-        },
-        {
-          name: 'Norman Fucking Rockwell',
-          id: 20190830,
-          headImg: 'https://ae01.alicdn.com/kf/Hdd856ae4c81545d2b51fa0c209f7aa28Z.jpg',
-          comment: 'Plz buy Norman Fucking Rockwell on everywhere',
-          time: '2019年9月16日 18:43',
-          commentNum: 0,
-          like: 5,
-          inputShow: false,
-          reply: []
         },
       ]
     }
@@ -185,8 +158,10 @@ export default {
   },
   methods: {
     getBlog() {
+      this.loading = true;
       this.blog.id = this.$route.params.blogId;
       this.user.id = this.$store.getters.getUser.id;
+      this.user.nickName = this.$store.getters.getUser.nickname;
       const _this = this
       this.$axios.get('http://localhost:8080/article/findById', {
         params: {
@@ -195,12 +170,12 @@ export default {
       }).then(res => {
         if (res.data.code == 100) {
           _this.blog.nickname = res.data.data.userNickname;
-          _this.user.url = 'http://localhost:8080/user/showPhotoById?userId=' + res.data.data.userId;
           _this.blog.title = res.data.data.title;
           _this.blog.classify = res.data.data.articleType;
           _this.blog.tags = res.data.data.tagList;
           _this.blog.timestamp = _this.formatDate(res.data.data.date);
           _this.blog.content = marked(res.data.data.content);
+          _this.loading = false;
         }
       });
     },
@@ -211,18 +186,30 @@ export default {
       let d = time.getDate();
       return `${y}-${m}-${d}`;
     },
-    pushComment(){
-      const _this = this;
-      this.$axios.post('http://localhost:8080/comment/new',{
-        params:{
-          userId: this.user.id,
-          articleId: this.blog.id,
-          date:this.formatDate(new Date()),
-          content:this.mycomment,
-        }
-      }).then(res =>{
-        _this.$message('评论成功');
-      })
+    collectArticle() {
+      this.$message('已收藏');
+    },
+    showCommentInput(i) {
+      this.comments[i].inputShow = true;
+    },
+    showReplyCommentInput(i, name) {
+      this.replyInputShow = true;
+      this.to = name;
+    },
+    closeCommentInput(i) {
+      this.comments[i].inputShow = false;
+    },
+    closeReplyCommentInput() {
+      this.replyInputShow = false;
+    },
+    addComment() {
+
+    },
+    pushComment(i) {
+      this.closeCommentInput(i);
+    },
+    pushCommentReply() {
+      this.closeReplyCommentInput();
     }
   },
 

@@ -20,11 +20,15 @@
     </el-aside>
 
     <el-main>
-      <div v-for="o in 4" :key="o" class="el-card" style="height: 80px">
-        <el-avatar :size="50" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+      <div v-for="(item,i) in attention" :key="i" class="el-card" style="height: 80px" v-loading="loading">
+        <el-avatar :size="50" :src="item.photoUrl"
                    style="float: left;margin-top: 20px;margin-left: 10px"></el-avatar>
-        <el-link type="primary" style="float: left;margin-top: 40px;margin-left: 10px" @click="toAttention">{{'关注者'+o}}</el-link>
-        <el-button type="primary" style="display: inline;float: right;margin-top: 20px;margin-right: 10px">取消关注</el-button>
+        <el-link type="primary" style="float: left;margin-top: 40px;margin-left: 10px" @click="toAttention(item.id)">
+          {{ '关注者' + item.nickname }}
+        </el-link>
+        <el-button type="primary" style="display: inline;float: right;margin-top: 20px;margin-right: 10px"
+                   @click="cancelAttention(item.id,i)">取消关注
+        </el-button>
       </div>
     </el-main>
   </el-container>
@@ -35,24 +39,51 @@ export default {
   name: "Attention",
   data() {
     return {
+      loading: false,
       user: {
         id: '',
-        attentionCount: '',
-      }
+      },
+      attention: [],
     }
   },
   created() {
+    this.loading = true;
+    const _this = this;
     if (this.$store.getters.getUser.id) {
       this.user.id = this.$store.getters.getUser.id;
-      this.user.attentionCount = this.$store.getters.getUser.attentionCount;
     }
+    this.$axios.get('http://localhost:8080/users/attentionList', {
+      params: {
+        id: this.user.id,
+      }
+    }).then(res => {
+      if (res.data.code == 100) {
+        _this.attention = res.data.data;
+      }
+    });
+    this.loading = false;
   },
   methods: {
-    update() {
-      this.$message("修改完成");
+    toAttention(id) {
+      this.$router.push({
+        name:'AttentionPage',
+        params:{
+          id:id,
+        }
+      });
     },
-    toAttention(){
-      this.$message("进入关注者主页")
+    cancelAttention(id, i) {
+      const _this = this;
+      this.$axios.put('http://localhost:8080/user/changeAttention', {
+        params: {
+          id: id,
+        }
+      }).then(res => {
+        if (res.data.code == 100) {
+          _this.$message('取消成功');
+        }
+      });
+      this.attention[i].remove();
     },
     menuClick(menuItem) {
       if (menuItem.index == 1) {
@@ -73,18 +104,5 @@ export default {
 </script>
 
 <style>
-
-.el-aside {
-  background-color: #FFFFFF;
-  color: #333;
-  text-align: center;
-
-}
-
-.el-main {
-  background-color: #FFFFFF;
-  color: #333;
-  text-align: center;
-}
 
 </style>
