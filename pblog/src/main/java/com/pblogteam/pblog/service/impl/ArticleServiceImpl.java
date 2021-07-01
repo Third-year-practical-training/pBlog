@@ -35,8 +35,6 @@ public class ArticleServiceImpl implements ArticleService {
     private TypeServiceImpl typeServiceImpl;
 
 
-
-
     private static final Integer ARTICLE_SUMMARY_LENGTH = 50;
 
     // 查询文章列表

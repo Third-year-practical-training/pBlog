@@ -16,7 +16,7 @@ public class CommentVO {
     private String photo;
     private Date date;
     private String content;
-    private Integer father;
+    private Integer fatherId;
     private List<CommentVO> childList;
 }
 

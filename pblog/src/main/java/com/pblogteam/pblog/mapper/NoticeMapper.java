@@ -3,13 +3,8 @@ package com.pblogteam.pblog.mapper;
 import com.pblogteam.pblog.entity.Notice;
 import com.pblogteam.pblog.entity.NoticeExample;
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-@Mapper
 public interface NoticeMapper {
     long countByExample(NoticeExample example);
 

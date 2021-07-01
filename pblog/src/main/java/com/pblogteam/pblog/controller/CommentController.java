@@ -6,6 +6,7 @@ import com.pblogteam.pblog.constant.ResponseState;
 import com.pblogteam.pblog.entity.Comment;
 import com.pblogteam.pblog.service.ArticleService;
 import com.pblogteam.pblog.service.CommentService;
+import com.pblogteam.pblog.vo.MyComment;
 import com.pblogteam.pblog.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -52,15 +53,15 @@ public class CommentController {
     }
 
     @GetMapping("/comment/selectById")
-    public ResultVO<PageInfo<Comment>> getCommentListByUserId(Integer id, int pageNum) {
+    public ResultVO<PageInfo<MyComment>> getCommentListByUserId(Integer id, int pageNum) {
         if(id == null) ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
-        PageInfo<Comment> commentList = commentService.selectByUserId(id, pageNum);
-        if(commentList != null) {
-            for (Comment a :
-                    commentList.getList()) {
+        PageInfo<MyComment> myComments = commentService.selectByUserId(id, pageNum);
+        if(myComments != null) {
+            for (MyComment a :
+                    myComments.getList()) {
                 a.setContent(a.getContent().length() > 100 ? a.getContent().substring(0, 100) : a.getContent());
             }
         }
-        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, commentList);
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, myComments);
     }
 }

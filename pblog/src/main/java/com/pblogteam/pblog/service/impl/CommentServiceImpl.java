@@ -41,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void insertComment(Comment comment) {
-        commentMapper.insert(comment);
+        commentMapper.insertSelective(comment);
     }
 
     @Override
@@ -54,8 +54,8 @@ public class CommentServiceImpl implements CommentService {
         criteria.andFatherIdIsNull();
         List<Comment> commentList = commentMapper.selectByExampleWithBLOBs(commentExample);
         List<CommentVO> commentVOList = fillCommentVOByComment(commentList);
-//        return commentMapper.selectByExampleWithBLOBs(commentExample);
         for(CommentVO commentVO: commentVOList) {
+            commentExample.clear();
             criteria = commentExample.createCriteria();
             criteria.andFatherIdEqualTo(commentVO.getCommentId());
             commentList = commentMapper.selectByExampleWithBLOBs(commentExample);
@@ -75,6 +75,7 @@ public class CommentServiceImpl implements CommentService {
         commentVO.setPhoto(fromUser.getPhotoUrl());
         commentVO.setFromUserNickName(fromUser.getNickname());
         commentVO.setFromUserId(fromUser.getId());
+        commentVO.setFatherId(comment.getFatherId());
         commentVO.setChildList(null);
         if(comment.getToId() != null) {
             commentVO.setToUserId(comment.getToId());
@@ -111,7 +112,7 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> commentList = commentMapper.selectByExampleWithBLOBs(commentExample);
         List<MyComment> myComments = new ArrayList<>();
         for(Comment comment: commentList) {
-            myComments.add(new MyComment(comment.getArticleId(), articleMapper.selectByPrimaryKey(comment.getArticleId()).getTitle(), comment.getId()));
+            myComments.add(new MyComment(comment, articleMapper.selectByPrimaryKey(comment.getArticleId()).getTitle()));
         }
         return new PageInfo<>(myComments);
     }

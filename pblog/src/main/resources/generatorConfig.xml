@@ -72,8 +72,8 @@
         <table tableName="comment" schema="pblogdb"/>
 <!--        <table tableName="user" schema="pblogdb"/>-->
 <!--        <table tableName="user_follower_rela" schema="pblogdb"/>-->
-<!--        <table tableName="notice" schema="pblogdb"/>-->
-<!--        <table tableName="message" schema="pblogdb"/>-->
+        <table tableName="notice" schema="pblogdb"/>
+        <table tableName="message" schema="pblogdb"/>
 
     </context>
 </generatorConfiguration>
