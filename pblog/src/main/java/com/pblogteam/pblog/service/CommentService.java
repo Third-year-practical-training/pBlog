@@ -12,6 +12,6 @@ public interface CommentService {
     void insertComment(Comment comment);
 //    void updateComment(Comment comment);
     List<CommentVO> selectByArticleId(Integer id);
-    boolean deleteByArticleId(Integer id);
+    void deleteByArticleId(Integer id);
     PageInfo<MyComment> selectByUserId(Integer id, int pageNum);
 }

@@ -96,11 +96,15 @@ public class CommentServiceImpl implements CommentService {
 
 
     @Override
-    public boolean deleteByArticleId(Integer id) {
+    public void deleteByArticleId(Integer id) {
         CommentExample commentExample = new CommentExample();
         CommentExample.Criteria commentEx = commentExample.createCriteria();
         commentEx.andArticleIdEqualTo(id);
-        return commentMapper.deleteByExample(commentExample) != 0;
+        commentMapper.deleteByExample(commentExample);
+        commentExample.clear();
+        commentEx = commentExample.createCriteria();
+        commentEx.andFatherIdEqualTo(id);
+        commentMapper.deleteByExample(commentExample);
     }
 
     @Override
