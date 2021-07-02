@@ -27,16 +27,29 @@ public class ArticleMapperTest {
         System.out.println(articleMapper.selectByExampleWithBLOBs(articleExample).get(0).getContent());
     }
 
+//    @Test
+//    public void deleteByArticleIdTest() {
+//        SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
+//        sdf.applyPattern("yyyy-MM-dd HH:mm:ss");// a为am/pm的标记
+//        Date date = new Date();// 获取当前时间
+//        ArticleExample articleExample = new ArticleExample();
+//        ArticleExample.Criteria criteria = articleExample.createCriteria();
+//        Article article = new Article(null, null, 1000, "cscsc", date, (byte) 1, null, null, "sakcnscnskncncsncsncn");
+//        articleMapper.insertAndReturnPrimaryKey(article);
+//        System.out.println(article.getId());
+//    }
+
     @Test
-    public void deleteByArticleIdTest() {
-        SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间
-        sdf.applyPattern("yyyy-MM-dd HH:mm:ss");// a为am/pm的标记
-        Date date = new Date();// 获取当前时间
+    public void testCount() {
         ArticleExample articleExample = new ArticleExample();
         ArticleExample.Criteria criteria = articleExample.createCriteria();
-        Article article = new Article(null, null, 1000, "cscsc", date, (byte) 1, null, null, "sakcnscnskncncsncsncn");
-        articleMapper.insertAndReturnPrimaryKey(article);
-        System.out.println(article.getId());
+        criteria.andTitleLike("test");
+        System.out.println(articleMapper.countByExample(articleExample));
+    }
+
+    @Test
+    public void testSearch() {
+        System.out.println(articleMapper.selectByTitleKeyWord("中国剩余定理"));
     }
 
 }
