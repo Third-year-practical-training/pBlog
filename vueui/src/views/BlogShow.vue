@@ -50,39 +50,41 @@
            style="text-align: left;margin-top: 0px;margin-left: 50px;width: 1060px"
            class="el-card">
         <div>
-          <el-avatar size="large" :src="item.headImg" style="margin-top: 10px;margin-left: 10px"></el-avatar>
-          <span style=" color: black;font-size: 18px;font-weight: bold;margin-left: 2px;">{{ item.name }}</span>
-          <span style="color: #7d7d7d;font-size: 5px;margin-left: 5px">{{ item.time }}</span>
-          <el-button type="text" style="color: #409EFF;float: right;margin-right: 10px" @click="showCommentInput(i)">
+          <el-avatar size="large" :src="getAvatar(item.fromUserId)" style="margin-top: 10px;margin-left: 10px"></el-avatar>
+          <span style=" color: black;font-size: 18px;font-weight: bold;margin-left: 2px;">{{
+              item.fromUserNickName
+            }}</span>
+          <span style="color: #7d7d7d;font-size: 5px;margin-left: 5px">{{ formatDate(item.date) }}</span>
+          <el-button type="text" style="color: #409EFF;float: right;margin-right: 10px"
+                     @click="showCommentInput(i,item.fromUserId,item.fromUserNickName)">
             回复
           </el-button>
         </div>
         <div style="margin-top: 10px;margin-left: 10px">
-          <span>{{ item.content }}</span>
-        </div>
-        <div v-show="item.inputShow">
-          <el-input type="textarea" autosize contenteditable="true" placeholder="请输入内容"
-                    style="max-width: 500px;margin-left: 10px" v-model="comment1"></el-input>
-          <el-button size="small" type="primary" @click="pushComment(i)" style="margin-left: 10px">发表评论</el-button>
+          <span>{{item.content}}</span>
         </div>
         <div>
-          <div v-for="(reply,j) in item.reply" :key="j" class="el-card" style="margin-left: 20px">
+          <div v-for="(reply,j) in item.childList" :key="j" class="el-card" style="margin-left: 20px">
             <div>
-              <el-avatar size="large" :src="reply.fromHeadImg" style="margin-top: 10px;margin-left: 10px"></el-avatar>
-              <span style=" color: black;font-size: 18px;font-weight: bold;margin-left: 2px;">{{ reply.from }}</span>
-              <span style="color: #7d7d7d;font-size: 5px;margin-left: 5px">{{ reply.time }}</span>
+              <el-avatar size="large" :src="getAvatar(reply.fromUserId)" style="margin-top: 10px;margin-left: 10px"></el-avatar>
+              <span
+                  style=" color: black;font-size: 18px;font-weight: bold;margin-left: 2px;">{{
+                  reply.fromUserNickName
+                }}</span>
+              <span style="color: #7d7d7d;font-size: 5px;margin-left: 5px">{{ formatDate(reply.date) }}</span>
               <el-button type="text" style="color: #409EFF;float: right;margin-right: 10px"
-                         @click="showReplyCommentInput(i,reply.from)">回复
+                         @click="showReplyCommentInput(i,reply.fromUserId,reply.fromUserNickName)">回复
               </el-button>
             </div>
             <div style="margin-top: 10px;margin-left: 10px">
-              <span>{{ reply.content }}</span>
+              <span>回复@{{reply.toUserNickName}}: {{reply.content}}</span>
             </div>
           </div>
           <div v-show="replyInputShow">
             <el-input type="textarea" autosize contenteditable="true" placeholder="请输入内容"
-                      style="max-width: 500px;margin-left: 30px;margin-top: 5px" v-model="comment2"></el-input>
-            <el-button size="small" type="primary" @click="pushCommentReply()" style="margin-left: 10px">发表评论</el-button>
+                      style="max-width: 500px;margin-left: 30px;margin-top: 5px" v-model="comment"></el-input>
+            <el-button size="small" type="primary" @click="pushCommentReply(i)" style="margin-left: 10px">发表评论
+            </el-button>
           </div>
         </div>
       </div>
@@ -113,13 +115,15 @@ export default {
     return {
       loading: false,
       mycomment: '',
-      comment1:'',
-      comment2:'',
-      replyInputShow:false,
-      from:'',
-      to:'',
+      comment: '',
+      replyInputShow: false,
+      from: '',
+      fromId: '',
+      to: '',
+      toId: '',
       blog: {
         id: null,
+        userId: '',
         nickname: '',
         title: '',
         classify: {},
@@ -127,30 +131,12 @@ export default {
         timestamp: '',
         content: ''
       },
-      data: [],
       user: {
         id: '',
         nickName: '',
-        avatar: 'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
+        avatar: '',
       },
-      comments: [
-        {
-          name: 'Taylor Swift',
-          headImg: 'https://ae01.alicdn.com/kf/H94c78935ffa64e7e977544d19ecebf06L.jpg',
-          content: '我发行了我的新专辑Lover',
-          time: '2019年9月16日 18:43',
-          inputShow: false,
-          reply: [
-            {
-              from: 'Lana Del Rey',
-              to: '',
-              fromHeadImg: 'https://ae01.alicdn.com/kf/Hd60a3f7c06fd47ae85624badd32ce54dv.jpg',
-              content: '新专辑和speak now 一样棒！',
-              time: '2019年9月16日 18:43',
-            }
-          ]
-        },
-      ]
+      comments: [],
     }
   },
   created() {
@@ -162,6 +148,7 @@ export default {
       this.blog.id = this.$route.params.blogId;
       this.user.id = this.$store.getters.getUser.id;
       this.user.nickName = this.$store.getters.getUser.nickname;
+      this.user.avatar = 'http://localhost:8080/user/showPhotoById?userId=' + this.user.id;
       const _this = this
       this.$axios.get('http://localhost:8080/article/findById', {
         params: {
@@ -169,12 +156,14 @@ export default {
         }
       }).then(res => {
         if (res.data.code == 100) {
+          _this.blog.userId = res.data.data.userId;
           _this.blog.nickname = res.data.data.userNickname;
           _this.blog.title = res.data.data.title;
           _this.blog.classify = res.data.data.articleType;
           _this.blog.tags = res.data.data.tagList;
           _this.blog.timestamp = _this.formatDate(res.data.data.date);
           _this.blog.content = marked(res.data.data.content);
+          _this.comments = res.data.data.commentList;
           _this.loading = false;
         }
       });
@@ -186,30 +175,126 @@ export default {
       let d = time.getDate();
       return `${y}-${m}-${d}`;
     },
+    getAvatar(id){
+      return 'http://localhost:8080/user/showPhotoById?userId=' + id;
+    },
     collectArticle() {
       this.$message('已收藏');
     },
-    showCommentInput(i) {
-      this.comments[i].inputShow = true;
-    },
-    showReplyCommentInput(i, name) {
+    showCommentInput(i, toId, to) {
       this.replyInputShow = true;
-      this.to = name;
+      this.from = this.user.nickName;
+      this.fromId = this.user.id;
+      this.to = to;
+      this.toId = toId;
+    },
+    showReplyCommentInput(i, toId, to) {
+      this.replyInputShow = true;
+      this.from = this.user.nickName;
+      this.fromId = this.user.id;
+      this.to = to;
+      this.toId = toId;
     },
     closeCommentInput(i) {
-      this.comments[i].inputShow = false;
+      this.replyInputShow = false;
     },
     closeReplyCommentInput() {
       this.replyInputShow = false;
     },
     addComment() {
-
+      const _this = this;
+      let comment = new FormData();
+      const date = this.formatDate(new Date().getTime());
+      comment.append('articleId', this.blog.id);
+      comment.append('userId', this.user.id);
+      comment.append('date', new Date());
+      comment.append('fromName', this.user.nickName);
+      comment.append('toName', '');
+      comment.append('toId', '');
+      comment.append('fatherId', '');
+      comment.append('content', this.mycomment);
+      this.$axios.post('http://localhost:8080/comment/new', comment).then(res => {
+        if (res.data.code == 100) {
+          _this.$message('评论成功');
+          let a = {};
+          a.commentId = '';
+          a.fromUserId = _this.user.id;
+          a.fromUserNickName = _this.user.nickName;
+          a.toUserId = '';
+          a.toUserNickName = '';
+          a.photo = _this.user.avatar;
+          a.date = date;
+          a.content = _this.mycomment;
+          a.fatherId = '';
+          a.childList = '';
+          _this.comments.push(a);
+        }
+      });
     },
     pushComment(i) {
       this.closeCommentInput(i);
+      const _this = this;
+      let comment = new FormData();
+      const date = this.formatDate(new Date().getTime());
+      comment.append('articleId', this.blog.id);
+      comment.append('userId', this.fromId);
+      comment.append('date', new Date());
+      comment.append('fromName', this.from);
+      comment.append('toName', this.to);
+      comment.append('toId', this.toId);
+      comment.append('fatherId', this.comments[i].commentId);
+      comment.append('content', this.comment);
+      this.$axios.post('http://localhost:8080/comment/new', comment).then(res => {
+        if (res.data.code == 100) {
+          _this.$message('评论成功');
+          let a = {};
+          a.commentId = '';
+          a.fromUserId = _this.fromId;
+          a.fromUserNickName = _this.from;
+          a.toUserId = _this.toId;
+          a.toUserNickName = _this.to;
+          a.photo = _this.user.avatar;
+          a.date = date;
+          a.content = _this.comment1;
+          a.fatherId = _this.comments[i].commentId;
+          a.childList = '';
+          let b = {};
+          b.inputShow = false;
+          _this.commentInputs.push(b);
+          _this.comments[i].childList.push(a);
+        }
+      });
     },
-    pushCommentReply() {
+    pushCommentReply(i) {
       this.closeReplyCommentInput();
+      const _this = this;
+      let comment = new FormData();
+      const date = this.formatDate(new Date().getTime());
+      comment.append('articleId', this.blog.id);
+      comment.append('userId', this.fromId);
+      comment.append('date', new Date());
+      comment.append('fromName', this.from);
+      comment.append('toName', this.to);
+      comment.append('toId', this.toId);
+      comment.append('fatherId', this.comments[i].commentId);
+      comment.append('content', this.comment);
+      this.$axios.post('http://localhost:8080/comment/new', comment).then(res => {
+        if (res.data.code == 100) {
+          _this.$message('评论成功');
+          let a = {};
+          a.commentId = '';
+          a.fromUserId = _this.fromId;
+          a.fromUserNickName = _this.from;
+          a.toUserId = _this.toId;
+          a.toUserNickName = _this.to;
+          a.photo = _this.user.avatar;
+          a.date = date;
+          a.content = _this.comment2;
+          a.fatherId = _this.comments[i].commentId;
+          a.childList = '';
+          _this.comments[i].childList.push(a);
+        }
+      });
     }
   },
 

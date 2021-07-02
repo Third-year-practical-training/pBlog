@@ -13,6 +13,7 @@ import Comments from "../views/Notice/Comments";
 import PersonalMessage from "../views/Notice/PersonalMessage";
 import SystemNotice from "../views/Notice/SystemNotice";
 import AttentionPage from "../views/AttentionPage";
+import SearchPage from "../views/SearchPage";
 
 Vue.use(VueRouter)
 
@@ -87,7 +88,11 @@ const routes = [
         name: 'AttentionPage',
         component: AttentionPage
     },
-
+    {
+        path: '/searchpage',
+        name: 'SearchPage',
+        component: SearchPage
+    },
 ]
 
 const router = new VueRouter({

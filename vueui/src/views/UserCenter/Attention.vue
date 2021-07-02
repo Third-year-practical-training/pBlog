@@ -21,10 +21,10 @@
 
     <el-main>
       <div v-for="(item,i) in attention" :key="i" class="el-card" style="height: 80px" v-loading="loading">
-        <el-avatar :size="50" :src="item.photoUrl"
+        <el-avatar :size="50" :src="getAvatar(item.id)"
                    style="float: left;margin-top: 20px;margin-left: 10px"></el-avatar>
         <el-link type="primary" style="float: left;margin-top: 40px;margin-left: 10px" @click="toAttention(item.id)">
-          {{ '关注者' + item.nickname }}
+          {{item.nickname }}
         </el-link>
         <el-button type="primary" style="display: inline;float: right;margin-top: 20px;margin-right: 10px"
                    @click="cancelAttention(item.id,i)">取消关注
@@ -55,10 +55,11 @@ export default {
     this.$axios.get('http://localhost:8080/users/attentionList', {
       params: {
         id: this.user.id,
+        pageNum:1,
       }
     }).then(res => {
       if (res.data.code == 100) {
-        _this.attention = res.data.data;
+        _this.attention = res.data.data.list;
       }
     });
     this.loading = false;
@@ -74,16 +75,17 @@ export default {
     },
     cancelAttention(id, i) {
       const _this = this;
-      this.$axios.put('http://localhost:8080/user/changeAttention', {
-        params: {
-          id: id,
-        }
-      }).then(res => {
+      let data = new FormData();
+      data.append('id',id);
+      this.$axios.put('http://localhost:8080/user/changeAttention',data).then(res => {
         if (res.data.code == 100) {
           _this.$message('取消成功');
         }
       });
       this.attention[i].remove();
+    },
+    getAvatar(id) {
+      return 'http://localhost:8080/user/showPhotoById?userId=' + id;
     },
     menuClick(menuItem) {
       if (menuItem.index == 1) {
