@@ -27,8 +27,7 @@
       <div v-for="item in result" :key="item" class="el-card" style="text-align: left">
         <h4>
           <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
-                       style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
-            {{ item.title }}
+                       style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px" v-html="item.title">
           </router-link>
         </h4>
         <span style="margin-left: 30px">{{ formatDate(item.date) }}</span>
@@ -70,14 +69,14 @@ export default {
       const _this = this;
       this.$axios.get('http://localhost:8080/article/searchByKeyWord',{
         params:{
-          keyword:this.searchInfo.keyword,
+          keyWord:this.searchInfo.keyword,
           pageNum:this.searchInfo.pageNum,
           type:this.searchInfo.type,
           id:this.searchInfo.typeId,
         }
       }).then(res => {
         if (res.data.code == 100) {
-          _this.result = res.data.data;
+          _this.result = res.data.data.list;
           _this.$message('搜索成功');
         }
       })
