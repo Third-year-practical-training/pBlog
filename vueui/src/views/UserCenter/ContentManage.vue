@@ -24,20 +24,25 @@
 
     <el-main>
       <el-tabs v-model="activeName">
-        <el-tab-pane label="我的文章" name="MyArticle">
+        <el-tab-pane label="我的文章" name="MyArticle" v-loading="loading">
           <div v-for="item in blogs" :key="item" class="el-card" style="text-align: left">
             <h4>
               <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
-                           style="font-size: large;font-family: 'Arial Black';text-align: center;margin-left: 30px">{{ item.title }}
+                           style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
+                {{ item.title }}
               </router-link>
             </h4>
-            <span style="margin-left: 30px">{{formatDate(item.date)}}</span>
+            <span style="margin-left: 30px">{{ formatDate(item.date) }}</span>
             <span style="font-size: small;color: gray;margin-left: 10px">标签: </span>
             <div style="display: inline" v-for="tag in item.articleTagList" :key="tag" class="el-tag">
               {{ tag.name }}
             </div>
-            <el-button type="danger" icon="el-icon-delete" circle style="display: inline-block;float: right"
-                       @click="deleteArticle"></el-button>
+            <div style="text-align: right;display: inline-block;float: right">
+              <el-button type="primary" icon="el-icon-edit" circle style="margin-right: 20px"
+                         @click="updateArticle(item.id)"></el-button>
+              <el-button type="danger" icon="el-icon-delete" circle style="margin-right: 10px"
+                         @click="deleteArticle(item.id)"></el-button>
+            </div>
           </div>
           <div class="block">
             <el-pagination
@@ -50,8 +55,23 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="我的收藏" name="MyCollection">
-
-
+          <div v-for="collection in collections" :key="collection" class="el-card" style="text-align: left">
+            <h4>
+              <router-link :to="{name: 'BlogShow', params: {blogId: collection.id}}"
+                           style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
+                {{ collection.title }}
+              </router-link>
+            </h4>
+            <span style="margin-left: 30px">{{ formatDate(collection.date) }}</span>
+            <span style="font-size: small;color: gray;margin-left: 10px">标签: </span>
+            <div style="display: inline" v-for="tag in collection.articleTagList" :key="tag" class="el-tag">
+              {{ tag.name }}
+            </div>
+            <div style="text-align: right;display: inline-block;float: right">
+              <el-button type="danger" icon="el-icon-delete" circle style="margin-right: 10px"
+                         @click="cancelCollection(collection.id)"></el-button>
+            </div>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -66,9 +86,11 @@ export default {
   data() {
     return {
       blogs: [],
+      collections: [],
       pageNum: 1,
       pageSize: 0,
       total: 0,
+      loading: false,
       activeName: 'MyArticle',
       user: {
         id: '',
@@ -76,6 +98,7 @@ export default {
     }
   },
   created() {
+    this.loading = true;
     if (this.$store.getters.getUser.id) {
       this.user.id = this.$store.getters.getUser.id;
     }
@@ -95,18 +118,38 @@ export default {
         console.log(res.data.msg);
       }
     });
+    this.$axios.get('http://localhost:8080/articles/collectList', {
+      params: {
+        id: this.user.id,
+      }
+    }).then(res => {
+      if (res.data.code == 100) {
+        _this.collections = res.data.data;
+        _this.loading = false;
+      } else {
+        console.log(res.data.msg);
+      }
+    });
   },
   methods: {
     pageChange(pageNum) {
 
     },
-    deleteArticle() {
+    deleteArticle(id) {
       this.$message("删除成功");
     },
-    cancelCollection() {
+    updateArticle(id) {
+       this.$router.push({
+         name:'NewBlog',
+         params:{
+           blogId:id,
+         }
+       });
+    },
+    cancelCollection(id) {
       this.$message("取消收藏");
     },
-    formatDate(date){
+    formatDate(date) {
       let time = new Date(date);
       let y = time.getFullYear();
       let m = time.getMonth() + 1;
@@ -135,19 +178,5 @@ export default {
 </script>
 
 <style>
-
-.el-aside {
-  background-color: #FFFFFF;
-  color: #333;
-  text-align: center;
-
-}
-
-.el-main {
-  background-color: #FFFFFF;
-  color: #333;
-  text-align: center;
-}
-
 
 </style>

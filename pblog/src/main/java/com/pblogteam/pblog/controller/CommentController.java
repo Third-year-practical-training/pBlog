@@ -32,8 +32,8 @@ public class CommentController {
 
     @RequestMapping(value = "/comment/new", method = {RequestMethod.POST})
     public ResultVO<String> addComment(@RequestParam("userId") Integer userId, @RequestParam("articleId") Integer articleId,
-                                       @RequestParam("date") @DateTimeFormat(pattern = "yyyy/MM/dd") Date date,
-                                       @RequestParam("content") String content, Comment comment, HttpSession session) {
+                                       @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+                                       @RequestParam("content") String content, Comment comment,HttpSession session) {
         if (userId != null & articleId != null & date != null & content != null) {
             commentService.insertComment(comment);
             return ResultVO.throwSuccess(ResponseState.SUCCESS);
