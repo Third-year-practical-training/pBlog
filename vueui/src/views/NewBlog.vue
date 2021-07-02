@@ -112,7 +112,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.editForm.id == null) {
-            this.editForm.date = this.formatDate(this.editForm.date);
+            this.editForm.date = this.formatDate(new Date().getTime());
             this.$axios({
                   url: 'http://localhost:8080/article/new',
                   method: 'post',
