@@ -160,7 +160,7 @@ public class ArticleController {
      * @return 查询结果
      */
     @GetMapping("/article/searchByKeyWord")
-    public ResultVO<PageInfo<ArticleTitleVO>> searchByKeyWord(String keyWord, int pageNum, int type, int id) {
+    public ResultVO<PageInfo<ArticleTitleVO>> searchByKeyWord(String keyWord, Integer pageNum, Integer type, Integer id) {
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.selectArticleByKeyWord(keyWord, type, id, pageNum));
     }
 
