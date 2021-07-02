@@ -157,6 +157,15 @@ public class UserController
             userService.changePhoto((Integer) session.getAttribute("userId"), finalname);
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, flag);
     }
+    @GetMapping("/admin/changeUserPrivilege")
+    public ResultVO changeUserPrivilege(Integer id, HttpServletRequest request) {
+        int curId = (int) request.getSession().getAttribute("userId");
+        if(id == curId) {
+            return ResultVO.throwError(ResponseState.UNKNOWN_ERROR);
+        }
+        userService.changeAdmin(id);
+        return ResultVO.throwSuccess(ResponseState.SUCCESS);
+    }
 
     @GetMapping("/user/showPhotoById")
     public void showPicture(HttpServletRequest request, HttpServletResponse response, @RequestParam("userId") int userId)
