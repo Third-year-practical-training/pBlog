@@ -121,9 +121,9 @@ public class UserController
 
     @PutMapping("/user/changeAttention")
     public ResultVO changeAttention(@RequestParam("id") Integer id,
-                                    HttpSession session)
+                                    HttpServletRequest request)
     {
-        userService.changeAttention(id,(Integer) session.getAttribute("userId"));
+        userService.changeAttention(id,(Integer) request.getSession().getAttribute("userId"));
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 

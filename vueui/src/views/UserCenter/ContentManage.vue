@@ -72,6 +72,15 @@
                          @click="cancelCollection(collection.id)"></el-button>
             </div>
           </div>
+          <div class="block">
+            <el-pagination
+                layout="prev, pager, next"
+                :current-page="collectionPage.colpageNum"
+                :page-size="collectionPage.colpageSize"
+                :total="collectionPage.coltotal"
+                @current-change="collectionPageChange">
+            </el-pagination>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -87,6 +96,11 @@ export default {
     return {
       blogs: [],
       collections: [],
+      collectionPage: {
+        colpageNum: 1,
+        colpageSize: 5,
+        coltotal: 0,
+      },
       pageNum: 1,
       pageSize: 0,
       total: 0,
@@ -113,7 +127,7 @@ export default {
         _this.blogs = res.data.data.list;
         _this.pageNum = res.data.data.pageNum;
         _this.total = res.data.data.total;
-        _this.pageSize = res.data.data.size;
+        _this.pageSize = res.data.data.pageSize;
       } else {
         console.log(res.data.msg);
       }
@@ -121,30 +135,37 @@ export default {
     this.$axios.get('http://localhost:8080/articles/collectList', {
       params: {
         id: this.user.id,
+        pageNum: 1,
       }
     }).then(res => {
       if (res.data.code == 100) {
-        _this.collections = res.data.data;
-        _this.loading = false;
+        _this.collections = res.data.data.list;
+        _this.collectionPage.colpageNum = res.data.data.pageNum;
+        _this.collectionPage.coltotal = res.data.data.total;
+        _this.collectionPage.colpageSize = res.data.data.pageSize;
       } else {
         console.log(res.data.msg);
       }
     });
+    this.loading = false;
   },
   methods: {
-    pageChange(pageNum) {
+    pageChange() {
+
+    },
+    collectionPageChange(){
 
     },
     deleteArticle(id) {
       this.$message("删除成功");
     },
     updateArticle(id) {
-       this.$router.push({
-         name:'NewBlog',
-         params:{
-           blogId:id,
-         }
-       });
+      this.$router.push({
+        name: 'NewBlog',
+        params: {
+          blogId: id,
+        }
+      });
     },
     cancelCollection(id) {
       this.$message("取消收藏");

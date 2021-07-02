@@ -209,7 +209,7 @@ public class ArticleServiceImpl implements ArticleService {
         ArticleExample articleExample = new ArticleExample();
         List<Article> articleList = new ArrayList<>();
         List<ArticleCollectorRela> artCollRelaList = null;
-        PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
+        PageHelper.startPage(pageNum, Config.PAGE_SIZE);
         artCollRelaList = articleCollRelaServiceImpl.selectByUserId(id);
         if(artCollRelaList != null) {
             for (ArticleCollectorRela a :

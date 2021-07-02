@@ -29,17 +29,10 @@ public class CommentController {
     private ArticleService articleService;
 
 
-
     @RequestMapping(value = "/comment/new", method = {RequestMethod.POST})
-    public ResultVO<String> addComment(@RequestParam("userId") Integer userId, @RequestParam("articleId") Integer articleId,
-                                       @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
-                                       @RequestParam("content") String content, Comment comment,HttpSession session) {
-        if (userId != null & articleId != null & date != null & content != null) {
-            commentService.insertComment(comment);
-            return ResultVO.throwSuccess(ResponseState.SUCCESS);
-        } else {
-            return ResultVO.throwError(ResponseState.NOT_FOUND);
-        }
+    public ResultVO<String> addComment(Comment comment, HttpSession session) {
+        commentService.insertComment(comment);
+        return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
     @RequestMapping(value = "/comment/delete", method = {RequestMethod.DELETE})
@@ -54,9 +47,9 @@ public class CommentController {
 
     @GetMapping("/comment/selectById")
     public ResultVO<PageInfo<MyComment>> getCommentListByUserId(Integer id, int pageNum) {
-        if(id == null) ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
+        if (id == null) ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         PageInfo<MyComment> myComments = commentService.selectByUserId(id, pageNum);
-        if(myComments != null) {
+        if (myComments != null) {
             for (MyComment a :
                     myComments.getList()) {
                 a.setContent(a.getContent().length() > 100 ? a.getContent().substring(0, 100) : a.getContent());
