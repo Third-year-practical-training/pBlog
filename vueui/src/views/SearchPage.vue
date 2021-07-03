@@ -72,7 +72,7 @@ export default {
       this.$axios.get('http://localhost:8080/article/searchByKeyWord',{
         params:{
           keyWord:this.searchInfo.keyWord,
-          pageNum:this.searchInfo.pageNum,
+          pageNum: this.searchInfo.pageNum,
           type:this.searchInfo.type,
           id:this.searchInfo.typeId,
         }

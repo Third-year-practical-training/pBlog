@@ -41,7 +41,10 @@
                     }}</span>
                     <el-divider direction="vertical"></el-divider>
                     <span style="color: #7d7d7d;font-size: small" @click="toAttentionPage(item.userId)"><i
-                        class="el-icon-user-solid"></i> 作者：<el-button type="text" style="color: aqua">{{item.userNickname}}</el-button>
+                        class="el-icon-user-solid"></i> 作者：<el-button type="text"
+                                                                      style="color: aqua">{{
+                        item.userNickname
+                      }}</el-button>
                       </span>
                     <br>
                     <span style="color: #7d7d7d;font-size: small"><i class="el-icon-collection-tag"></i> 标签：</span>
@@ -60,7 +63,8 @@
                 :current-page="pageNum"
                 :page-size="pageSize"
                 :total="total"
-                @current-change="page">
+                :hide-on-single-page="false"
+                @current-page="page(pageNum)">
             </el-pagination>
           </div>
         </div>
@@ -133,7 +137,7 @@ export default {
       this.user.url = 'http://localhost:8080/user/showPhotoById?userId=' + this.user.id;
       this.user.description = this.$store.getters.getUser.description;
       this.user.nickname = this.$store.getters.getUser.nickname;
-      this.page();
+      this.page(this.pageNum);
       this.getHotTags();
     } else {
       this.$message("请先登录");
@@ -143,11 +147,11 @@ export default {
     this.loading = false;
   },
   methods: {
-    page() {
+    page(pageNum) {
       const _this = this;
       this.$axios.get('http://localhost:8080/article/findAllArticle', {
         params: {
-          pageNum: this.pageNum,
+          pageNum: pageNum,
         }
       }).then(res => {
         if (res.data.code == 100) {
@@ -159,6 +163,18 @@ export default {
           console.log(res.data.msg);
         }
       });
+    },
+    prePage() {
+      if (this.pageNum <= 1) {
+        this.$message('已经是第一页了');
+      } else {
+        this.pageNum = this.pageNum - 1;
+        this.page(this.pageNum);
+      }
+    },
+    nextPage() {
+      this.pageNum = this.pageNum + 1;
+      this.page(this.pageNum);
     },
     getHotTags() {
       const _this = this;
