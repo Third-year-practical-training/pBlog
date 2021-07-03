@@ -7,6 +7,7 @@ import com.pblogteam.pblog.config.Config;
 import com.pblogteam.pblog.entity.*;
 import com.pblogteam.pblog.mapper.ArticleMapper;
 import com.pblogteam.pblog.service.ArticleService;
+import com.pblogteam.pblog.util.CopyPageInfo;
 import com.pblogteam.pblog.vo.ArticleAndCommentVO;
 import com.pblogteam.pblog.vo.ArticleNewVO;
 import com.pblogteam.pblog.vo.ArticleTitleVO;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.pblogteam.pblog.util.CopyPageInfo.covertPageInfo;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
@@ -50,17 +53,19 @@ public class ArticleServiceImpl implements ArticleService {
         ArticleExample.Criteria articleEx = articleExample.createCriteria();
         articleEx.andUserIdEqualTo(id);
         articleEx.andPublishedEqualTo((byte) flag);
+        return pageHelperSelect(pageNum, articleExample);
+    }
+
+    public PageInfo<ArticleTitleVO> pageHelperSelect(int pageNum, ArticleExample articleExample) {
         PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
         List<Article> articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
-        return new PageInfo<>(fillArtTitVOByArtList(articleList));
+        return covertPageInfo(fillArtTitVOByArtList(articleList), articleList);
     }
 
     @Override
     public PageInfo<ArticleTitleVO> showAllArticle(int pageNum) {
         ArticleExample articleExample = new ArticleExample();
-        PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
-        List<Article> articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
-        return new PageInfo<>(fillArtTitVOByArtList(articleList));
+        return pageHelperSelect(pageNum, articleExample);
     }
 
     @Override
@@ -69,9 +74,7 @@ public class ArticleServiceImpl implements ArticleService {
         ArticleExample.Criteria articleEx = articleExample.createCriteria();
         articleEx.andArticleTypeIdEqualTo(id);
         articleEx.andPublishedEqualTo((byte) 1);
-        PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
-        List<Article> articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
-        return new PageInfo<>(fillArtTitVOByArtList(articleList));
+        return pageHelperSelect(pageNum, articleExample);
     }
 
     public List<ArticleTitleVO> fillArtTitVOByArtList(List<Article> articleList) {
@@ -217,7 +220,7 @@ public class ArticleServiceImpl implements ArticleService {
                 articleList.add(articleMapper.selectByPrimaryKey(a.getArticleId()));
             }
         }
-        return new PageInfo<>(fillArtTitVOByArtList(articleList));
+        return covertPageInfo(fillArtTitVOByArtList(articleList), artCollRelaList);
     }
 
     @Override
@@ -288,6 +291,6 @@ public class ArticleServiceImpl implements ArticleService {
                 article.setTitle(newTitle);
             });
         }
-        return new PageInfo<>(fillArtTitVOByArtList(articleList));
+        return covertPageInfo(fillArtTitVOByArtList(articleList), articleList);
     }
 }
