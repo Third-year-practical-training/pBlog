@@ -1,8 +1,5 @@
 package com.pblogteam.pblog.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;

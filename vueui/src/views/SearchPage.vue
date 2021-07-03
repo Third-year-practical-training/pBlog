@@ -3,7 +3,7 @@
     <div>
       <el-main>
         <div>
-          <el-input v-model="searchInfo.keyword" placeholder="请输入搜索内容" style="max-width: 500px"></el-input>
+          <el-input v-model="searchInfo.keyWord" placeholder="请输入搜索内容" style="max-width: 500px"></el-input>
           <el-button type="primary" @click="Search" icon="el-icon-search" style="margin-left: 10px">搜索</el-button>
         </div>
 
@@ -27,7 +27,9 @@
       <div v-for="item in result" :key="item" class="el-card" style="text-align: left">
         <h4>
           <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
-                       style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px" v-html="item.title">
+                       style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px"
+                       v-html="item.title">
+            <!-- {{ item.title }} -->
           </router-link>
         </h4>
         <span style="margin-left: 30px">{{ formatDate(item.date) }}</span>
@@ -46,7 +48,7 @@ export default {
   data() {
     return {
       searchInfo: {
-        keyword: '',
+        keyWord: '',
         type: '',
         typeId: 0,
         pageNum: 1,
@@ -69,7 +71,7 @@ export default {
       const _this = this;
       this.$axios.get('http://localhost:8080/article/searchByKeyWord',{
         params:{
-          keyWord:this.searchInfo.keyword,
+          keyWord:this.searchInfo.keyWord,
           pageNum:this.searchInfo.pageNum,
           type:this.searchInfo.type,
           id:this.searchInfo.typeId,

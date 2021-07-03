@@ -10,12 +10,14 @@ import com.pblogteam.pblog.vo.ArticleTitleVO;
 import com.pblogteam.pblog.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+@Controller
 @RestController
 @RequestMapping("/")
 public class ArticleController {
@@ -154,11 +156,12 @@ public class ArticleController {
      * @param keyWord   要查询的关键字
      * @param pageNum   分页
      * @param type  查询的范围 0 全站，1类型，2标签
-     * @param id    类型id或tag id
+     * @param id    类型id 或 tag id
      * @return 查询结果
      */
     @GetMapping("/article/searchByKeyWord")
     public ResultVO<PageInfo<ArticleTitleVO>> searchByKeyWord(String keyWord, int pageNum, int type, int id) {
+        if(keyWord == null || keyWord.equals("") || keyWord.contains("%")) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.selectArticleByKeyWord(keyWord, type, id, pageNum));
     }
 

@@ -242,13 +242,13 @@ public class ArticleServiceImpl implements ArticleService {
     public PageInfo<ArticleTitleVO> selectArticleByKeyWord(String keyWord, int type, int id, int pageNum) {
         ArticleExample articleExample = new ArticleExample();
         ArticleExample.Criteria criteria = articleExample.createCriteria();
-        criteria.andTitleLike(keyWord);
+        criteria.andTitleLike("%" + keyWord + "%");
         if(type == 1) {
             criteria.andArticleTypeIdEqualTo(id);
         } else if(type == 2) {
             criteria.andIdIn(articleTagRelaServiceImpl.selectArticleIdsByTagId(id));
         }
-        int cnt = (int)articleMapper.countByExample(articleExample);
+        long cnt = articleMapper.countByExample(articleExample);
         List<Article> articleList = null;
         if(cnt == 0) {
             // 提取短语查询
@@ -284,7 +284,7 @@ public class ArticleServiceImpl implements ArticleService {
             articleList.forEach(article -> {
                 String title = article.getTitle();
                 // 利用正则替换
-                String newTitle = title.replaceAll(title, "<font style='color:red;'>$0</font>");
+                String newTitle = title.replaceAll(keyWord, "<font style='color:red;'>$0</font>");
                 article.setTitle(newTitle);
             });
         }

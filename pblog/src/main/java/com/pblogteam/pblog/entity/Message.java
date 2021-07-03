@@ -3,6 +3,7 @@ package com.pblogteam.pblog.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+
 public class Message implements Serializable {
     private Integer id;
 
