@@ -235,7 +235,7 @@ export default {
           a.childList = '';
           _this.comments.push(a);
           let b = {};
-          a.inputValue = false;
+          b.inputValue = false;
           _this.commentInputs.push(b);
         }
       });

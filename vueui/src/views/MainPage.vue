@@ -63,8 +63,7 @@
                 :current-page="pageNum"
                 :page-size="pageSize"
                 :total="total"
-                :hide-on-single-page="false"
-                @current-page="page(pageNum)">
+                @current-change="page">
             </el-pagination>
           </div>
         </div>
@@ -110,7 +109,8 @@ export default {
       hotTags: [],
       pageNum: 1,
       total: 0,
-      pageSize: 5,
+      pageSize: 0,
+      hasNextPage: false,
       loading: false,
       user: {
         id: '',
@@ -137,7 +137,7 @@ export default {
       this.user.url = 'http://localhost:8080/user/showPhotoById?userId=' + this.user.id;
       this.user.description = this.$store.getters.getUser.description;
       this.user.nickname = this.$store.getters.getUser.nickname;
-      this.page(this.pageNum);
+      this.page(1);
       this.getHotTags();
     } else {
       this.$message("请先登录");

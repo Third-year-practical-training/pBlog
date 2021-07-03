@@ -95,8 +95,8 @@ export default {
       activeName: 'otherArticle',
       loading: false,
       avatarUrl: '',
-      show1:true,
-      show2:false,
+      show1: true,
+      show2: false,
     }
   },
   created() {
@@ -105,8 +105,8 @@ export default {
       let id = this.$route.params.id;
       this.avatarUrl = this.getAvatar(id);
       this.getUser(id);
-      this.getBlogs(id);
-      this.getCollections(id);
+      this.getBlogs(id, 1);
+      this.getCollections(id, 1);
     }
     if (this.$store.getters.getUser.id) {
       this.curUser = this.$store.getters.getUser;
@@ -129,12 +129,12 @@ export default {
         }
       });
     },
-    getBlogs(id) {
+    blogPageChange(current) {
       const _this = this;
       this.$axios.get('http://localhost:8080/articles/findByUserId', {
         params: {
-          id: id,
-          pageNum: 1,
+          id: this.user.id,
+          pageNum: current,
         }
       }).then(res => {
         if (res.data.code == 100) {
@@ -146,13 +146,14 @@ export default {
           console.log(res.data.msg);
         }
       });
+
     },
-    getCollections(id) {
+    collectionPageChange(current) {
       const _this = this;
       this.$axios.get('http://localhost:8080/articles/collectList', {
         params: {
-          id: id,
-          pageNum: 1,
+          id: this.user.id,
+          pageNum: current,
         }
       }).then(res => {
         if (res.data.code == 100) {
@@ -165,12 +166,41 @@ export default {
         }
       });
     },
-    attentionShow() {
-      if (this.curUser.myAttention == true) {
-        return '取消关注';
-      } else {
-        return '关注';
-      }
+    getBlogs(id, pageNum) {
+      const _this = this;
+      this.$axios.get('http://localhost:8080/articles/findByUserId', {
+        params: {
+          id: id,
+          pageNum: pageNum,
+        }
+      }).then(res => {
+        if (res.data.code == 100) {
+          _this.blogs = res.data.data.list;
+          _this.blogPage.blogPageNum = res.data.data.pageNum;
+          _this.blogPage.blogTotal = res.data.data.total;
+          _this.blogPage.blogPageSize = res.data.data.pageSize;
+        } else {
+          console.log(res.data.msg);
+        }
+      });
+    },
+    getCollections(id, pageNum) {
+      const _this = this;
+      this.$axios.get('http://localhost:8080/articles/collectList', {
+        params: {
+          id: id,
+          pageNum: pageNum,
+        }
+      }).then(res => {
+        if (res.data.code == 100) {
+          _this.collections = res.data.data.list;
+          _this.collectionPage.colpageNum = res.data.data.pageNum;
+          _this.collectionPage.coltotal = res.data.data.total;
+          _this.collectionPage.colpageSize = res.data.data.pageSize;
+        } else {
+          console.log(res.data.msg);
+        }
+      });
     },
     formatDate(date) {
       let time = new Date(date);
@@ -182,11 +212,11 @@ export default {
     getAvatar(id) {
       return 'http://localhost:8080/user/showPhotoById?userId=' + id;
     },
-    changeShow(is){
-      if(is == false){
+    changeShow(is) {
+      if (is == false) {
         this.show1 = true;
         this.show2 = false;
-      }else{
+      } else {
         this.show1 = false;
         this.show2 = true;
       }
@@ -198,24 +228,17 @@ export default {
         const _this = this;
         this.buttonLoading = true;
         let data = new FormData();
-        data.append('id',id);
-        this.$axios.put('http://localhost:8080/user/changeAttention',data).then(res => {
+        data.append('id', id);
+        this.$axios.put('http://localhost:8080/user/changeAttention', data).then(res => {
           if (res.data.code == 100) {
             _this.curUser.myAttention = !_this.curUser.myAttention;
             _this.changeShow(_this.curUser.myAttention);
-            _this.$store.commit("SET_USERINFO" , _this.curUser);
+            _this.$store.commit("SET_USERINFO", _this.curUser);
             _this.buttonLoading = false;
           }
         });
       }
-
     },
-    blogPageChange() {
-
-    },
-    collectionPageChange() {
-
-    }
   }
 }
 </script>

@@ -43,7 +43,8 @@
                          size="medium"
                          style="margin-top: 5px;margin-left: 5px"></el-avatar>
               <el-link v-if="item.toUserId !== '' &&  item.toUserId != null"
-                    style="margin-left: 5px;color: cornflowerblue;font-size: medium">{{item.toUserNickname}}</el-link>
+                       style="margin-left: 5px;color: cornflowerblue;font-size: medium">{{ item.toUserNickname }}
+              </el-link>
               <span v-if="item.toUserId !== '' &&  item.toUserId != null" style="color:#7d7d7d;">的评论</span>
             </div>
             <div style="margin-top: 10px">
@@ -56,6 +57,15 @@
               }}
             </el-link>
             <el-button type="danger" icon="el-icon-delete" circle style="float: right;margin-right: 5px"></el-button>
+          </div>
+          <div class="block">
+            <el-pagination
+                layout="prev, pager, next"
+                :current-page="user.pageNum"
+                :page-size="user.pageSize"
+                :total="user.total"
+                @current-change="page">
+            </el-pagination>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -83,20 +93,25 @@ export default {
     if (this.$store.getters.getUser.id) {
       this.user.id = this.$store.getters.getUser.id;
     }
-    const _this = this;
-    this.$axios.get('http://localhost:8080/comment/selectById', {
-      params: {
-        id: this.user.id,
-        pageNum: this.user.pageNum,
-      }
-    }).then(res => {
-      _this.mycomments = res.data.data.list;
-      _this.user.pageNum = res.data.data.pageNum;
-      _this.user.pageSize = res.data.data.pageSize;
-      _this.user.total = res.data.data.total;
-    });
+    this.page(1);
   },
   methods: {
+    page(current) {
+      const _this = this;
+      this.$axios.get('http://localhost:8080/comment/selectById', {
+        params: {
+          id: this.user.id,
+          pageNum: current,
+        }
+      }).then(res => {
+        if (res.data.code == 100) {
+          _this.mycomments = res.data.data.list;
+          _this.user.pageNum = res.data.data.pageNum;
+          _this.user.pageSize = res.data.data.pageSize;
+          _this.user.total = res.data.data.total;
+        }
+      });
+    },
     menuClick(menuItem) {
       if (menuItem.index == 1) {
         this.$router.push('/comments');

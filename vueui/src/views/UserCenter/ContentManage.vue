@@ -47,10 +47,10 @@
           <div class="block">
             <el-pagination
                 layout="prev, pager, next"
-                :current-page="pageNum"
-                :page-size="pageSize"
-                :total="total"
-                @current-change="pageChange">
+                :current-page="blog.pageNum"
+                :page-size="blog.pageSize"
+                :total="blog.total"
+                @current-change="blogPage">
             </el-pagination>
           </div>
         </el-tab-pane>
@@ -75,10 +75,10 @@
           <div class="block">
             <el-pagination
                 layout="prev, pager, next"
-                :current-page="collectionPage.colpageNum"
-                :page-size="collectionPage.colpageSize"
-                :total="collectionPage.coltotal"
-                @current-change="collectionPageChange">
+                :current-page="collection.colpageNum"
+                :page-size="collection.colpageSize"
+                :total="collection.coltotal"
+                @current-change="collectionPage">
             </el-pagination>
           </div>
         </el-tab-pane>
@@ -96,14 +96,16 @@ export default {
     return {
       blogs: [],
       collections: [],
-      collectionPage: {
+      collection: {
         colpageNum: 1,
         colpageSize: 5,
         coltotal: 0,
       },
-      pageNum: 1,
-      pageSize: 0,
-      total: 0,
+      blog: {
+        pageNum: 1,
+        pageSize: 0,
+        total: 0,
+      },
       loading: false,
       activeName: 'MyArticle',
       user: {
@@ -116,45 +118,46 @@ export default {
     if (this.$store.getters.getUser.id) {
       this.user.id = this.$store.getters.getUser.id;
     }
-    const _this = this;
-    this.$axios.get('http://localhost:8080/articles/findByUserId', {
-      params: {
-        id: this.user.id,
-        pageNum: this.pageNum,
-      }
-    }).then(res => {
-      if (res.data.code == 100) {
-        _this.blogs = res.data.data.list;
-        _this.pageNum = res.data.data.pageNum;
-        _this.total = res.data.data.total;
-        _this.pageSize = res.data.data.pageSize;
-      } else {
-        console.log(res.data.msg);
-      }
-    });
-    this.$axios.get('http://localhost:8080/articles/collectList', {
-      params: {
-        id: this.user.id,
-        pageNum: 1,
-      }
-    }).then(res => {
-      if (res.data.code == 100) {
-        _this.collections = res.data.data.list;
-        _this.collectionPage.colpageNum = res.data.data.pageNum;
-        _this.collectionPage.coltotal = res.data.data.total;
-        _this.collectionPage.colpageSize = res.data.data.pageSize;
-      } else {
-        console.log(res.data.msg);
-      }
-    });
+    this.blogPage(1);
+    this.collectionPage(1);
     this.loading = false;
   },
   methods: {
-    pageChange() {
-
+    blogPage(current) {
+      const _this = this;
+      this.$axios.get('http://localhost:8080/articles/findByUserId', {
+        params: {
+          id: this.user.id,
+          pageNum: current,
+        }
+      }).then(res => {
+        if (res.data.code == 100) {
+          _this.blogs = res.data.data.list;
+          _this.blog.pageNum = res.data.data.pageNum;
+          _this.blog.total = res.data.data.total;
+          _this.blog.pageSize = res.data.data.pageSize;
+        } else {
+          console.log(res.data.msg);
+        }
+      });
     },
-    collectionPageChange(){
-
+    collectionPage(current) {
+      const _this = this;
+      this.$axios.get('http://localhost:8080/articles/collectList', {
+        params: {
+          id: this.user.id,
+          pageNum: current,
+        }
+      }).then(res => {
+        if (res.data.code == 100) {
+          _this.collections = res.data.data.list;
+          _this.collection.colpageNum = res.data.data.pageNum;
+          _this.collection.coltotal = res.data.data.total;
+          _this.collection.colpageSize = res.data.data.pageSize;
+        } else {
+          console.log(res.data.msg);
+        }
+      });
     },
     deleteArticle(id) {
       this.$message("删除成功");
