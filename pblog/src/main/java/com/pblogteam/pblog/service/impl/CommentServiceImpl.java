@@ -10,6 +10,7 @@ import com.pblogteam.pblog.mapper.ArticleMapper;
 import com.pblogteam.pblog.mapper.CommentMapper;
 import com.pblogteam.pblog.mapper.UserMapper;
 import com.pblogteam.pblog.service.CommentService;
+import com.pblogteam.pblog.util.CopyPageInfo;
 import com.pblogteam.pblog.vo.CommentVO;
 import com.pblogteam.pblog.vo.MyComment;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,6 +119,6 @@ public class CommentServiceImpl implements CommentService {
         for(Comment comment: commentList) {
             myComments.add(new MyComment(comment, articleMapper.selectByPrimaryKey(comment.getArticleId()).getTitle()));
         }
-        return new PageInfo<>(myComments);
+        return CopyPageInfo.covertPageInfo(myComments, commentList);
     }
 }

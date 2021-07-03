@@ -37,5 +37,9 @@ public class ArticleServiceImplTest {
         System.out.println(articleService.selectByArticleId(4, 15));
     }
 
+    @Test
+    public void testTotal() {
+        System.out.println(articleService.showAllArticle(1));
+    }
 
 }
