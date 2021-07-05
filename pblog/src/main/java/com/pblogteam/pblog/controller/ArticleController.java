@@ -167,6 +167,9 @@ public class ArticleController {
 
     @GetMapping("/article/findAllArticle")
     public ResultVO<PageInfo<ArticleTitleVO>> findAllArticle(int pageNum) {
-        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.showAllArticle(pageNum));
+        System.out.println(System.currentTimeMillis());
+        PageInfo<ArticleTitleVO> tmp = articleServiceImpl.showAllArticle(pageNum);
+        System.out.println(System.currentTimeMillis());
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, tmp);
     }
 }

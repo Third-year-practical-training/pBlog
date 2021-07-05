@@ -57,7 +57,7 @@ public class UserController
         {
             return ResultVO.throwError(400, "用户名不存在");
         }
-        else if (userService.checkPassword(userVO, password) == false)
+        else if (!userService.checkPassword(userVO, password))
         {
             return ResultVO.throwError(400, "密码错误");
         }
@@ -66,10 +66,39 @@ public class UserController
             HttpSession session = request.getSession();
             System.out.println("signin: " + session.getId());
             session.setAttribute("userId", userVO.getId());
+            session.setAttribute("privilege", userVO.getPrivilege());
             stringRedisTemplate.opsForValue().set("User" + userVO.getId(), session.getId());
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userVO);
         }
     }
+
+    @PostMapping(value = {"/admin/signin", "/admin"})
+    public ResultVO<UserVO> signin(String username, String password, HttpServletRequest request, HttpServletResponse response) {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json; charset=utf-8");
+        response.setHeader("Access-Control-Allow-Credentials","true");
+        response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+        response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
+        UserVO userVO = userService.findByUserName(username);
+        if(userVO.getPrivilege() == 0) {
+            return ResultVO.throwError(400, "没有权限");
+        }else if(userVO == null) {
+            return ResultVO.throwError(400, "用户名不存在");
+        }else if(!userService.checkPassword(userVO, password)) {
+            return ResultVO.throwError(400, "密码错误");
+        }else {
+            HttpSession session = request.getSession();
+            System.out.println("管理员signin: " + session.getId());
+            session.setAttribute("userId", userVO.getId());
+            session.setAttribute("adminId", userVO.getId());
+//            session.setAttribute("privilege", userVO.getPrivilege());
+            stringRedisTemplate.opsForValue().set("User" + userVO.getId(), session.getId());
+            stringRedisTemplate.opsForValue().set("admin" + userVO.getId(), session.getId());
+            return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userVO);
+        }
+    }
+
     @GetMapping("/user/findByUserId")
     public ResultVO<UserVO> findByUserId(@RequestParam("id") Integer id,
                                          HttpSession session)
@@ -83,7 +112,7 @@ public class UserController
         }
     }
 
-    @PostMapping("/user/signout")
+    @PostMapping(value = {"/user/signout", "/admin/signout"})
     public ResultVO signout(HttpServletRequest request)
     {
         // 退出登录
