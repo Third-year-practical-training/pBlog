@@ -2,6 +2,7 @@ package com.pblogteam.pblog.component;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.pblogteam.pblog.constant.ResponseState;
 import com.pblogteam.pblog.vo.ResultVO;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +43,19 @@ public class RedisSessionInterceptor implements HandlerInterceptor
         System.out.println("Interceptor: " + session.getId());
         Integer userId = (Integer)session.getAttribute("userId");
         System.out.println(session.getAttribute("userId"));
-        if (userId != null)
-        {
+        if (userId != null) {
             String signedSessionId = stringRedisTemplate.opsForValue().get("User" + session.getAttribute("userId"));
-            if (signedSessionId != null && signedSessionId.equals(session.getId()))
-            {
+            if (signedSessionId != null && signedSessionId.equals(session.getId())) {
                 return true;
+            }
+        }
+        if(request.getRequestURI().contains("/admin")) {
+            Integer adminId = (Integer) session.getAttribute("adminId");
+            if(adminId != null) {
+                String signedSessionId = stringRedisTemplate.opsForValue().get("admin" + session.getAttribute("adminId"));
+                if (signedSessionId != null && signedSessionId.equals(session.getId())) {
+                    return true;
+                }
             }
         }
         response401(response);

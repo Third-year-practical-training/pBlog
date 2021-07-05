@@ -49,7 +49,11 @@ public class ArticleMapperTest {
 
     @Test
     public void testSearch() {
-        System.out.println(articleMapper.selectByTitleKeyWord("中国剩余定理"));
+        long start = System.currentTimeMillis();
+        ArticleExample articleExample = new ArticleExample();
+        ArticleExample.Criteria criteria = articleExample.createCriteria();
+        articleMapper.selectByExample(articleExample);
+        System.out.println(System.currentTimeMillis() - start);
     }
 
 }
