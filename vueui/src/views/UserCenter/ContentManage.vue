@@ -25,7 +25,7 @@
     <el-main>
       <el-tabs v-model="activeName">
         <el-tab-pane label="我的文章" name="MyArticle" v-loading="loading">
-          <div v-for="item in blogs" :key="item" class="el-card" style="text-align: left">
+          <div v-for="(item,i) in blogs" :key="i" class="el-card" style="text-align: left">
             <h4>
               <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
                            style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
@@ -39,9 +39,9 @@
             </div>
             <div style="text-align: right;display: inline-block;float: right">
               <el-button type="primary" icon="el-icon-edit" circle style="margin-right: 20px"
-                         @click="updateArticle(item.id)"></el-button>
+                         @click="updateArticle(i)"></el-button>
               <el-button type="danger" icon="el-icon-delete" circle style="margin-right: 10px"
-                         @click="deleteArticle(item.id)"></el-button>
+                         @click="deleteArticle(i)"></el-button>
             </div>
           </div>
           <div class="block">
@@ -55,7 +55,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="我的收藏" name="MyCollection">
-          <div v-for="collection in collections" :key="collection" class="el-card" style="text-align: left">
+          <div v-for="(collection,j) in collections" :key="j" class="el-card" style="text-align: left">
             <h4>
               <router-link :to="{name: 'BlogShow', params: {blogId: collection.id}}"
                            style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
@@ -69,7 +69,7 @@
             </div>
             <div style="text-align: right;display: inline-block;float: right">
               <el-button type="danger" icon="el-icon-delete" circle style="margin-right: 10px"
-                         @click="cancelCollection(collection.id)"></el-button>
+                         @click="cancelCollection(j)"></el-button>
             </div>
           </div>
           <div class="block">
@@ -159,19 +159,38 @@ export default {
         }
       });
     },
-    deleteArticle(id) {
-      this.$message("删除成功");
+    deleteArticle(index) {
+      const _this = this;
+      this.$axios.delete('http://localhost:8080/article/deleteById', {
+        params: {
+          id: this.blogs[index].id
+        }
+      }).then(res => {
+        if (res.data.code == 100) {
+          _this.blogs.splice(index,1);
+          _this.$message('删除成功');
+        }
+      })
     },
-    updateArticle(id) {
+    updateArticle(index) {
       this.$router.push({
         name: 'NewBlog',
         params: {
-          blogId: id,
+          blogId: this.blogs[index].id,
         }
       });
     },
-    cancelCollection(id) {
-      this.$message("取消收藏");
+    cancelCollection(index) {
+      const _this = this;
+      let data = new FormData();
+      data.append('userId',this.user.id);
+      data.append(' articleId',this.collections[index].id);
+      this.$axios.put('http://localhost:8080/article/changeCollection', data).then(res => {
+        if (res.data.code == 100) {
+          _this.collections.splice(index,1);
+          _this.$message('删除收藏成功');
+        }
+      })
     },
     formatDate(date) {
       let time = new Date(date);

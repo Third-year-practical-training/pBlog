@@ -111,7 +111,7 @@ export default {
       this.loading = true;
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          if (this.editForm.id == null) {
+          if (this.editForm.id == null || this.editForm.id == '') {
             this.editForm.date = this.formatDate(new Date().getTime());
             this.$axios({
                   url: 'http://localhost:8080/article/new',

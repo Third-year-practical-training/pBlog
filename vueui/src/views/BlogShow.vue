@@ -18,8 +18,13 @@
                   blog.classify.name
                 }}</span>
               <el-divider direction="vertical"></el-divider>
-              <el-button type="text" style="color: #7d7d7d;font-size: small" @click="collectArticle"><i
+              <el-button v-if="blog.isCollection == false" type="text" style="color: #7d7d7d;font-size: small"
+                         @click="collectArticle"><i
                   class="el-icon-collection"></i> 收藏
+              </el-button>
+              <el-button v-if="blog.isCollection != false" type="text" style="color: #7d7d7d;font-size: small"
+                         @click="collectArticle"><i
+                  class="el-icon-collection"></i> 取消收藏
               </el-button>
               <br>
               <span style="color: #7d7d7d;font-size: small"><i class="el-icon-collection-tag"></i> 标签：</span>
@@ -98,6 +103,7 @@
 
 <script>
 import marked from "marked";
+import axios from "axios";
 
 
 let rendererMD = new marked.Renderer();
@@ -132,7 +138,8 @@ export default {
         classify: {},
         tags: [],
         timestamp: '',
-        content: ''
+        content: '',
+        isCollection: false
       },
       user: {
         id: '',
@@ -167,6 +174,7 @@ export default {
           _this.blog.tags = res.data.data.tagList;
           _this.blog.timestamp = _this.formatDate(res.data.data.date);
           _this.blog.content = marked(res.data.data.content);
+          _this.blog.isCollection = res.data.data.myCollection;
           _this.comments = res.data.data.commentList;
           for (let i = 0; i < _this.comments.length; i++) {
             let a = {};
@@ -188,7 +196,16 @@ export default {
       return 'http://localhost:8080/user/showPhotoById?userId=' + id;
     },
     collectArticle() {
-      this.$message('已收藏');
+      const _this = this;
+      let data = new FormData();
+      data.append('userId',this.user.id);
+      data.append(' articleId',this.blog.id);
+      this.$axios.put('http://localhost:8080/article/changeCollection', data).then(res => {
+        if (res.data.code == 100) {
+          _this.blog.isCollection = !(_this.blog.isCollection);
+          _this.$message('修改收藏成功');
+        }
+      })
     },
     showCommentInput(i, toId, to) {
       this.commentInputs[i].inputValue = true;
