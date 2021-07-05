@@ -3,8 +3,13 @@ package com.pblogteam.pblog.mapper;
 import com.pblogteam.pblog.entity.BlackList;
 import com.pblogteam.pblog.entity.BlackListExample;
 import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+@Repository
+@Mapper
 public interface BlackListMapper {
     long countByExample(BlackListExample example);
 

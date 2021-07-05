@@ -64,18 +64,18 @@
         <!-- <table tableName="risk_model_order" domainObjectName="DSRiskModelOrder" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
          <table tableName="tel_bill_record" domainObjectName="DSTelBillRecord" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>-->
         <!-- 指定数据库表 -->
-        <table tableName="article" schema="pblogdb"/>
+<!--        <table tableName="article" schema="pblogdb"/>-->
 <!--        <table tableName="article_collector_rela" schema="pblogdb"/>-->
 <!--        <table tableName="article_tag" schema="pblogdb"/>-->
 <!--        <table tableName="article_tag_rela" schema="pblogdb"/>-->
 <!--        <table tableName="article_type" schema="pblogdb"/>-->
 <!--        <table tableName="comment" schema="pblogdb"/>-->
-<!--        <table tableName="user" schema="pblogdb"/>-->
+        <table tableName="user" schema="pblogdb"/>
 <!--        <table tableName="user_follower_rela" schema="pblogdb"/>-->
 <!--        <table tableName="notice" schema="pblogdb"/>-->
-        <table tableName="message" schema="pblogdb"/>
-        <table tableName="black_list" schema="pblogdb"/>
-        <table tableName="admin_ban" schema="pblogdb"/>
+<!--        <table tableName="message" schema="pblogdb"/>-->
+<!--        <table tableName="black_list" schema="pblogdb"/>-->
+<!--        <table tableName="admin_ban" schema="pblogdb"/>-->
 
     </context>
 </generatorConfiguration>

@@ -1,12 +1,8 @@
 package com.pblogteam.pblog.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 import java.io.Serializable;
 import java.util.Date;
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class User implements Serializable {
     private Integer id;
 
@@ -32,7 +28,7 @@ public class User implements Serializable {
 
     private Integer attentionCount;
 
-    private Byte privilege;
+    private Integer privilege;
 
     private static final long serialVersionUID = 1L;
 
@@ -132,11 +128,11 @@ public class User implements Serializable {
         this.attentionCount = attentionCount;
     }
 
-    public Byte getPrivilege() {
+    public Integer getPrivilege() {
         return privilege;
     }
 
-    public void setPrivilege(Byte privilege) {
+    public void setPrivilege(Integer privilege) {
         this.privilege = privilege;
     }
 

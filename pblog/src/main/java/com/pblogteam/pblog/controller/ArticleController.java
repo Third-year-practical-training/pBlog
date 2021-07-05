@@ -2,6 +2,7 @@ package com.pblogteam.pblog.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
+import com.hankcs.hanlp.collection.dartsclone.DartMap;
 import com.pblogteam.pblog.constant.ResponseState;
 import com.pblogteam.pblog.service.ArticleCollRelaService;
 import com.pblogteam.pblog.service.impl.ArticleServiceImpl;
@@ -141,6 +142,12 @@ public class ArticleController {
             return ResultVO.throwSuccess(ResponseState.SUCCESS);
         }
         return ResultVO.throwError(ResponseState.NOT_FOUND);
+    }
+
+    @GetMapping("/admin/changeFeature")
+    public ResultVO changeFeature(Integer id) {
+        articleServiceImpl.changeFeature(id);
+        return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
     @DeleteMapping("/draft/deleteById")

@@ -3,8 +3,13 @@ package com.pblogteam.pblog.mapper;
 import com.pblogteam.pblog.entity.Article;
 import com.pblogteam.pblog.entity.ArticleExample;
 import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
+
+@Repository
+@Mapper
 public interface ArticleMapper {
     //    my own start
     int insertAndReturnPrimaryKey(Article record);

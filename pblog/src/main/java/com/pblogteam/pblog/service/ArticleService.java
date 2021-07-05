@@ -16,7 +16,6 @@ public interface ArticleService {
 
     PageInfo<ArticleTitleVO> selectByTypeId(Integer id, int pageNum);
 
-
     boolean deleteArticleById(Integer id);
 
     void addAndUpdate(ArticleNewVO articleNewVO, Byte published);
@@ -30,6 +29,8 @@ public interface ArticleService {
     boolean isArticle(Integer id, Integer curId);
 
     void publishDraft(Integer id);
+
+    void changeFeature(Integer id);
 
 
 

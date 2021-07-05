@@ -177,9 +177,9 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public void changeAdmin(Integer userId) {
+    public void changeAdmin(Integer userId, Integer privilege) {
         User user = userMapper.selectByPrimaryKey(userId);
-        user.setPrivilege((byte) ~(byte) Privilege.ADMIN.getPrivilege().intValue());
+        user.setPrivilege(privilege);
         userMapper.updateByPrimaryKey(user);
     }
 

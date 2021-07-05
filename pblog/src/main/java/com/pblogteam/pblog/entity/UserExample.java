@@ -942,52 +942,52 @@ public class UserExample {
             return (Criteria) this;
         }
 
-        public Criteria andPrivilegeEqualTo(Byte value) {
+        public Criteria andPrivilegeEqualTo(Integer value) {
             addCriterion("privilege =", value, "privilege");
             return (Criteria) this;
         }
 
-        public Criteria andPrivilegeNotEqualTo(Byte value) {
+        public Criteria andPrivilegeNotEqualTo(Integer value) {
             addCriterion("privilege <>", value, "privilege");
             return (Criteria) this;
         }
 
-        public Criteria andPrivilegeGreaterThan(Byte value) {
+        public Criteria andPrivilegeGreaterThan(Integer value) {
             addCriterion("privilege >", value, "privilege");
             return (Criteria) this;
         }
 
-        public Criteria andPrivilegeGreaterThanOrEqualTo(Byte value) {
+        public Criteria andPrivilegeGreaterThanOrEqualTo(Integer value) {
             addCriterion("privilege >=", value, "privilege");
             return (Criteria) this;
         }
 
-        public Criteria andPrivilegeLessThan(Byte value) {
+        public Criteria andPrivilegeLessThan(Integer value) {
             addCriterion("privilege <", value, "privilege");
             return (Criteria) this;
         }
 
-        public Criteria andPrivilegeLessThanOrEqualTo(Byte value) {
+        public Criteria andPrivilegeLessThanOrEqualTo(Integer value) {
             addCriterion("privilege <=", value, "privilege");
             return (Criteria) this;
         }
 
-        public Criteria andPrivilegeIn(List<Byte> values) {
+        public Criteria andPrivilegeIn(List<Integer> values) {
             addCriterion("privilege in", values, "privilege");
             return (Criteria) this;
         }
 
-        public Criteria andPrivilegeNotIn(List<Byte> values) {
+        public Criteria andPrivilegeNotIn(List<Integer> values) {
             addCriterion("privilege not in", values, "privilege");
             return (Criteria) this;
         }
 
-        public Criteria andPrivilegeBetween(Byte value1, Byte value2) {
+        public Criteria andPrivilegeBetween(Integer value1, Integer value2) {
             addCriterion("privilege between", value1, value2, "privilege");
             return (Criteria) this;
         }
 
-        public Criteria andPrivilegeNotBetween(Byte value1, Byte value2) {
+        public Criteria andPrivilegeNotBetween(Integer value1, Integer value2) {
             addCriterion("privilege not between", value1, value2, "privilege");
             return (Criteria) this;
         }

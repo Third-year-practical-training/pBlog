@@ -1,6 +1,8 @@
 package com.pblogteam.pblog.vo;
 
+import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.pblogteam.pblog.entity.ArticleTag;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Data;
 
 import java.util.Date;
@@ -15,6 +17,7 @@ public class ArticleTitleVO {
     private Date date;
     private String summary;
     private Integer collectCount;
+    private Boolean isFeature;
     private Integer commentCount;
     private List<ArticleTag> articleTagList;
 }

@@ -4,6 +4,7 @@ import com.pblogteam.pblog.config.Config;
 import com.pblogteam.pblog.entity.Article;
 import com.pblogteam.pblog.entity.ArticleCollectorRela;
 import com.pblogteam.pblog.entity.ArticleCollectorRelaExample;
+import com.pblogteam.pblog.entity.ArticleExample;
 import com.pblogteam.pblog.mapper.ArticleCollectorRelaMapper;
 import com.pblogteam.pblog.mapper.ArticleMapper;
 import com.pblogteam.pblog.service.ArticleCollRelaService;

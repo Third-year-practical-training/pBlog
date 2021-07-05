@@ -85,12 +85,13 @@ public class ArticleServiceImpl implements ArticleService {
                 ArticleTitleVO articleTitleVO = new ArticleTitleVO();
                 articleTitleVO.setId(a.getId());
                 articleTitleVO.setUserId(a.getUserId());
+                articleTitleVO.setIsFeature(a.getIsFeature() == 1);
                 // 查nickname
                 articleTitleVO.setUserNickname(userServiceImpl.selectByPrimaryKey(a.getUserId()).getNickname());
                 articleTitleVO.setTitle(a.getTitle());
                 articleTitleVO.setDate(a.getDate());
                 // 查文章简介
-                articleTitleVO.setSummary(a.getContent().length() > ARTICLE_SUMMARY_LENGTH ? a.getContent().substring(0, ARTICLE_SUMMARY_LENGTH) : a.getContent());
+                articleTitleVO.setSummary(a.getSummary());
                 articleTitleVO.setCollectCount(a.getCollectionCount());
                 articleTitleVO.setCommentCount(a.getCommentCount());
 
@@ -146,6 +147,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setDate(articleNewVO.getDate());
         article.setContent(articleNewVO.getContent());
         article.setId(articleNewVO.getId());
+        article.setSummary(articleNewVO.getSummary());
         // 添加文章
         if(article.getId() == null) {
             // 添加新文章
@@ -226,6 +228,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public void changeCollection(Integer userId, Integer articleId) {
         articleCollRelaServiceImpl.changeCollStatus(new ArticleCollectorRela(userId, articleId));
+        Article article = articleMapper.selectByPrimaryKey(articleId);
+        article.setCollectionCount(article.getCollectionCount() + 1);
+        articleMapper.updateByPrimaryKey(article);
     }
 
     /**
@@ -246,6 +251,13 @@ public class ArticleServiceImpl implements ArticleService {
         article.setId(id);
         article.setPublished((byte) 1);
         articleMapper.updateByPrimaryKeySelective(article);
+    }
+
+    @Override
+    public void changeFeature(Integer id) {
+        Article article = articleMapper.selectByPrimaryKey(id);
+        article.setIsFeature(article.getIsFeature() == 1 ? 0 : 1);
+        articleMapper.updateByPrimaryKey(article);
     }
 
     @Override
