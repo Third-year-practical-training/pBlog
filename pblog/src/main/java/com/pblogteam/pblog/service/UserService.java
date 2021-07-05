@@ -32,5 +32,5 @@ public interface UserService {
 
     void changeAdmin(Integer userId, Integer privilege);
 
-
+    PageInfo<UserVO> findAllUser(int pageNum);
 }

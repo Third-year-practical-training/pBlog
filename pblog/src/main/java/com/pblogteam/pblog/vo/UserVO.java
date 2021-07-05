@@ -25,6 +25,6 @@ public class UserVO
     private String photoUrl;
     private String description;
     private Integer attentionCount;
-    private Byte privilege;
+    private Integer privilege;
     private boolean myAttention;
 }
