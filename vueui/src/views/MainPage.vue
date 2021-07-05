@@ -26,16 +26,23 @@
             </el-carousel-item>
           </el-carousel>
           <el-card class="box-card" v-loading="loading">
-            <div v-for="item in blogs" :key="item.id" class="block">
-              <el-card>
-                <div class="grid-content bg-purple-light">
-                  <p>
-                    <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
-                                 style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
-                      {{ item.title }}
-                    </router-link>
-                  </p>
+            <div v-for="item in blogs" :key="item.id">
+              <el-card style="min-height: 150px;max-width: 900px">
+                <div>
                   <div>
+                    <el-image style="width: 200px;height: 200px;float: left;margin-bottom: 10px"
+                              :src="getAvatarUrl(item.userId)">
+                    </el-image>
+                  </div>
+                  <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
+                               style="font-size: x-large;font-family: 'Arial Black';color: #333333;text-decoration: none">
+                    {{ item.title }}
+                  </router-link>
+                  <div
+                      style="min-height: 100px;text-align: left;max-width: 600px;margin-left: 50px;float: left;margin-top: 30px">
+                    <span>{{ item.summary }}</span>
+                  </div>
+                  <div style="float: right">
                   <span style="color: #7d7d7d;font-size: small"><i class="el-icon-date"></i> 发表于：{{
                       formatDate(item.date)
                     }}</span>
@@ -46,12 +53,17 @@
                         item.userNickname
                       }}</el-button>
                       </span>
-                    <br>
+                    <el-divider direction="vertical"></el-divider>
                     <span style="color: #7d7d7d;font-size: small"><i class="el-icon-collection-tag"></i> 标签：</span>
                     <div style="display: inline" v-for="tag in item.articleTagList" :key="tag" class="el-tag">
                       {{ tag.name }}
                     </div>
-                    <br>
+                    <el-divider direction="vertical"></el-divider>
+                    <span style="color: #7d7d7d;font-size: small"><i
+                        class="el-icon-collection-tag"></i> 收藏数： {{ item.collectCount }}</span>
+                    <el-divider direction="vertical"></el-divider>
+                    <span style="color: #7d7d7d;font-size: small"><i
+                        class="el-icon-collection-tag"></i> 评论数： {{ item.commentCount }}</span>
                   </div>
                 </div>
               </el-card>
@@ -164,18 +176,6 @@ export default {
         }
       });
     },
-    prePage() {
-      if (this.pageNum <= 1) {
-        this.$message('已经是第一页了');
-      } else {
-        this.pageNum = this.pageNum - 1;
-        this.page(this.pageNum);
-      }
-    },
-    nextPage() {
-      this.pageNum = this.pageNum + 1;
-      this.page(this.pageNum);
-    },
     getHotTags() {
       const _this = this;
       this.$axios.get('http://localhost:8080/getHotTags').then(res => {
@@ -228,6 +228,9 @@ export default {
           id: id,
         }
       });
+    },
+    getAvatarUrl(id) {
+      return 'http://localhost:8080/user/showPhotoById?userId=' + id;
     }
 
   }
@@ -256,13 +259,13 @@ export default {
   width: 100%;
 }
 
-.bg-purple-light {
-  background: #FFFFFF;
-}
+/*.bg-purple-light {*/
+/*  background: #FFFFFF;*/
+/*}*/
 
-.grid-content {
-  border-radius: 4px;
-  min-height: 36px;
-}
+/*.grid-content {*/
+/*  border-radius: 4px;*/
+/*  min-height: 36px;*/
+/*}*/
 
 </style>

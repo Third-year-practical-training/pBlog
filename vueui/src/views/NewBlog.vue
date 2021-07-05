@@ -4,6 +4,9 @@
       <el-form-item label="标题" prop="title" style="margin-top: 10px">
         <el-input v-model="editForm.title"></el-input>
       </el-form-item>
+      <el-form-item label="简介" prop="summary" style="margin-top: 10px">
+        <el-input v-model="editForm.summary"></el-input>
+      </el-form-item>
       <el-form-item label="分类" prop="articleTypeId">
         <el-select v-model="editForm.articleTypeId" placeholder="请选择">
           <el-option
@@ -63,8 +66,8 @@ export default {
         title: '',
         date: '',
         content: '',
+        summary:'',
         tag: [],
-
       },
       select: [],
       rules: {
