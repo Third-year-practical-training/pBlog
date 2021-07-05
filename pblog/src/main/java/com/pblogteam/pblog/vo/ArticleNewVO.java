@@ -15,5 +15,6 @@ public class ArticleNewVO {
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Shanghai")
     private Date date;
     private String content;
+    private String summary;
     private List<ArticleTag> tag;
 }

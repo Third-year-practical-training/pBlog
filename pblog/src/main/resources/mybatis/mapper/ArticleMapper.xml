@@ -6,15 +6,16 @@
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="article_type_id" jdbcType="INTEGER" property="articleTypeId" />
     <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="summary" jdbcType="VARCHAR" property="summary" />
     <result column="date" jdbcType="DATE" property="date" />
     <result column="published" jdbcType="TINYINT" property="published" />
     <result column="collection_count" jdbcType="INTEGER" property="collectionCount" />
     <result column="comment_count" jdbcType="INTEGER" property="commentCount" />
+    <result column="is_feature" jdbcType="INTEGER" property="isFeature" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.pblogteam.pblog.entity.Article">
     <result column="content" jdbcType="LONGVARCHAR" property="content" />
   </resultMap>
-
   <!--  my own start-->
   <insert id="insertAndReturnPrimaryKey" parameterType="com.pblogteam.pblog.entity.Article" useGeneratedKeys="true" keyProperty="id">
     insert into article (user_id, article_type_id,
@@ -90,7 +91,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, user_id, article_type_id, title, date, published, collection_count, comment_count
+    id, user_id, article_type_id, title, summary, date, published, collection_count, 
+    comment_count, is_feature
   </sql>
   <sql id="Blob_Column_List">
     content
@@ -145,13 +147,13 @@
   </delete>
   <insert id="insert" parameterType="com.pblogteam.pblog.entity.Article">
     insert into article (id, user_id, article_type_id, 
-      title, date, published, 
-      collection_count, comment_count, content
-      )
+      title, summary, date, 
+      published, collection_count, comment_count, 
+      is_feature, content)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{articleTypeId,jdbcType=INTEGER}, 
-      #{title,jdbcType=VARCHAR}, #{date,jdbcType=DATE}, #{published,jdbcType=TINYINT}, 
-      #{collectionCount,jdbcType=INTEGER}, #{commentCount,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}
-      )
+      #{title,jdbcType=VARCHAR}, #{summary,jdbcType=VARCHAR}, #{date,jdbcType=DATE}, 
+      #{published,jdbcType=TINYINT}, #{collectionCount,jdbcType=INTEGER}, #{commentCount,jdbcType=INTEGER}, 
+      #{isFeature,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.pblogteam.pblog.entity.Article">
     insert into article
@@ -168,6 +170,9 @@
       <if test="title != null">
         title,
       </if>
+      <if test="summary != null">
+        summary,
+      </if>
       <if test="date != null">
         date,
       </if>
@@ -179,6 +184,9 @@
       </if>
       <if test="commentCount != null">
         comment_count,
+      </if>
+      <if test="isFeature != null">
+        is_feature,
       </if>
       <if test="content != null">
         content,
@@ -197,6 +205,9 @@
       <if test="title != null">
         #{title,jdbcType=VARCHAR},
       </if>
+      <if test="summary != null">
+        #{summary,jdbcType=VARCHAR},
+      </if>
       <if test="date != null">
         #{date,jdbcType=DATE},
       </if>
@@ -208,6 +219,9 @@
       </if>
       <if test="commentCount != null">
         #{commentCount,jdbcType=INTEGER},
+      </if>
+      <if test="isFeature != null">
+        #{isFeature,jdbcType=INTEGER},
       </if>
       <if test="content != null">
         #{content,jdbcType=LONGVARCHAR},
@@ -235,6 +249,9 @@
       <if test="record.title != null">
         title = #{record.title,jdbcType=VARCHAR},
       </if>
+      <if test="record.summary != null">
+        summary = #{record.summary,jdbcType=VARCHAR},
+      </if>
       <if test="record.date != null">
         date = #{record.date,jdbcType=DATE},
       </if>
@@ -246,6 +263,9 @@
       </if>
       <if test="record.commentCount != null">
         comment_count = #{record.commentCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.isFeature != null">
+        is_feature = #{record.isFeature,jdbcType=INTEGER},
       </if>
       <if test="record.content != null">
         content = #{record.content,jdbcType=LONGVARCHAR},
@@ -261,10 +281,12 @@
       user_id = #{record.userId,jdbcType=INTEGER},
       article_type_id = #{record.articleTypeId,jdbcType=INTEGER},
       title = #{record.title,jdbcType=VARCHAR},
+      summary = #{record.summary,jdbcType=VARCHAR},
       date = #{record.date,jdbcType=DATE},
       published = #{record.published,jdbcType=TINYINT},
       collection_count = #{record.collectionCount,jdbcType=INTEGER},
       comment_count = #{record.commentCount,jdbcType=INTEGER},
+      is_feature = #{record.isFeature,jdbcType=INTEGER},
       content = #{record.content,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -276,10 +298,12 @@
       user_id = #{record.userId,jdbcType=INTEGER},
       article_type_id = #{record.articleTypeId,jdbcType=INTEGER},
       title = #{record.title,jdbcType=VARCHAR},
+      summary = #{record.summary,jdbcType=VARCHAR},
       date = #{record.date,jdbcType=DATE},
       published = #{record.published,jdbcType=TINYINT},
       collection_count = #{record.collectionCount,jdbcType=INTEGER},
-      comment_count = #{record.commentCount,jdbcType=INTEGER}
+      comment_count = #{record.commentCount,jdbcType=INTEGER},
+      is_feature = #{record.isFeature,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -296,6 +320,9 @@
       <if test="title != null">
         title = #{title,jdbcType=VARCHAR},
       </if>
+      <if test="summary != null">
+        summary = #{summary,jdbcType=VARCHAR},
+      </if>
       <if test="date != null">
         date = #{date,jdbcType=DATE},
       </if>
@@ -308,6 +335,9 @@
       <if test="commentCount != null">
         comment_count = #{commentCount,jdbcType=INTEGER},
       </if>
+      <if test="isFeature != null">
+        is_feature = #{isFeature,jdbcType=INTEGER},
+      </if>
       <if test="content != null">
         content = #{content,jdbcType=LONGVARCHAR},
       </if>
@@ -319,10 +349,12 @@
     set user_id = #{userId,jdbcType=INTEGER},
       article_type_id = #{articleTypeId,jdbcType=INTEGER},
       title = #{title,jdbcType=VARCHAR},
+      summary = #{summary,jdbcType=VARCHAR},
       date = #{date,jdbcType=DATE},
       published = #{published,jdbcType=TINYINT},
       collection_count = #{collectionCount,jdbcType=INTEGER},
       comment_count = #{commentCount,jdbcType=INTEGER},
+      is_feature = #{isFeature,jdbcType=INTEGER},
       content = #{content,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -331,10 +363,12 @@
     set user_id = #{userId,jdbcType=INTEGER},
       article_type_id = #{articleTypeId,jdbcType=INTEGER},
       title = #{title,jdbcType=VARCHAR},
+      summary = #{summary,jdbcType=VARCHAR},
       date = #{date,jdbcType=DATE},
       published = #{published,jdbcType=TINYINT},
       collection_count = #{collectionCount,jdbcType=INTEGER},
-      comment_count = #{commentCount,jdbcType=INTEGER}
+      comment_count = #{commentCount,jdbcType=INTEGER},
+      is_feature = #{isFeature,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

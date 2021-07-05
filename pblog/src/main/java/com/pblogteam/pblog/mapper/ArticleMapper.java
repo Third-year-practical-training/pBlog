@@ -1,7 +1,6 @@
 package com.pblogteam.pblog.mapper;
 
 import com.pblogteam.pblog.entity.Article;
-import com.pblogteam.pblog.entity.ArticleCollectorRela;
 import com.pblogteam.pblog.entity.ArticleExample;
 import java.util.List;
 
