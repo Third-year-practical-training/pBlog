@@ -25,7 +25,6 @@
                 <div style="margin-top: 20px; margin-bottom: -10px; color: #666; font-size: 14px; text-align: center; font-weight: bold;">
                     <span style="margin-right: 5px;">演示帐号一键登录：</span>
                     <el-button type="danger" size="mini" @click="testAccount('admin')">admin</el-button>
-                    <el-button type="danger" size="mini" plain @click="testAccount('test')">test</el-button>
                 </div>
             </el-form>
         </div>
@@ -80,7 +79,15 @@ export default {
                     this.$store.dispatch('user/login', this.form).then(() => {
                         this.loading = false
                         this.form.remember && localStorage.setItem('login_account', this.form.account)
-                        this.$router.push({ path: this.redirect || '/' })
+                        const _this = this
+                        let data = new FormData()
+                        data.append('username',this.form.account)
+                        data.append('password',this.form.password)
+                        this.$api.get('/admin/signin',data).then( res =>{
+                            if (res.data.code == 100){
+                                _this.$router.push({ path: this.redirect || '/' })
+                            }
+                        })
                     }).catch(() => {
                         this.loading = false
                     })
