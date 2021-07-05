@@ -80,17 +80,17 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<ArticleTag> getHotTag() {
-        List<ArticleTagRela> articleTagRelaList = articleTagRelaMapper.getHotTagList();
-        articleTagRelaList.sort(new Comparator<ArticleTagRela>() {
-            @Override
-            public int compare(ArticleTagRela o1, ArticleTagRela o2) {
-                 if(o1.getArticleId() > o2.getArticleId()) return 1;
-                 else if(o1.getArticleId().equals(o2.getArticleId())) return 0;
-                 else return -1;
-            }
-        });
+        List<ArticleTagRela> articleTagRelaList = articleTagRelaMapper.getHotTagList(Config.HOT_TAG_SIZE);
+//        articleTagRelaList.sort(new Comparator<ArticleTagRela>() {
+//            @Override
+//            public int compare(ArticleTagRela o1, ArticleTagRela o2) {
+//                 if(o1.getArticleId() > o2.getArticleId()) return 1;
+//                 else if(o1.getArticleId().equals(o2.getArticleId())) return 0;
+//                 else return -1;
+//            }
+//        });
         List<Integer> tagIds = new ArrayList<>();
-        for(int i = 0; i < Config.HOT_TAG_SIZE && i < articleTagRelaList.size(); i++) {
+        for(int i = 0;i < articleTagRelaList.size(); i++) {
             tagIds.add(articleTagRelaList.get(i).getTagId());
         }
         ArticleTagExample articleTagExample = new ArticleTagExample();

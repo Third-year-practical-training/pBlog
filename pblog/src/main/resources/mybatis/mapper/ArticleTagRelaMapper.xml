@@ -11,8 +11,8 @@
     <result column="tag_id" property="tagId" jdbcType="INTEGER"/>
   </resultMap>
 <!--  my own start-->
-  <select id="getHotTagList" resultMap="GroupByTagId">
-    select count(*), tag_id from article_tag_rela group by tag_id;
+  <select id="getHotTagList" resultMap="GroupByTagId" parameterType="java.lang.Integer">
+    select count(*) as article_Id, tag_id from article_tag_rela group by tag_id order by article_Id desc limit 0, #{num};
   </select>
 <!--  my own end-->
   

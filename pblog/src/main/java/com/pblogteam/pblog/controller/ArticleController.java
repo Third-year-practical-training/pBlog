@@ -3,6 +3,7 @@ package com.pblogteam.pblog.controller;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 import com.pblogteam.pblog.constant.ResponseState;
+import com.pblogteam.pblog.service.ArticleCollRelaService;
 import com.pblogteam.pblog.service.impl.ArticleServiceImpl;
 import com.pblogteam.pblog.vo.ArticleAndCommentVO;
 import com.pblogteam.pblog.vo.ArticleNewVO;
@@ -24,6 +25,8 @@ public class ArticleController {
 
     @Autowired
     private ArticleServiceImpl articleServiceImpl;
+    @Autowired
+    private ArticleCollRelaService articleCollRelaService;
     @GetMapping("/articles/findByUserId")
     public ResultVO<PageInfo<ArticleTitleVO>> getArticleListByUser(Integer id, int pageNum) {
         if(id != null) {
@@ -171,5 +174,10 @@ public class ArticleController {
         PageInfo<ArticleTitleVO> tmp = articleServiceImpl.showAllArticle(pageNum);
         System.out.println(System.currentTimeMillis());
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, tmp);
+    }
+
+    @GetMapping("/article/getHotArticles")
+    public ResultVO<List<ArticleTitleVO>> getHotArticles() {
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleCollRelaService.getHotList());
     }
 }
