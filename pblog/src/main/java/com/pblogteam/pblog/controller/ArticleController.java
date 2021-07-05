@@ -9,13 +9,13 @@ import com.pblogteam.pblog.vo.ArticleAndCommentVO;
 import com.pblogteam.pblog.vo.ArticleNewVO;
 import com.pblogteam.pblog.vo.ArticleTitleVO;
 import com.pblogteam.pblog.vo.ResultVO;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -46,6 +46,7 @@ public class ArticleController {
         return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
     }
 
+
     @GetMapping("/articles/findByType")
     public ResultVO<PageInfo<ArticleTitleVO>> getArticleListByType(Integer id, int pageNum) {
         if(id != null) {
@@ -68,23 +69,23 @@ public class ArticleController {
 
     @GetMapping("/article/findById")
     public ResultVO<ArticleAndCommentVO> getArticleContentById(Integer id, HttpServletRequest request) {
-        if(!articleServiceImpl.isArticle(id) || id == null) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
+        Integer curId = (Integer) request.getSession().getAttribute("userId");
+        if(!articleServiceImpl.isArticle(id, curId) || id == null) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         int userId = (int) request.getSession().getAttribute("userId");
-        if(id == null) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.selectByArticleId(id, userId));
     }
 
     @GetMapping("/draft/findById")
     public ResultVO<ArticleAndCommentVO> getDraftContentById(Integer id, HttpServletRequest request) {
         ResultVO<ArticleAndCommentVO> resultVO = new ResultVO<>();
-        if(articleServiceImpl.isArticle(id) || id == null) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         int userId = (int) request.getSession().getAttribute("userId");
+        if(articleServiceImpl.isArticle(id, userId) || id == null) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.selectByArticleId(id, userId));
     }
 
     @PutMapping("/article/changeCollection")
     public ResultVO changeCollectStatus(Integer userId, Integer articleId) {
-        if(!articleServiceImpl.isArticle(articleId) || userId == null || articleId == null) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
+        if(!articleServiceImpl.isArticle(articleId, -1) || userId == null || articleId == null) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         articleServiceImpl.changeCollection(userId, articleId);
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
@@ -102,8 +103,9 @@ public class ArticleController {
     }
 
     @PutMapping("/article/update")
-    public ResultVO updateArticle(@RequestBody ArticleNewVO articleNewVO) {
-        if(articleNewVO.getId() != null && !articleServiceImpl.isArticle(articleNewVO.getId())) {
+    public ResultVO updateArticle(@RequestBody ArticleNewVO articleNewVO, HttpServletRequest request) {
+        int userId = (int) request.getSession().getAttribute("userId");
+        if(articleNewVO.getId() != null && !articleServiceImpl.isArticle(articleNewVO.getId(), userId)) {
             return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         }
         articleServiceImpl.addAndUpdate(articleNewVO, (byte) 1);
@@ -111,8 +113,9 @@ public class ArticleController {
     }
 
     @PutMapping("/draft/update")
-    public ResultVO updateDraft(@RequestBody ArticleNewVO articleNewVO) {
-        if(articleNewVO.getId() != null && articleServiceImpl.isArticle(articleNewVO.getId())) {
+    public ResultVO updateDraft(@RequestBody ArticleNewVO articleNewVO, HttpServletRequest request) {
+        int userId = (int) request.getSession().getAttribute("userId");
+        if(articleNewVO.getId() != null && articleServiceImpl.isArticle(articleNewVO.getId(), userId)) {
             return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         }
         articleServiceImpl.addAndUpdate(articleNewVO, (byte) 0);
@@ -120,8 +123,9 @@ public class ArticleController {
     }
 
     @DeleteMapping("/article/deleteById")
-    public ResultVO deleteArticle(Integer id) {
-        if(!articleServiceImpl.isArticle(id) || id == null) {
+    public ResultVO deleteArticle(Integer id, HttpServletRequest request) {
+        Integer curId = (Integer) request.getSession().getAttribute("userId");
+        if(!articleServiceImpl.isArticle(id, curId) || id == null) {
             return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         }
         if(articleServiceImpl.deleteArticleById(id)) {
@@ -130,10 +134,19 @@ public class ArticleController {
             return ResultVO.throwError(ResponseState.NOT_FOUND);
         }
     }
+    @DeleteMapping("/admin/deleteArticle")
+    public ResultVO deleteArticleAdmin(Integer id) {
+        if(articleServiceImpl.isArticle(id, -1)) {
+            articleServiceImpl.deleteArticleById(id);
+            return ResultVO.throwSuccess(ResponseState.SUCCESS);
+        }
+        return ResultVO.throwError(ResponseState.NOT_FOUND);
+    }
 
     @DeleteMapping("/draft/deleteById")
-    public ResultVO deleteDraft(Integer id) {
-        if(articleServiceImpl.isArticle(id) || id == null) {
+    public ResultVO deleteDraft(Integer id, HttpServletRequest request) {
+        int userId = (int) request.getSession().getAttribute("userId");
+        if(articleServiceImpl.isArticle(id, userId) || id == null) {
             return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         }
         if(articleServiceImpl.deleteArticleById(id)) {
@@ -144,8 +157,9 @@ public class ArticleController {
     }
 
     @PutMapping("/draft/publishById")
-    public ResultVO publishDraft(Integer id) {
-        if(articleServiceImpl.isArticle(id) || id == null) {
+    public ResultVO publishDraft(Integer id, HttpServletRequest request) {
+        int userId = (int) request.getSession().getAttribute("userId");
+        if(articleServiceImpl.isArticle(id, userId) || id == null) {
             return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         }
         articleServiceImpl.publishDraft(id);

@@ -27,7 +27,7 @@ public interface ArticleService {
 
     void changeCollection(Integer userId, Integer articleId);
 
-    boolean isArticle(Integer id);
+    boolean isArticle(Integer id, Integer curId);
 
     void publishDraft(Integer id);
 

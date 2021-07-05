@@ -228,9 +228,16 @@ public class ArticleServiceImpl implements ArticleService {
         articleCollRelaServiceImpl.changeCollStatus(new ArticleCollectorRela(userId, articleId));
     }
 
+    /**
+     *
+     * @param id
+     * @param curId 传入用户ID，判断是否是自己的文章，不需要判断时传入-1
+     * @return
+     */
     @Override
-    public boolean isArticle(Integer id) {
-        return articleMapper.selectByPrimaryKey(id).getPublished() == 0x01;
+    public boolean isArticle(Integer id, Integer curId) {
+        Article article = articleMapper.selectByPrimaryKey(id);
+        return article.getPublished() == 0x01 && (curId == -1 || article.getUserId().equals(curId));
     }
 
     @Override
