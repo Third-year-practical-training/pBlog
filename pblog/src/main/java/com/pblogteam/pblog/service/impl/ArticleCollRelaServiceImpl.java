@@ -1,18 +1,30 @@
 package com.pblogteam.pblog.service.impl;
 
+import com.pblogteam.pblog.config.Config;
+import com.pblogteam.pblog.entity.Article;
 import com.pblogteam.pblog.entity.ArticleCollectorRela;
 import com.pblogteam.pblog.entity.ArticleCollectorRelaExample;
 import com.pblogteam.pblog.mapper.ArticleCollectorRelaMapper;
+import com.pblogteam.pblog.mapper.ArticleMapper;
 import com.pblogteam.pblog.service.ArticleCollRelaService;
+import com.pblogteam.pblog.service.ArticleService;
+import com.pblogteam.pblog.vo.ArticleTitleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ArticleCollRelaServiceImpl implements ArticleCollRelaService {
     @Autowired
     private ArticleCollectorRelaMapper articleCollectorRelaMapper;
+
+    @Autowired
+    private ArticleServiceImpl articleServiceImpl;
+
+    @Autowired
+    private ArticleMapper articleMapper;
     @Override
     public void changeCollStatus(ArticleCollectorRela articleCollectorRela) {
         if(isExist(articleCollectorRela)) {
@@ -63,5 +75,13 @@ public class ArticleCollRelaServiceImpl implements ArticleCollRelaService {
         return articleCollectorRelaMapper.selectByExample(example);
     }
 
-
+    @Override
+    public List<ArticleTitleVO> getHotList() {
+        List<ArticleCollectorRela> articleCollectorRelaList = articleCollectorRelaMapper.getHotArticleList(Config.HOT_ARTICLE_SIZE);
+        List<Article> articleList = new ArrayList<>();
+        for(ArticleCollectorRela item: articleCollectorRelaList) {
+            articleList.add(articleMapper.selectByPrimaryKey(item.getArticleId()));
+        }
+        return articleServiceImpl.fillArtTitVOByArtList(articleList);
+    }
 }

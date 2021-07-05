@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Mapper
 public interface ArticleTagRelaMapper {
     // my own start
-    List<ArticleTagRela> getHotTagList();
+    List<ArticleTagRela> getHotTagList(int num);
     // my own end
 
     int countByExample(ArticleTagRelaExample example);

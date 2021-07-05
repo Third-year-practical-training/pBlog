@@ -11,6 +11,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Mapper
 public interface ArticleCollectorRelaMapper {
+//    my own start
+    List<ArticleCollectorRela> getHotArticleList(int num);
+//    my own end
     long countByExample(ArticleCollectorRelaExample example);
 
     int deleteByExample(ArticleCollectorRelaExample example);
