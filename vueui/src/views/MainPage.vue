@@ -1,6 +1,6 @@
 <template>
-  <el-container>
-    <el-header>
+  <el-container id="mainpage">
+    <el-header id="header">
       <div class="block"
            style="display: inline-block;font-size: xx-large;font-family: 'Arial Black';margin-left: 600px">IT技术论坛
       </div>
@@ -12,8 +12,8 @@
         <el-tab-pane label="退出登录" name="exit"></el-tab-pane>
       </el-tabs>
     </el-header>
-    <el-container>
-      <el-main>
+    <el-container id="maincontainer">
+      <el-main id="main">
         <div class="block">
           <span class="demonstration"></span>
           <el-carousel height="200px" autoplay="true">
@@ -26,7 +26,7 @@
             </el-carousel-item>
           </el-carousel>
           <el-card class="box-card" v-loading="loading">
-            <div v-for="item in blogs" :key="item.id">
+            <div v-for="item in blogs" :key="item.id" style="margin-left: 100px">
               <el-card style="min-height: 150px;max-width: 900px">
                 <div>
                   <div>
@@ -80,7 +80,7 @@
           </div>
         </div>
       </el-main>
-      <el-aside>
+      <el-aside id="asidepage">
         <el-card class="box-card">
           <el-avatar :size="150" :src="this.user.url"></el-avatar>
           <div class="text item" style="font-family: 'Arial Black';font-size: large">{{ this.user.nickname }}</div>
@@ -98,15 +98,17 @@
           <div slot="header" class="clearfix">
             <span>热门文章</span>
           </div>
-          <div v-for="o in 4" :key="o" class="text item">
-            {{ '文章标题 ' + o }}
+          <div v-for="item in hotArticles" :key="item" class="text item">
+            <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
+                         style="font-family: 'Arial Black';color: red;text-decoration: none">
+              {{ item.title }}
+            </router-link>
             <el-divider></el-divider>
           </div>
         </el-card>
       </el-aside>
     </el-container>
   </el-container>
-
 </template>
 
 <script>
@@ -119,6 +121,7 @@ export default {
     return {
       blogs: [],
       hotTags: [],
+      hotArticles: [],
       pageNum: 1,
       total: 0,
       pageSize: 0,
@@ -151,6 +154,7 @@ export default {
       this.user.nickname = this.$store.getters.getUser.nickname;
       this.page(1);
       this.getHotTags();
+      this.getHotArticles();
     } else {
       this.$message("请先登录");
       this.$router.push('/');
@@ -181,6 +185,16 @@ export default {
       this.$axios.get('http://localhost:8080/getHotTags').then(res => {
         if (res.data.code == 100) {
           _this.hotTags = res.data.data;
+        } else {
+          console.log(res.data.msg);
+        }
+      })
+    },
+    getHotArticles() {
+      const _this = this;
+      this.$axios.get('http://localhost:8080//article/getHotArticles').then(res => {
+        if (res.data.code == 100) {
+          _this.hotArticles = res.data.data;
         } else {
           console.log(res.data.msg);
         }
@@ -239,6 +253,12 @@ export default {
 
 <style>
 
+#mainpage {
+  background: url("../assets/mainpagebg.jpeg") no-repeat center;
+  background-size: 100% 100%;
+  position: page;
+}
+
 .el-carousel__item h3 {
   color: #475669;
   font-size: 14px;
@@ -258,6 +278,7 @@ export default {
 .box-card {
   width: 100%;
 }
+
 
 /*.bg-purple-light {*/
 /*  background: #FFFFFF;*/
