@@ -4,7 +4,9 @@
   <resultMap id="BaseResultMap" type="com.pblogteam.pblog.entity.Message">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="from_id" jdbcType="INTEGER" property="fromId" />
+    <result column="from_name" jdbcType="VARCHAR" property="fromName" />
     <result column="to_id" jdbcType="INTEGER" property="toId" />
+    <result column="to_name" jdbcType="VARCHAR" property="toName" />
     <result column="date" jdbcType="DATE" property="date" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.pblogteam.pblog.entity.Message">
@@ -69,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, from_id, to_id, date
+    id, from_id, from_name, to_id, to_name, date
   </sql>
   <sql id="Blob_Column_List">
     content
@@ -123,10 +125,12 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.pblogteam.pblog.entity.Message">
-    insert into message (id, from_id, to_id, 
-      date, content)
-    values (#{id,jdbcType=INTEGER}, #{fromId,jdbcType=INTEGER}, #{toId,jdbcType=INTEGER}, 
-      #{date,jdbcType=DATE}, #{content,jdbcType=LONGVARCHAR})
+    insert into message (id, from_id, from_name, 
+      to_id, to_name, date, content
+      )
+    values (#{id,jdbcType=INTEGER}, #{fromId,jdbcType=INTEGER}, #{fromName,jdbcType=VARCHAR}, 
+      #{toId,jdbcType=INTEGER}, #{toName,jdbcType=VARCHAR}, #{date,jdbcType=DATE}, #{content,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.pblogteam.pblog.entity.Message">
     insert into message
@@ -137,8 +141,14 @@
       <if test="fromId != null">
         from_id,
       </if>
+      <if test="fromName != null">
+        from_name,
+      </if>
       <if test="toId != null">
         to_id,
+      </if>
+      <if test="toName != null">
+        to_name,
       </if>
       <if test="date != null">
         date,
@@ -154,8 +164,14 @@
       <if test="fromId != null">
         #{fromId,jdbcType=INTEGER},
       </if>
+      <if test="fromName != null">
+        #{fromName,jdbcType=VARCHAR},
+      </if>
       <if test="toId != null">
         #{toId,jdbcType=INTEGER},
+      </if>
+      <if test="toName != null">
+        #{toName,jdbcType=VARCHAR},
       </if>
       <if test="date != null">
         #{date,jdbcType=DATE},
@@ -180,8 +196,14 @@
       <if test="record.fromId != null">
         from_id = #{record.fromId,jdbcType=INTEGER},
       </if>
+      <if test="record.fromName != null">
+        from_name = #{record.fromName,jdbcType=VARCHAR},
+      </if>
       <if test="record.toId != null">
         to_id = #{record.toId,jdbcType=INTEGER},
+      </if>
+      <if test="record.toName != null">
+        to_name = #{record.toName,jdbcType=VARCHAR},
       </if>
       <if test="record.date != null">
         date = #{record.date,jdbcType=DATE},
@@ -198,7 +220,9 @@
     update message
     set id = #{record.id,jdbcType=INTEGER},
       from_id = #{record.fromId,jdbcType=INTEGER},
+      from_name = #{record.fromName,jdbcType=VARCHAR},
       to_id = #{record.toId,jdbcType=INTEGER},
+      to_name = #{record.toName,jdbcType=VARCHAR},
       date = #{record.date,jdbcType=DATE},
       content = #{record.content,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
@@ -209,7 +233,9 @@
     update message
     set id = #{record.id,jdbcType=INTEGER},
       from_id = #{record.fromId,jdbcType=INTEGER},
+      from_name = #{record.fromName,jdbcType=VARCHAR},
       to_id = #{record.toId,jdbcType=INTEGER},
+      to_name = #{record.toName,jdbcType=VARCHAR},
       date = #{record.date,jdbcType=DATE}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -221,8 +247,14 @@
       <if test="fromId != null">
         from_id = #{fromId,jdbcType=INTEGER},
       </if>
+      <if test="fromName != null">
+        from_name = #{fromName,jdbcType=VARCHAR},
+      </if>
       <if test="toId != null">
         to_id = #{toId,jdbcType=INTEGER},
+      </if>
+      <if test="toName != null">
+        to_name = #{toName,jdbcType=VARCHAR},
       </if>
       <if test="date != null">
         date = #{date,jdbcType=DATE},
@@ -236,7 +268,9 @@
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.pblogteam.pblog.entity.Message">
     update message
     set from_id = #{fromId,jdbcType=INTEGER},
+      from_name = #{fromName,jdbcType=VARCHAR},
       to_id = #{toId,jdbcType=INTEGER},
+      to_name = #{toName,jdbcType=VARCHAR},
       date = #{date,jdbcType=DATE},
       content = #{content,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
@@ -244,7 +278,9 @@
   <update id="updateByPrimaryKey" parameterType="com.pblogteam.pblog.entity.Message">
     update message
     set from_id = #{fromId,jdbcType=INTEGER},
+      from_name = #{fromName,jdbcType=VARCHAR},
       to_id = #{toId,jdbcType=INTEGER},
+      to_name = #{toName,jdbcType=VARCHAR},
       date = #{date,jdbcType=DATE}
     where id = #{id,jdbcType=INTEGER}
   </update>

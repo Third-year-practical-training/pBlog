@@ -12,6 +12,8 @@ public class Article implements Serializable {
 
     private String title;
 
+    private String summary;
+
     private Date date;
 
     private Byte published;
@@ -19,6 +21,8 @@ public class Article implements Serializable {
     private Integer collectionCount;
 
     private Integer commentCount;
+
+    private Integer isFeature;
 
     private String content;
 
@@ -56,6 +60,14 @@ public class Article implements Serializable {
         this.title = title == null ? null : title.trim();
     }
 
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary == null ? null : summary.trim();
+    }
+
     public Date getDate() {
         return date;
     }
@@ -88,6 +100,14 @@ public class Article implements Serializable {
         this.commentCount = commentCount;
     }
 
+    public Integer getIsFeature() {
+        return isFeature;
+    }
+
+    public void setIsFeature(Integer isFeature) {
+        this.isFeature = isFeature;
+    }
+
     public String getContent() {
         return content;
     }
@@ -106,10 +126,12 @@ public class Article implements Serializable {
         sb.append(", userId=").append(userId);
         sb.append(", articleTypeId=").append(articleTypeId);
         sb.append(", title=").append(title);
+        sb.append(", summary=").append(summary);
         sb.append(", date=").append(date);
         sb.append(", published=").append(published);
         sb.append(", collectionCount=").append(collectionCount);
         sb.append(", commentCount=").append(commentCount);
+        sb.append(", isFeature=").append(isFeature);
         sb.append(", content=").append(content);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
