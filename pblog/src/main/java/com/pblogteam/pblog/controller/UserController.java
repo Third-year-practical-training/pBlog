@@ -203,6 +203,13 @@ public class UserController
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
+    @GetMapping("/admin/getAllUser")
+    public ResultVO<PageInfo<UserVO>> getAllUser(int pageNum) {
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.findAllUser(pageNum));
+    }
+
+
+
     @GetMapping("/user/showPhotoById")
     public void showPicture(HttpServletRequest request, HttpServletResponse response, @RequestParam("userId") int userId)
     {

@@ -183,6 +183,18 @@ public class UserServiceImpl implements UserService
         userMapper.updateByPrimaryKey(user);
     }
 
+    @Override
+    public PageInfo<UserVO> findAllUser(int pageNum) {
+        UserExample userExample = new UserExample();
+        PageHelper.startPage(pageNum, Config.USER_SIZE);
+        List<User> userList = userMapper.selectByExample(userExample);
+        List<UserVO> userVOS = new ArrayList<>();
+        for(User user: userList) {
+            userVOS.add(createUserVOByUser(user));
+        }
+        return CopyPageInfo.covertPageInfo(userVOS, userList);
+    }
+
     public static UserVO createUserVOByUser(User user)
     {
         UserVO userVO = new UserVO();
