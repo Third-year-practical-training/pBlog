@@ -71,8 +71,7 @@ public class ArticleController {
 
     @GetMapping("/article/findById")
     public ResultVO<ArticleAndCommentVO> getArticleContentById(Integer id, HttpServletRequest request) {
-        Integer curId = (Integer) request.getSession().getAttribute("userId");
-        if (!articleServiceImpl.isArticle(id, curId) || id == null)
+        if (!articleServiceImpl.isArticle(id, -1) || id == null)
             return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         int userId = (int) request.getSession().getAttribute("userId");
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.selectByArticleId(id, userId));
