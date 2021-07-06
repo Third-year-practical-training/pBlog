@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.servlet.http.HttpServletRequest;
 
 
-
 /**
  * 全局异常类，处理自定义异常
  */
@@ -25,8 +24,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BlogException.class)
     public ResultVO blogExceptionHandler(HttpServletRequest request, BlogException e) {
-            // return 自定义的信息和状态码，throw抛出来的
-            return ResultVO.throwError(e.getCode(), e.getMsg());
+        // return 自定义的信息和状态码，throw抛出来的
+        return ResultVO.throwError(e.getCode(), e.getMsg());
     }
 
     // 未知错误

@@ -28,8 +28,7 @@ import java.util.UUID;
 
 @CrossOrigin
 @RestController
-public class UserController
-{
+public class UserController {
     @Autowired
     UserService userService;
 
@@ -44,25 +43,19 @@ public class UserController
     public ResultVO<UserVO> signin(@RequestParam("username") String username,
                                    @RequestParam("password") String password,
                                    Map<String, Object> map,
-                                   HttpServletRequest request, HttpServletResponse response)
-    {
+                                   HttpServletRequest request, HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
-        response.setHeader("Access-Control-Allow-Credentials","true");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
         response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
         UserVO userVO = userService.findByUserName(username);
-        if (userVO == null)
-        {
+        if (userVO == null) {
             return ResultVO.throwError(400, "用户名不存在");
-        }
-        else if (!userService.checkPassword(userVO, password))
-        {
+        } else if (!userService.checkPassword(userVO, password)) {
             return ResultVO.throwError(400, "密码错误");
-        }
-        else
-        {
+        } else {
             HttpSession session = request.getSession();
             System.out.println("signin: " + session.getId());
             session.setAttribute("userId", userVO.getId());
@@ -76,18 +69,18 @@ public class UserController
     public ResultVO<UserVO> signin(String username, String password, HttpServletRequest request, HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
-        response.setHeader("Access-Control-Allow-Credentials","true");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
         response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
         UserVO userVO = userService.findByUserName(username);
-        if(userVO.getPrivilege() == 0) {
+        if (userVO.getPrivilege() == 0) {
             return ResultVO.throwError(400, "没有权限");
-        }else if(userVO == null) {
+        } else if (userVO == null) {
             return ResultVO.throwError(400, "用户名不存在");
-        }else if(!userService.checkPassword(userVO, password)) {
+        } else if (!userService.checkPassword(userVO, password)) {
             return ResultVO.throwError(400, "密码错误");
-        }else {
+        } else {
             HttpSession session = request.getSession();
             System.out.println("管理员signin: " + session.getId());
             session.setAttribute("userId", userVO.getId());
@@ -101,8 +94,7 @@ public class UserController
 
     @GetMapping("/user/findByUserId")
     public ResultVO<UserVO> findByUserId(@RequestParam("id") Integer id,
-                                         HttpSession session)
-    {
+                                         HttpSession session) {
         UserVO userVO = userService.findByUserId(id, (Integer) session.getAttribute("userId"));
         if (userVO == null)
             return ResultVO.throwError(400, "用户id不存在");
@@ -113,8 +105,7 @@ public class UserController
     }
 
     @PostMapping(value = {"/user/signout", "/admin/signout"})
-    public ResultVO signout(HttpServletRequest request)
-    {
+    public ResultVO signout(HttpServletRequest request) {
         // 退出登录
         request.getSession().removeAttribute("userId");
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
@@ -124,45 +115,38 @@ public class UserController
     public ResultVO signup(@RequestParam("username") String username,
                            @RequestParam("password") String password,
                            @RequestParam("email") @Email String email,
-                           HttpServletRequest request,HttpServletResponse response)
-    {
+                           HttpServletRequest request, HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
-        response.setHeader("Access-Control-Allow-Credentials","true");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
         response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, PATCH");
-        if (userService.signup(username, password, email))
-        {
+        if (userService.signup(username, password, email)) {
             return ResultVO.throwSuccess(ResponseState.SUCCESS);
-        }
-        else
-        {
+        } else {
             return ResultVO.throwError(400, "用户名已存在");
         }
     }
 
     @GetMapping("/users/attentionList")
-    public ResultVO<PageInfo<UserVO>> attentionList(@RequestParam("id") Integer id, int pageNum)
-    {
+    public ResultVO<PageInfo<UserVO>> attentionList(@RequestParam("id") Integer id, int pageNum) {
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.myAttentionList(id, pageNum));
     }
 
     @PutMapping("/user/changeAttention")
     public ResultVO changeAttention(@RequestParam("id") Integer id,
-                                    HttpServletRequest request)
-    {
-        userService.changeAttention(id,(Integer) request.getSession().getAttribute("userId"));
+                                    HttpServletRequest request) {
+        userService.changeAttention(id, (Integer) request.getSession().getAttribute("userId"));
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
     @PutMapping("/user/updateinfo")
     public ResultVO updateInfo(@RequestBody UserNewVO userNewVO, HttpSession session) {
         Integer userId = (Integer) session.getAttribute("userId");
-        System.out.println("userId= " +userId);
+        System.out.println("userId= " + userId);
         System.out.println(userNewVO);
-        if(!userService.checkNewUsernameLegality(userId, userNewVO))
-        {
+        if (!userService.checkNewUsernameLegality(userId, userNewVO)) {
             return ResultVO.throwError(400, "用户名已存在");
         }
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.updateInfo(userId, userNewVO));
@@ -170,8 +154,7 @@ public class UserController
 
     @PostMapping("/user/changePhoto")
     public ResultVO<Boolean> changePhoto(@RequestParam("photo") MultipartFile file,
-                                         HttpSession session) throws IOException
-    {
+                                         HttpSession session) throws IOException {
         InputStream inputStream = file.getInputStream();
 
         String filename = file.getOriginalFilename();
@@ -187,7 +170,6 @@ public class UserController
     }
 
     /**
-     *
      * @param id
      * @param privilege 权限， -1 禁止评论，0正常用户， 1管理员
      * @param request
@@ -196,7 +178,7 @@ public class UserController
     @GetMapping("/admin/changeUserPrivilege")
     public ResultVO changeUserPrivilege(Integer id, Integer privilege, HttpServletRequest request) {
         int curId = (int) request.getSession().getAttribute("userId");
-        if(id == curId) {
+        if (id == curId) {
             return ResultVO.throwError(ResponseState.UNKNOWN_ERROR);
         }
         userService.changeAdmin(id, privilege);
@@ -209,16 +191,13 @@ public class UserController
     }
 
 
-
     @GetMapping("/user/showPhotoById")
-    public void showPicture(HttpServletRequest request, HttpServletResponse response, @RequestParam("userId") int userId)
-    {
+    public void showPicture(HttpServletRequest request, HttpServletResponse response, @RequestParam("userId") int userId) {
         FTPClient ftp = null;
         InputStream in = null;
         OutputStream os = null;
         String imgPath = userService.selectByPrimaryKey(userId).getPhotoUrl();
-        try
-        {
+        try {
             ftp = FtpUtil.initFTP(ftp);
             in = ftp.retrieveFileStream(new String(imgPath.getBytes("UTF-8"), "iso-8859-1"));
             String picType = imgPath.split("\\.")[1];
@@ -226,22 +205,14 @@ public class UserController
             bufImg = ImageIO.read(in);
             os = response.getOutputStream();
             ImageIO.write(bufImg, picType, os);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally
-        {
-            if (in != null)
-            {
-                try
-                {
+        } finally {
+            if (in != null) {
+                try {
                     in.close();
                     FtpUtil.destroy(ftp);
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                 }
             }
         }

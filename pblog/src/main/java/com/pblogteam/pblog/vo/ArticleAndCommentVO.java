@@ -1,11 +1,10 @@
 package com.pblogteam.pblog.vo;
 
 
-
-
 import com.pblogteam.pblog.entity.ArticleTag;
 import com.pblogteam.pblog.entity.ArticleType;
 import lombok.Data;
+
 import java.util.Date;
 import java.util.List;
 

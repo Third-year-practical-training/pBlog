@@ -7,8 +7,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class UserNewVO
-{
+public class UserNewVO {
     private String username;
     private String nickname;
     private String real_name;

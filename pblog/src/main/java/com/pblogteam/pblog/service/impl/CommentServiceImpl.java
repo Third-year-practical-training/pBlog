@@ -58,7 +58,7 @@ public class CommentServiceImpl implements CommentService {
         criteria.andFatherIdIsNull();
         List<Comment> commentList = commentMapper.selectByExampleWithBLOBs(commentExample);
         List<CommentVO> commentVOList = fillCommentVOByComment(commentList);
-        for(CommentVO commentVO: commentVOList) {
+        for (CommentVO commentVO : commentVOList) {
             commentExample.clear();
             criteria = commentExample.createCriteria();
             criteria.andFatherIdEqualTo(commentVO.getCommentId());
@@ -69,7 +69,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     public CommentVO castCommentToCommentVO(Comment comment) {
-        if(comment == null) return null;
+        if (comment == null) return null;
         CommentVO commentVO = new CommentVO();
         commentVO.setCommentId(comment.getId());
         commentVO.setContent(comment.getContent());
@@ -81,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
         commentVO.setFromUserId(fromUser.getId());
         commentVO.setFatherId(comment.getFatherId());
         commentVO.setChildList(null);
-        if(comment.getToId() != null) {
+        if (comment.getToId() != null) {
             commentVO.setToUserId(comment.getToId());
             User toUser = userMapper.selectByPrimaryKey(comment.getToId());
             commentVO.setToUserNickName(toUser.getNickname());
@@ -90,9 +90,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     public List<CommentVO> fillCommentVOByComment(List<Comment> commentList) {
-        if(commentList == null) return null;
+        if (commentList == null) return null;
         List<CommentVO> commentVOList = new ArrayList<>();
-        for(Comment comment: commentList) {
+        for (Comment comment : commentList) {
             commentVOList.add(castCommentToCommentVO(comment));
         }
         return commentVOList;
@@ -119,7 +119,7 @@ public class CommentServiceImpl implements CommentService {
         PageHelper.startPage(pageNum, Config.PAGE_SIZE);
         List<Comment> commentList = commentMapper.selectByExampleWithBLOBs(commentExample);
         List<MyComment> myComments = new ArrayList<>();
-        for(Comment comment: commentList) {
+        for (Comment comment : commentList) {
             myComments.add(new MyComment(comment, articleMapper.selectByPrimaryKey(comment.getArticleId()).getTitle()));
         }
         return CopyPageInfo.covertPageInfo(myComments, commentList);

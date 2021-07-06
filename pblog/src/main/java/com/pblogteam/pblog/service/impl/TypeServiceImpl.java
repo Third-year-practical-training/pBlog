@@ -14,6 +14,7 @@ public class TypeServiceImpl implements TypeService {
 
     @Autowired
     private ArticleTypeMapper articleTypeMapper;
+
     @Override
     public List<ArticleType> ListType() {
         ArticleTypeExample articleTypeExample = new ArticleTypeExample();

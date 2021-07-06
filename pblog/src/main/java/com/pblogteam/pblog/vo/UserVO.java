@@ -7,8 +7,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class UserVO
-{
+public class UserVO {
     private Integer id;
     //@JsonIgnore
     private String username;

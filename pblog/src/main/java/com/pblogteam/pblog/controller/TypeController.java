@@ -25,7 +25,7 @@ public class TypeController {
 
     @PutMapping("/admin/updateTypeById")
     public ResultVO updateTypeById(Integer id, String type, HttpSession session) {
-        if(typeServiceImpl.updateTypeById(type, id)) {
+        if (typeServiceImpl.updateTypeById(type, id)) {
             return ResultVO.throwSuccess(ResponseState.SUCCESS);
         } else {
             return ResultVO.throwError(ResponseState.UNKNOWN_ERROR);
@@ -34,7 +34,7 @@ public class TypeController {
 
     @DeleteMapping("/admin/deleteTypeById")
     public ResultVO deleteTypeById(Integer id) {
-        if(typeServiceImpl.deleteTypeById(id)) {
+        if (typeServiceImpl.deleteTypeById(id)) {
             return ResultVO.throwSuccess(ResponseState.SUCCESS);
         } else {
             return ResultVO.throwError(ResponseState.UNKNOWN_ERROR);
@@ -44,7 +44,7 @@ public class TypeController {
     // 增加type
     @PutMapping("/admin/saveType")
     public ResultVO saveType(String type) {
-        if(typeServiceImpl.saveType(type)) {
+        if (typeServiceImpl.saveType(type)) {
             return ResultVO.throwSuccess(ResponseState.SUCCESS);
         } else {
             return ResultVO.throwError(ResponseState.UNKNOWN_ERROR);

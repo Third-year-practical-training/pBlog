@@ -2,6 +2,7 @@ package com.pblogteam.pblog.mapper;
 
 import com.pblogteam.pblog.entity.ArticleCollectorRela;
 import com.pblogteam.pblog.entity.ArticleCollectorRelaExample;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -11,9 +12,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Mapper
 public interface ArticleCollectorRelaMapper {
-//    my own start
+    //    my own start
     List<ArticleCollectorRela> getHotArticleList(int num);
-//    my own end
+
+    //    my own end
     long countByExample(ArticleCollectorRelaExample example);
 
     int deleteByExample(ArticleCollectorRelaExample example);

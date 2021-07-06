@@ -6,7 +6,7 @@ import com.github.pagehelper.PageInfo;
 import java.util.List;
 
 public class CopyPageInfo {
-    public static<A, F> PageInfo<A> covertPageInfo(List<A> aim, List<F> from) {
+    public static <A, F> PageInfo<A> covertPageInfo(List<A> aim, List<F> from) {
         PageInfo<A> ret = new PageInfo<>(aim);
         PageInfo<F> result = new PageInfo<>(from);
         copyPageInfo(ret, result);

@@ -2,6 +2,7 @@ package com.pblogteam.pblog.mapper;
 
 import com.pblogteam.pblog.entity.Article;
 import com.pblogteam.pblog.entity.ArticleExample;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -15,6 +16,7 @@ public interface ArticleMapper {
     int insertAndReturnPrimaryKey(Article record);
 
     List<Article> selectByTitleKeyWord(String title);
+
     //    my own end
     long countByExample(ArticleExample example);
 

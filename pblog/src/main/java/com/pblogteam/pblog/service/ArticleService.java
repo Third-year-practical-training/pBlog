@@ -33,11 +33,9 @@ public interface ArticleService {
     void changeFeature(Integer id);
 
 
-
     /**
-     *
      * @param keyWord 查询需要的关键字
-     * @param type 在什么范围内查询
+     * @param type    在什么范围内查询
      * @return 查询结果
      */
     PageInfo<ArticleTitleVO> selectArticleByKeyWord(String keyWord, int type, int id, int pageNum);

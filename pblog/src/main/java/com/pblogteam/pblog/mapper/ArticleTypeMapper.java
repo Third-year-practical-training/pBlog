@@ -2,6 +2,7 @@ package com.pblogteam.pblog.mapper;
 
 import com.pblogteam.pblog.entity.ArticleType;
 import com.pblogteam.pblog.entity.ArticleTypeExample;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;

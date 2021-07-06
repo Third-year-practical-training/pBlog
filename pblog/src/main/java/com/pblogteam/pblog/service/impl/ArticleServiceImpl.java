@@ -43,9 +43,8 @@ public class ArticleServiceImpl implements ArticleService {
     // 查询文章列表
 
     /**
-     *
-     * @param id   userId
-     * @return     需要的列表信息
+     * @param id userId
+     * @return 需要的列表信息
      */
     @Override
     public PageInfo<ArticleTitleVO> selectArtOrDraListByUserId(Integer id, int flag, int pageNum) {
@@ -79,7 +78,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     public List<ArticleTitleVO> fillArtTitVOByArtList(List<Article> articleList) {
         List<ArticleTitleVO> articleTitleVOList = new ArrayList<>();
-        if(articleList != null) {
+        if (articleList != null) {
             for (Article a :
                     articleList) {
                 ArticleTitleVO articleTitleVO = new ArticleTitleVO();
@@ -105,7 +104,7 @@ public class ArticleServiceImpl implements ArticleService {
     public List<ArticleTag> selectTagListByArticleId(Integer id) {
         List<ArticleTagRela> articleTagRelaList = articleTagRelaServiceImpl.selectByArticleId(id);
         List<ArticleTag> articleTagList = new ArrayList<>();
-        if(articleTagRelaList != null) {
+        if (articleTagRelaList != null) {
             for (ArticleTagRela a :
                     articleTagRelaList) {
                 articleTagList.add(tagServiceImpl.selectByPrimaryKey(a.getTagId()));
@@ -115,19 +114,18 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     /**
-     *
-     * @param id  要删除的文章的Id
-     * @return  true 成功
-     *          false 失败
+     * @param id 要删除的文章的Id
+     * @return true 成功
+     * false 失败
      */
     @Override
     public boolean deleteArticleById(Integer id) {
         // 删文章表
         boolean published = articleMapper.selectByPrimaryKey(id).getPublished() != 0x00;
         int flag = articleMapper.deleteByPrimaryKey(id);
-        if(flag == 0) return false;
+        if (flag == 0) return false;
         // 删评论表
-        if(published) {
+        if (published) {
             commentServiceImpl.deleteByArticleId(id);
             // 删收藏
             articleCollRelaServiceImpl.deleteByArticleId(id);
@@ -149,13 +147,13 @@ public class ArticleServiceImpl implements ArticleService {
         article.setId(articleNewVO.getId());
         article.setSummary(articleNewVO.getSummary());
         // 添加文章
-        if(article.getId() == null) {
+        if (article.getId() == null) {
             // 添加新文章
             article.setPublished(published);
             article.setCollectionCount(0);
             article.setCommentCount(0);
             articleMapper.insertAndReturnPrimaryKey(article);
-            if(tagList != null) {
+            if (tagList != null) {
                 for (ArticleTag a :
                         tagList) {
                     // 查找是否存在该 tag
@@ -164,7 +162,7 @@ public class ArticleServiceImpl implements ArticleService {
                     ArticleTagRela articleTagRela = new ArticleTagRela();
 
                     articleTag.setName(a.getName());
-                    if(articleTagList.size() == 0) {
+                    if (articleTagList.size() == 0) {
                         // 不存在
                         tagServiceImpl.insertAndReturnPrimaryKey(articleTag);
                     } else {
@@ -180,7 +178,7 @@ public class ArticleServiceImpl implements ArticleService {
             // 修改文章
             articleMapper.updateByPrimaryKeySelective(article);
             articleTagRelaServiceImpl.deleteByArticleId(article.getId());
-            if(tagList != null) {
+            if (tagList != null) {
                 for (ArticleTag a :
                         tagList) {
                     tagServiceImpl.insertAndReturnPrimaryKey(a);
@@ -216,7 +214,7 @@ public class ArticleServiceImpl implements ArticleService {
         List<ArticleCollectorRela> artCollRelaList = null;
         PageHelper.startPage(pageNum, Config.PAGE_SIZE);
         artCollRelaList = articleCollRelaServiceImpl.selectByUserId(id);
-        if(artCollRelaList != null) {
+        if (artCollRelaList != null) {
             for (ArticleCollectorRela a :
                     artCollRelaList) {
                 articleList.add(articleMapper.selectByPrimaryKey(a.getArticleId()));
@@ -234,7 +232,6 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     /**
-     *
      * @param id
      * @param curId 传入用户ID，判断是否是自己的文章，不需要判断时传入-1
      * @return
@@ -265,17 +262,17 @@ public class ArticleServiceImpl implements ArticleService {
         ArticleExample articleExample = new ArticleExample();
         ArticleExample.Criteria criteria = articleExample.createCriteria();
         criteria.andTitleLike("%" + keyWord + "%");
-        if(type == 1) {
+        if (type == 1) {
             criteria.andArticleTypeIdEqualTo(id);
-        } else if(type == 2) {
+        } else if (type == 2) {
             criteria.andIdIn(articleTagRelaServiceImpl.selectArticleIdsByTagId(id));
         }
         long cnt = articleMapper.countByExample(articleExample);
         List<Article> articleList = null;
-        if(cnt == 0) {
+        if (cnt == 0) {
             // 提取短语查询
             List<String> termList = HanLP.extractPhrase(keyWord, 1);
-            if(termList.size() == 0) {
+            if (termList.size() == 0) {
                 termList = HanLP.extractKeyword(keyWord, keyWord.length() / 2);
             }
             // 拼接正则字符串

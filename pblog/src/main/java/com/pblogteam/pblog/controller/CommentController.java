@@ -2,6 +2,7 @@ package com.pblogteam.pblog.controller;
 
 
 import com.github.pagehelper.PageInfo;
+import com.pblogteam.pblog.config.Config;
 import com.pblogteam.pblog.constant.ResponseState;
 import com.pblogteam.pblog.entity.Comment;
 import com.pblogteam.pblog.service.ArticleService;
@@ -11,6 +12,7 @@ import com.pblogteam.pblog.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpSession;
 
 
@@ -28,7 +30,7 @@ public class CommentController {
     @RequestMapping(value = "/comment/new", method = {RequestMethod.POST})
     public ResultVO addComment(Comment comment, HttpSession session) {
         Integer id = (Integer) session.getAttribute("userId");
-        if(!commentService.hasPrivilege(id)) {
+        if (!commentService.hasPrivilege(id)) {
             return ResultVO.throwError(400, "已被禁言");
         }
         commentService.insertComment(comment);
@@ -52,7 +54,7 @@ public class CommentController {
         if (myComments != null) {
             for (MyComment a :
                     myComments.getList()) {
-                a.setContent(a.getContent().length() > 100 ? a.getContent().substring(0, 100) : a.getContent());
+                a.setContent(a.getContent().length() > Config.COMMENT_LENGTH ? a.getContent().substring(0, Config.COMMENT_LENGTH) : a.getContent());
             }
         }
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, myComments);

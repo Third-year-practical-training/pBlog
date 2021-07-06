@@ -19,6 +19,7 @@ public class MyComment {
     private Integer toUserId;
     private String toUserNickname;
     private String content;
+
     public MyComment(Comment comment, String articleTitle) {
         this.articleId = comment.getArticleId();
         this.commentId = comment.getId();

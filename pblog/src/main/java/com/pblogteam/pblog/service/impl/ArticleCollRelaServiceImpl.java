@@ -26,15 +26,15 @@ public class ArticleCollRelaServiceImpl implements ArticleCollRelaService {
 
     @Autowired
     private ArticleMapper articleMapper;
+
     @Override
     public void changeCollStatus(ArticleCollectorRela articleCollectorRela) {
-        if(isExist(articleCollectorRela)) {
+        if (isExist(articleCollectorRela)) {
             delete(articleCollectorRela);
         } else {
             insert(articleCollectorRela);
         }
     }
-
 
 
     @Override
@@ -80,7 +80,7 @@ public class ArticleCollRelaServiceImpl implements ArticleCollRelaService {
     public List<ArticleTitleVO> getHotList() {
         List<ArticleCollectorRela> articleCollectorRelaList = articleCollectorRelaMapper.getHotArticleList(Config.HOT_ARTICLE_SIZE);
         List<Article> articleList = new ArrayList<>();
-        for(ArticleCollectorRela item: articleCollectorRelaList) {
+        for (ArticleCollectorRela item : articleCollectorRelaList) {
             articleList.add(articleMapper.selectByPrimaryKey(item.getArticleId()));
         }
         return articleServiceImpl.fillArtTitVOByArtList(articleList);

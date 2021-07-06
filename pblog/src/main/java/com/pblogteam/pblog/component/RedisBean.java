@@ -7,16 +7,14 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-public class RedisBean
-{
+public class RedisBean {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
     public static StringRedisTemplate redis;
 
     @PostConstruct
-    public void getRedisTemplate()
-    {
+    public void getRedisTemplate() {
         redis = stringRedisTemplate;
     }
 }

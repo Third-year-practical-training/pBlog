@@ -7,6 +7,7 @@ import lombok.Getter;
 public class BlogException extends RuntimeException {
     private Integer code;
     private String msg;
+
     public BlogException(ResponseState responseState) {
         super(responseState.getMsg());
         this.code = responseState.getCode();

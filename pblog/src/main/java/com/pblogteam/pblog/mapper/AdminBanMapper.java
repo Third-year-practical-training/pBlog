@@ -2,6 +2,7 @@ package com.pblogteam.pblog.mapper;
 
 import com.pblogteam.pblog.entity.AdminBan;
 import com.pblogteam.pblog.entity.AdminBanExample;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;

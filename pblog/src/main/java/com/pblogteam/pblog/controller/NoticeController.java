@@ -22,7 +22,6 @@ public class NoticeController {
     }
 
     /**
-     *
      * @param notice, 只需要传入date，content
      * @return
      */
@@ -34,9 +33,9 @@ public class NoticeController {
 
     @DeleteMapping("/admin/notice/delete")
     public ResultVO deleteNotice(Integer id) {
-        if(noticeService.deleteNotice(id)) {
+        if (noticeService.deleteNotice(id)) {
             return ResultVO.throwSuccess(ResponseState.SUCCESS);
-        }else{
+        } else {
             return ResultVO.throwError(ResponseState.NOT_FOUND);
         }
     }

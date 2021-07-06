@@ -28,9 +28,10 @@ public class ArticleController {
     private ArticleServiceImpl articleServiceImpl;
     @Autowired
     private ArticleCollRelaService articleCollRelaService;
+
     @GetMapping("/articles/findByUserId")
     public ResultVO<PageInfo<ArticleTitleVO>> getArticleListByUser(Integer id, int pageNum) {
-        if(id != null) {
+        if (id != null) {
             PageInfo<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectArtOrDraListByUserId(id, 1, pageNum);
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleTitleVOList);
         }
@@ -40,8 +41,8 @@ public class ArticleController {
     @GetMapping("/drafts/findByUserId")
     public ResultVO<PageInfo<ArticleTitleVO>> getDraftListByUser(Integer id, int pageNum) {
         ResultVO<List<ArticleTitleVO>> resultVO = new ResultVO<>();
-        if(id != null) {
-            PageInfo<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectArtOrDraListByUserId(id, 0, pageNum  );
+        if (id != null) {
+            PageInfo<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectArtOrDraListByUserId(id, 0, pageNum);
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleTitleVOList);
         }
         return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
@@ -50,7 +51,7 @@ public class ArticleController {
 
     @GetMapping("/articles/findByType")
     public ResultVO<PageInfo<ArticleTitleVO>> getArticleListByType(Integer id, int pageNum) {
-        if(id != null) {
+        if (id != null) {
             PageInfo<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectByTypeId(id, pageNum);
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleTitleVOList);
         }
@@ -60,7 +61,7 @@ public class ArticleController {
     @GetMapping("/articles/collectList")
     public ResultVO<PageInfo<ArticleTitleVO>> getCollArtByUserId(Integer id, int pageNum) {
         ResultVO<PageInfo<ArticleTitleVO>> resultVO = new ResultVO<>();
-        if(id != null) {
+        if (id != null) {
             PageInfo<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectCollectListByUserId(id, pageNum);
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleTitleVOList);
         }
@@ -71,7 +72,8 @@ public class ArticleController {
     @GetMapping("/article/findById")
     public ResultVO<ArticleAndCommentVO> getArticleContentById(Integer id, HttpServletRequest request) {
         Integer curId = (Integer) request.getSession().getAttribute("userId");
-        if(!articleServiceImpl.isArticle(id, curId) || id == null) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
+        if (!articleServiceImpl.isArticle(id, curId) || id == null)
+            return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         int userId = (int) request.getSession().getAttribute("userId");
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.selectByArticleId(id, userId));
     }
@@ -80,13 +82,15 @@ public class ArticleController {
     public ResultVO<ArticleAndCommentVO> getDraftContentById(Integer id, HttpServletRequest request) {
         ResultVO<ArticleAndCommentVO> resultVO = new ResultVO<>();
         int userId = (int) request.getSession().getAttribute("userId");
-        if(articleServiceImpl.isArticle(id, userId) || id == null) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
+        if (articleServiceImpl.isArticle(id, userId) || id == null)
+            return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.selectByArticleId(id, userId));
     }
 
     @PutMapping("/article/changeCollection")
     public ResultVO changeCollectStatus(Integer userId, Integer articleId) {
-        if(!articleServiceImpl.isArticle(articleId, -1) || userId == null || articleId == null) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
+        if (!articleServiceImpl.isArticle(articleId, -1) || userId == null || articleId == null)
+            return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         articleServiceImpl.changeCollection(userId, articleId);
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
@@ -106,7 +110,7 @@ public class ArticleController {
     @PutMapping("/article/update")
     public ResultVO updateArticle(@RequestBody ArticleNewVO articleNewVO, HttpServletRequest request) {
         int userId = (int) request.getSession().getAttribute("userId");
-        if(articleNewVO.getId() != null && !articleServiceImpl.isArticle(articleNewVO.getId(), userId)) {
+        if (articleNewVO.getId() != null && !articleServiceImpl.isArticle(articleNewVO.getId(), userId)) {
             return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         }
         articleServiceImpl.addAndUpdate(articleNewVO, (byte) 1);
@@ -116,7 +120,7 @@ public class ArticleController {
     @PutMapping("/draft/update")
     public ResultVO updateDraft(@RequestBody ArticleNewVO articleNewVO, HttpServletRequest request) {
         int userId = (int) request.getSession().getAttribute("userId");
-        if(articleNewVO.getId() != null && articleServiceImpl.isArticle(articleNewVO.getId(), userId)) {
+        if (articleNewVO.getId() != null && articleServiceImpl.isArticle(articleNewVO.getId(), userId)) {
             return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         }
         articleServiceImpl.addAndUpdate(articleNewVO, (byte) 0);
@@ -126,18 +130,19 @@ public class ArticleController {
     @DeleteMapping("/article/deleteById")
     public ResultVO deleteArticle(Integer id, HttpServletRequest request) {
         Integer curId = (Integer) request.getSession().getAttribute("userId");
-        if(!articleServiceImpl.isArticle(id, curId) || id == null) {
+        if (!articleServiceImpl.isArticle(id, curId) || id == null) {
             return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         }
-        if(articleServiceImpl.deleteArticleById(id)) {
+        if (articleServiceImpl.deleteArticleById(id)) {
             return ResultVO.throwSuccess(ResponseState.SUCCESS);
         } else {
             return ResultVO.throwError(ResponseState.NOT_FOUND);
         }
     }
+
     @DeleteMapping("/admin/deleteArticle")
     public ResultVO deleteArticleAdmin(Integer id) {
-        if(articleServiceImpl.isArticle(id, -1)) {
+        if (articleServiceImpl.isArticle(id, -1)) {
             articleServiceImpl.deleteArticleById(id);
             return ResultVO.throwSuccess(ResponseState.SUCCESS);
         }
@@ -153,10 +158,10 @@ public class ArticleController {
     @DeleteMapping("/draft/deleteById")
     public ResultVO deleteDraft(Integer id, HttpServletRequest request) {
         int userId = (int) request.getSession().getAttribute("userId");
-        if(articleServiceImpl.isArticle(id, userId) || id == null) {
+        if (articleServiceImpl.isArticle(id, userId) || id == null) {
             return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         }
-        if(articleServiceImpl.deleteArticleById(id)) {
+        if (articleServiceImpl.deleteArticleById(id)) {
             return ResultVO.throwSuccess(ResponseState.SUCCESS);
         } else {
             return ResultVO.throwError(ResponseState.NOT_FOUND);
@@ -166,7 +171,7 @@ public class ArticleController {
     @PutMapping("/draft/publishById")
     public ResultVO publishDraft(Integer id, HttpServletRequest request) {
         int userId = (int) request.getSession().getAttribute("userId");
-        if(articleServiceImpl.isArticle(id, userId) || id == null) {
+        if (articleServiceImpl.isArticle(id, userId) || id == null) {
             return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         }
         articleServiceImpl.publishDraft(id);
@@ -174,18 +179,17 @@ public class ArticleController {
     }
 
 
-
     /**
-     *
-     * @param keyWord   要查询的关键字
-     * @param pageNum   分页
-     * @param type  查询的范围 0 全站，1类型，2标签
-     * @param id    类型id 或 tag id
+     * @param keyWord 要查询的关键字
+     * @param pageNum 分页
+     * @param type    查询的范围 0 全站，1类型，2标签
+     * @param id      类型id 或 tag id
      * @return 查询结果
      */
     @GetMapping("/article/searchByKeyWord")
     public ResultVO<PageInfo<ArticleTitleVO>> searchByKeyWord(String keyWord, int pageNum, int type, int id) {
-        if(keyWord == null || keyWord.equals("") || keyWord.contains("%")) return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
+        if (keyWord == null || keyWord.equals("") || keyWord.contains("%"))
+            return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.selectArticleByKeyWord(keyWord, type, id, pageNum));
     }
 

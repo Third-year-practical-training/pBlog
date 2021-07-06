@@ -27,7 +27,7 @@ public class ArticleTagRelaServiceImpl implements ArticleTagRelaService {
 
     @Override
     public void insert(ArticleTagRela articleTagRela) {
-        if(!isExist(articleTagRela)) {
+        if (!isExist(articleTagRela)) {
             articleTagRelaMapper.insert(articleTagRela);
         }
     }
@@ -55,8 +55,8 @@ public class ArticleTagRelaServiceImpl implements ArticleTagRelaService {
         criteria.andTagIdEqualTo(tagId);
         List<ArticleTagRela> articleTagRelaList = articleTagRelaMapper.selectByExample(articleTagRelaExample);
         List<Integer> list = new ArrayList<>();
-        for (ArticleTagRela item:
-             articleTagRelaList) {
+        for (ArticleTagRela item :
+                articleTagRelaList) {
             list.add(item.getArticleId());
         }
         return list;

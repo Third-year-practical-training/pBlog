@@ -53,7 +53,7 @@ public class TagServiceImpl implements TagService {
         ArticleTagExample.Criteria articleTagEx = articleTagExample.createCriteria();
         articleTagEx.andNameEqualTo(name);
         List<ArticleTag> articleTagList = articleTagMapper.selectByExample(articleTagExample);
-        if(articleTagList.size() == 0) {
+        if (articleTagList.size() == 0) {
             return -1;
         } else {
             return articleTagList.get(0).getId();
@@ -90,7 +90,7 @@ public class TagServiceImpl implements TagService {
 //            }
 //        });
         List<Integer> tagIds = new ArrayList<>();
-        for(int i = 0;i < articleTagRelaList.size(); i++) {
+        for (int i = 0; i < articleTagRelaList.size(); i++) {
             tagIds.add(articleTagRelaList.get(i).getTagId());
         }
         ArticleTagExample articleTagExample = new ArticleTagExample();

@@ -2,6 +2,7 @@ package com.pblogteam.pblog.mapper;
 
 import com.pblogteam.pblog.entity.BlackList;
 import com.pblogteam.pblog.entity.BlackListExample;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;

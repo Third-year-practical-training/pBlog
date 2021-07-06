@@ -26,8 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService
-{
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
@@ -37,8 +36,7 @@ public class UserServiceImpl implements UserService
 
 
     @Override
-    public UserVO findByUserName(String username)
-    {
+    public UserVO findByUserName(String username) {
         User user = userMapper.selectByUsername(username);
         if (user == null)
             return null;
@@ -47,8 +45,7 @@ public class UserServiceImpl implements UserService
 
 
     @Override
-    public boolean checkPassword(UserVO userVO, String password)
-    {
+    public boolean checkPassword(UserVO userVO, String password) {
         if (userVO.getPassword().equals(password))
             return true;
         else
@@ -56,16 +53,13 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public UserVO findByUserId(Integer id, Integer signedinUserId)
-    {
+    public UserVO findByUserId(Integer id, Integer signedinUserId) {
         User user = userMapper.selectByPrimaryKey(id);
         if (user == null)
             return null;
-        else
-        {
+        else {
             UserVO userVO = createUserVOByUser(user);
-            if (id != signedinUserId && signedinUserId != null)
-            {
+            if (id != signedinUserId && signedinUserId != null) {
                 if (userFollowerRelasExampleByIds(id, signedinUserId) != null)
                     userVO.setMyAttention(true);
             }
@@ -74,11 +68,9 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public boolean signup(String username, String password, String email)
-    {
-        User user =userMapper.selectByUsername(username);
-        if (user == null)
-        {
+    public boolean signup(String username, String password, String email) {
+        User user = userMapper.selectByUsername(username);
+        if (user == null) {
             user = new User();
             user.setUsername(username);
             user.setNickname(username);
@@ -87,20 +79,17 @@ public class UserServiceImpl implements UserService
             user.setSex((byte) 1);
             userMapper.insert(user);
             return true;
-        }
-        else
+        } else
             return false;
     }
 
     @Override
-    public PageInfo<UserVO> myAttentionList(Integer followerId, int pageNum)
-    {
+    public PageInfo<UserVO> myAttentionList(Integer followerId, int pageNum) {
         List<UserVO> attentionList = new ArrayList<>();
         PageHelper.startPage(pageNum, Config.PAGE_SIZE);
         List<Integer> attenionUserIds = userFollowerRelaMapper.selectByFollowerId(followerId);
         UserVO userVO = null;
-        for (Integer i : attenionUserIds)
-        {
+        for (Integer i : attenionUserIds) {
             userVO = createUserVOByUser(userMapper.selectByPrimaryKey(i));
             userVO.setMyAttention(true);
             attentionList.add(userVO);
@@ -109,17 +98,12 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public void changeAttention(Integer id, Integer signedinUserId)
-    {
+    public void changeAttention(Integer id, Integer signedinUserId) {
         UserFollowerRelaExample userFollowerRelaExample = userFollowerRelasExampleByIds(id, signedinUserId);
-        if (userFollowerRelaExample != null)
-        {
+        if (userFollowerRelaExample != null) {
             userFollowerRelaMapper.deleteByExample(userFollowerRelaExample);
-        }
-        else
-        {
-            if (userMapper.selectByPrimaryKey(id) != null && userMapper.selectByPrimaryKey(signedinUserId) != null)
-            {
+        } else {
+            if (userMapper.selectByPrimaryKey(id) != null && userMapper.selectByPrimaryKey(signedinUserId) != null) {
                 UserFollowerRela userFollowerRela = new UserFollowerRela();
                 userFollowerRela.setUserId(id);
                 userFollowerRela.setFollowerId(signedinUserId);
@@ -134,8 +118,7 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public void changePhoto(Integer userId, String photoUrl)
-    {
+    public void changePhoto(Integer userId, String photoUrl) {
         User user = new User();
         user.setId(userId);
         user.setPhotoUrl(photoUrl);
@@ -143,8 +126,7 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public boolean checkNewUsernameLegality(Integer userId, UserNewVO userNewVO)
-    {
+    public boolean checkNewUsernameLegality(Integer userId, UserNewVO userNewVO) {
         User user = userMapper.selectByUsername(userNewVO.getUsername());
         //数据库中没有新的用户名或新的用户名和该用户原用户名相等
         return user == null || user.getId().equals(userId);
@@ -189,14 +171,13 @@ public class UserServiceImpl implements UserService
         PageHelper.startPage(pageNum, Config.USER_SIZE);
         List<User> userList = userMapper.selectByExample(userExample);
         List<UserVO> userVOS = new ArrayList<>();
-        for(User user: userList) {
+        for (User user : userList) {
             userVOS.add(createUserVOByUser(user));
         }
         return CopyPageInfo.covertPageInfo(userVOS, userList);
     }
 
-    public static UserVO createUserVOByUser(User user)
-    {
+    public static UserVO createUserVOByUser(User user) {
         UserVO userVO = new UserVO();
         userVO.setId(user.getId());
         userVO.setUsername(user.getUsername());
@@ -204,9 +185,9 @@ public class UserServiceImpl implements UserService
         userVO.setReal_name(user.getRealName());
         userVO.setNickname(user.getNickname());
         userVO.setEmail(user.getEmail());
-        if (user.getSex() == 0){
+        if (user.getSex() == 0) {
             userVO.setSex("女");
-        } else{
+        } else {
             userVO.setSex("男");
         }
         userVO.setBirthday(user.getBirthday());
@@ -218,8 +199,7 @@ public class UserServiceImpl implements UserService
         return userVO;
     }
 
-    public UserFollowerRelaExample userFollowerRelasExampleByIds(Integer id, Integer signedinUserId)
-    {
+    public UserFollowerRelaExample userFollowerRelasExampleByIds(Integer id, Integer signedinUserId) {
         UserFollowerRelaExample userFollowerRelaExample = new UserFollowerRelaExample();
         UserFollowerRelaExample.Criteria criteria = userFollowerRelaExample.createCriteria();
         criteria.andFollowerIdEqualTo(signedinUserId);
