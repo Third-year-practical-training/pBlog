@@ -3,6 +3,7 @@ package com.pblogteam.pblog.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.pblogteam.pblog.config.Config;
+import com.pblogteam.pblog.entity.Article;
 import com.pblogteam.pblog.entity.Comment;
 import com.pblogteam.pblog.entity.CommentExample;
 import com.pblogteam.pblog.entity.User;
@@ -43,6 +44,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void insertComment(Comment comment) {
         commentMapper.insertSelective(comment);
+        Article article = articleMapper.selectByPrimaryKey(comment.getArticleId());
+        article.setCommentCount(article.getCommentCount() + 1);
     }
 
     @Override
@@ -120,5 +123,10 @@ public class CommentServiceImpl implements CommentService {
             myComments.add(new MyComment(comment, articleMapper.selectByPrimaryKey(comment.getArticleId()).getTitle()));
         }
         return CopyPageInfo.covertPageInfo(myComments, commentList);
+    }
+
+    @Override
+    public boolean hasPrivilege(Integer id) {
+        return userMapper.selectByPrimaryKey(id).getPrivilege() != -1;
     }
 }

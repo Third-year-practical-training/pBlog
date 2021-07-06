@@ -177,10 +177,22 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public void changeAdmin(Integer userId) {
+    public void changeAdmin(Integer userId, Integer privilege) {
         User user = userMapper.selectByPrimaryKey(userId);
-        user.setPrivilege((byte) ~(byte) Privilege.ADMIN.getPrivilege().intValue());
+        user.setPrivilege(privilege);
         userMapper.updateByPrimaryKey(user);
+    }
+
+    @Override
+    public PageInfo<UserVO> findAllUser(int pageNum) {
+        UserExample userExample = new UserExample();
+        PageHelper.startPage(pageNum, Config.USER_SIZE);
+        List<User> userList = userMapper.selectByExample(userExample);
+        List<UserVO> userVOS = new ArrayList<>();
+        for(User user: userList) {
+            userVOS.add(createUserVOByUser(user));
+        }
+        return CopyPageInfo.covertPageInfo(userVOS, userList);
     }
 
     public static UserVO createUserVOByUser(User user)

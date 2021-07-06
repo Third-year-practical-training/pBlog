@@ -157,8 +157,7 @@ public class UserController
     }
 
     @PutMapping("/user/updateinfo")
-    public ResultVO updateInfo(@RequestBody UserNewVO userNewVO, HttpSession session)
-    {
+    public ResultVO updateInfo(@RequestBody UserNewVO userNewVO, HttpSession session) {
         Integer userId = (Integer) session.getAttribute("userId");
         System.out.println("userId= " +userId);
         System.out.println(userNewVO);
@@ -186,15 +185,30 @@ public class UserController
             userService.changePhoto((Integer) session.getAttribute("userId"), finalname);
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, flag);
     }
+
+    /**
+     *
+     * @param id
+     * @param privilege 权限， -1 禁止评论，0正常用户， 1管理员
+     * @param request
+     * @return
+     */
     @GetMapping("/admin/changeUserPrivilege")
-    public ResultVO changeUserPrivilege(Integer id, HttpServletRequest request) {
+    public ResultVO changeUserPrivilege(Integer id, Integer privilege, HttpServletRequest request) {
         int curId = (int) request.getSession().getAttribute("userId");
         if(id == curId) {
             return ResultVO.throwError(ResponseState.UNKNOWN_ERROR);
         }
-        userService.changeAdmin(id);
+        userService.changeAdmin(id, privilege);
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
+
+    @GetMapping("/admin/getAllUser")
+    public ResultVO<PageInfo<UserVO>> getAllUser(int pageNum) {
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.findAllUser(pageNum));
+    }
+
+
 
     @GetMapping("/user/showPhotoById")
     public void showPicture(HttpServletRequest request, HttpServletResponse response, @RequestParam("userId") int userId)

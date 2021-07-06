@@ -30,7 +30,7 @@ public interface UserService {
 
     boolean isAdmin(Integer userId);
 
-    void changeAdmin(Integer userId);
+    void changeAdmin(Integer userId, Integer privilege);
 
-
+    PageInfo<UserVO> findAllUser(int pageNum);
 }

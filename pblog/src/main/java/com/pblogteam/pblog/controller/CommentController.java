@@ -9,13 +9,9 @@ import com.pblogteam.pblog.service.CommentService;
 import com.pblogteam.pblog.vo.MyComment;
 import com.pblogteam.pblog.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.List;
 
 
 @Controller
@@ -30,13 +26,17 @@ public class CommentController {
 
 
     @RequestMapping(value = "/comment/new", method = {RequestMethod.POST})
-    public ResultVO<String> addComment(Comment comment, HttpSession session) {
+    public ResultVO addComment(Comment comment, HttpSession session) {
+        Integer id = (Integer) session.getAttribute("userId");
+        if(!commentService.hasPrivilege(id)) {
+            return ResultVO.throwError(400, "已被禁言");
+        }
         commentService.insertComment(comment);
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
     @RequestMapping(value = "/comment/delete", method = {RequestMethod.DELETE})
-    public ResultVO<String> deleteComment(@RequestParam("id") Integer id, Comment comment, HttpSession session) {
+    public ResultVO deleteComment(@RequestParam("id") Integer id, Comment comment, HttpSession session) {
         if (id != null) {
             commentService.deleteCommentById(comment.getId());
             return ResultVO.throwSuccess(ResponseState.SUCCESS);

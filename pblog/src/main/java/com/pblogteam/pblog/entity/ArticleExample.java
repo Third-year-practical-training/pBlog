@@ -382,6 +382,76 @@ public class ArticleExample {
             return (Criteria) this;
         }
 
+        public Criteria andSummaryIsNull() {
+            addCriterion("summary is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSummaryIsNotNull() {
+            addCriterion("summary is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSummaryEqualTo(String value) {
+            addCriterion("summary =", value, "summary");
+            return (Criteria) this;
+        }
+
+        public Criteria andSummaryNotEqualTo(String value) {
+            addCriterion("summary <>", value, "summary");
+            return (Criteria) this;
+        }
+
+        public Criteria andSummaryGreaterThan(String value) {
+            addCriterion("summary >", value, "summary");
+            return (Criteria) this;
+        }
+
+        public Criteria andSummaryGreaterThanOrEqualTo(String value) {
+            addCriterion("summary >=", value, "summary");
+            return (Criteria) this;
+        }
+
+        public Criteria andSummaryLessThan(String value) {
+            addCriterion("summary <", value, "summary");
+            return (Criteria) this;
+        }
+
+        public Criteria andSummaryLessThanOrEqualTo(String value) {
+            addCriterion("summary <=", value, "summary");
+            return (Criteria) this;
+        }
+
+        public Criteria andSummaryLike(String value) {
+            addCriterion("summary like", value, "summary");
+            return (Criteria) this;
+        }
+
+        public Criteria andSummaryNotLike(String value) {
+            addCriterion("summary not like", value, "summary");
+            return (Criteria) this;
+        }
+
+        public Criteria andSummaryIn(List<String> values) {
+            addCriterion("summary in", values, "summary");
+            return (Criteria) this;
+        }
+
+        public Criteria andSummaryNotIn(List<String> values) {
+            addCriterion("summary not in", values, "summary");
+            return (Criteria) this;
+        }
+
+        public Criteria andSummaryBetween(String value1, String value2) {
+            addCriterion("summary between", value1, value2, "summary");
+            return (Criteria) this;
+        }
+
+        public Criteria andSummaryNotBetween(String value1, String value2) {
+            addCriterion("summary not between", value1, value2, "summary");
+            return (Criteria) this;
+        }
+
         public Criteria andDateIsNull() {
             addCriterion("date is null");
             return (Criteria) this;
@@ -619,6 +689,66 @@ public class ArticleExample {
 
         public Criteria andCommentCountNotBetween(Integer value1, Integer value2) {
             addCriterion("comment_count not between", value1, value2, "commentCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFeatureIsNull() {
+            addCriterion("is_feature is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFeatureIsNotNull() {
+            addCriterion("is_feature is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFeatureEqualTo(Integer value) {
+            addCriterion("is_feature =", value, "isFeature");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFeatureNotEqualTo(Integer value) {
+            addCriterion("is_feature <>", value, "isFeature");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFeatureGreaterThan(Integer value) {
+            addCriterion("is_feature >", value, "isFeature");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFeatureGreaterThanOrEqualTo(Integer value) {
+            addCriterion("is_feature >=", value, "isFeature");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFeatureLessThan(Integer value) {
+            addCriterion("is_feature <", value, "isFeature");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFeatureLessThanOrEqualTo(Integer value) {
+            addCriterion("is_feature <=", value, "isFeature");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFeatureIn(List<Integer> values) {
+            addCriterion("is_feature in", values, "isFeature");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFeatureNotIn(List<Integer> values) {
+            addCriterion("is_feature not in", values, "isFeature");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFeatureBetween(Integer value1, Integer value2) {
+            addCriterion("is_feature between", value1, value2, "isFeature");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsFeatureNotBetween(Integer value1, Integer value2) {
+            addCriterion("is_feature not between", value1, value2, "isFeature");
             return (Criteria) this;
         }
     }

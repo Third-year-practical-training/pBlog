@@ -14,4 +14,5 @@ public interface CommentService {
     List<CommentVO> selectByArticleId(Integer id);
     void deleteByArticleId(Integer id);
     PageInfo<MyComment> selectByUserId(Integer id, int pageNum);
+    boolean hasPrivilege(Integer id);
 }
