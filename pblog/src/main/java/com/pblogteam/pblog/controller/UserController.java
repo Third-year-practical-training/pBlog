@@ -175,7 +175,7 @@ public class UserController {
      * @param request
      * @return
      */
-    @GetMapping("/admin/changeUserPrivilege")
+    @PutMapping("/admin/changeUserPrivilege")
     public ResultVO changeUserPrivilege(Integer id, Integer privilege, HttpServletRequest request) {
         int curId = (int) request.getSession().getAttribute("userId");
         if (id == curId) {

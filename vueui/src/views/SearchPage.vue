@@ -4,7 +4,7 @@
       <el-main>
         <div>
           <el-input v-model="searchInfo.keyWord" placeholder="请输入搜索内容" style="max-width: 500px"></el-input>
-          <el-button type="primary" @click="Search" icon="el-icon-search" style="margin-left: 10px">搜索</el-button>
+          <el-button type="primary" @click="Search(1)" icon="el-icon-search" style="margin-left: 10px">搜索</el-button>
         </div>
 
         <div style="text-align: center">
@@ -29,7 +29,6 @@
           <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
                        style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px"
                        v-html="item.title">
-            <!-- {{ item.title }} -->
           </router-link>
         </h4>
         <span style="margin-left: 30px">{{ formatDate(item.date) }}</span>
@@ -37,6 +36,15 @@
         <div style="display: inline" v-for="tag in item.articleTagList" :key="tag" class="el-tag">
           {{ tag.name }}
         </div>
+      </div>
+      <div class="block">
+        <el-pagination
+            layout="prev, pager, next"
+            :current-page="resultPage.pageNum"
+            :page-size="resultPage.pageSize"
+            :total="resultPage.total"
+            @current-change="Search">
+        </el-pagination>
       </div>
     </el-card>
   </div>
@@ -51,10 +59,14 @@ export default {
         keyWord: '',
         type: '',
         typeId: 0,
-        pageNum: 1,
       },
       articleTypes: [],
       result: [],
+      resultPage: {
+        pageNum: 1,
+        pageSize: 0,
+        total: 0,
+      },
       show: false,
     }
   },
@@ -67,18 +79,21 @@ export default {
     });
   },
   methods: {
-    Search() {
+    Search(current) {
       const _this = this;
-      this.$axios.get('http://localhost:8080/article/searchByKeyWord',{
-        params:{
-          keyWord:this.searchInfo.keyWord,
-          pageNum:this.searchInfo.pageNum,
-          type:this.searchInfo.type,
-          id:this.searchInfo.typeId,
+      this.$axios.get('http://localhost:8080/article/searchByKeyWord', {
+        params: {
+          keyWord: this.searchInfo.keyWord,
+          pageNum: current,
+          type: this.searchInfo.type,
+          id: this.searchInfo.typeId,
         }
       }).then(res => {
         if (res.data.code == 100) {
           _this.result = res.data.data.list;
+          _this.resultPage.pageNum = res.data.data.pageNum;
+          _this.resultPage.total = res.data.data.total;
+          _this.resultPage.pageSize = res.data.data.pageSize;
           _this.$message('搜索成功');
         }
       })

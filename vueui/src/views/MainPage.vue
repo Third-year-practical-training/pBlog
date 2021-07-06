@@ -1,6 +1,6 @@
 <template>
-  <el-container>
-    <el-header>
+  <el-container id="mainpage">
+    <el-header id="header">
       <div class="block"
            style="display: inline-block;font-size: xx-large;font-family: 'Arial Black';margin-left: 600px">IT技术论坛
       </div>
@@ -12,8 +12,8 @@
         <el-tab-pane label="退出登录" name="exit"></el-tab-pane>
       </el-tabs>
     </el-header>
-    <el-container>
-      <el-main>
+    <el-container id="maincontainer">
+      <el-main id="main">
         <div class="block">
           <span class="demonstration"></span>
           <el-carousel height="200px" autoplay="true">
@@ -26,29 +26,44 @@
             </el-carousel-item>
           </el-carousel>
           <el-card class="box-card" v-loading="loading">
-            <div v-for="item in blogs" :key="item.id" class="block">
-              <el-card>
-                <div class="grid-content bg-purple-light">
-                  <p>
-                    <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
-                                 style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
-                      {{ item.title }}
-                    </router-link>
-                  </p>
+            <div v-for="item in blogs" :key="item.id" style="margin-left: 100px">
+              <el-card style="min-height: 150px;max-width: 900px">
+                <div>
                   <div>
+                    <el-image style="width: 200px;height: 200px;float: left;margin-bottom: 10px"
+                              :src="getAvatarUrl(item.userId)">
+                    </el-image>
+                  </div>
+                  <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
+                               style="font-size: x-large;font-family: 'Arial Black';color: #333333;text-decoration: none">
+                    {{ item.title }}<i v-if="item.isFeature == true" class="el-icon-reading"></i>
+                  </router-link>
+                  <div
+                      style="min-height: 100px;text-align: left;max-width: 600px;margin-left: 50px;float: left;margin-top: 30px">
+                    <span>{{ item.summary }}</span>
+                  </div>
+                  <div style="float: right">
                   <span style="color: #7d7d7d;font-size: small"><i class="el-icon-date"></i> 发表于：{{
                       formatDate(item.date)
                     }}</span>
                     <el-divider direction="vertical"></el-divider>
                     <span style="color: #7d7d7d;font-size: small" @click="toAttentionPage(item.userId)"><i
-                        class="el-icon-user-solid"></i> 作者：<el-button type="text" style="color: aqua">{{item.userNickname}}</el-button>
+                        class="el-icon-user-solid"></i> 作者：<el-button type="text"
+                                                                      style="color: aqua">{{
+                        item.userNickname
+                      }}</el-button>
                       </span>
-                    <br>
+                    <el-divider direction="vertical"></el-divider>
                     <span style="color: #7d7d7d;font-size: small"><i class="el-icon-collection-tag"></i> 标签：</span>
                     <div style="display: inline" v-for="tag in item.articleTagList" :key="tag" class="el-tag">
                       {{ tag.name }}
                     </div>
-                    <br>
+                    <el-divider direction="vertical"></el-divider>
+                    <span style="color: #7d7d7d;font-size: small"><i
+                        class="el-icon-collection-tag"></i> 收藏数： {{ item.collectCount }}</span>
+                    <el-divider direction="vertical"></el-divider>
+                    <span style="color: #7d7d7d;font-size: small"><i
+                        class="el-icon-collection-tag"></i> 评论数： {{ item.commentCount }}</span>
                   </div>
                 </div>
               </el-card>
@@ -65,7 +80,7 @@
           </div>
         </div>
       </el-main>
-      <el-aside>
+      <el-aside id="asidepage">
         <el-card class="box-card">
           <el-avatar :size="150" :src="this.user.url"></el-avatar>
           <div class="text item" style="font-family: 'Arial Black';font-size: large">{{ this.user.nickname }}</div>
@@ -83,15 +98,17 @@
           <div slot="header" class="clearfix">
             <span>热门文章</span>
           </div>
-          <div v-for="o in 4" :key="o" class="text item">
-            {{ '文章标题 ' + o }}
+          <div v-for="item in hotArticles" :key="item" class="text item">
+            <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
+                         style="font-family: 'Arial Black';color: red;text-decoration: none">
+              {{ item.title }}
+            </router-link>
             <el-divider></el-divider>
           </div>
         </el-card>
       </el-aside>
     </el-container>
   </el-container>
-
 </template>
 
 <script>
@@ -104,9 +121,11 @@ export default {
     return {
       blogs: [],
       hotTags: [],
+      hotArticles: [],
       pageNum: 1,
       total: 0,
-      pageSize: 5,
+      pageSize: 0,
+      hasNextPage: false,
       loading: false,
       user: {
         id: '',
@@ -133,8 +152,9 @@ export default {
       this.user.url = 'http://localhost:8080/user/showPhotoById?userId=' + this.user.id;
       this.user.description = this.$store.getters.getUser.description;
       this.user.nickname = this.$store.getters.getUser.nickname;
-      this.page();
+      this.page(1);
       this.getHotTags();
+      this.getHotArticles();
     } else {
       this.$message("请先登录");
       this.$router.push('/');
@@ -143,11 +163,11 @@ export default {
     this.loading = false;
   },
   methods: {
-    page() {
+    page(pageNum) {
       const _this = this;
       this.$axios.get('http://localhost:8080/article/findAllArticle', {
         params: {
-          pageNum: this.pageNum,
+          pageNum: pageNum,
         }
       }).then(res => {
         if (res.data.code == 100) {
@@ -165,6 +185,16 @@ export default {
       this.$axios.get('http://localhost:8080/getHotTags').then(res => {
         if (res.data.code == 100) {
           _this.hotTags = res.data.data;
+        } else {
+          console.log(res.data.msg);
+        }
+      })
+    },
+    getHotArticles() {
+      const _this = this;
+      this.$axios.get('http://localhost:8080//article/getHotArticles').then(res => {
+        if (res.data.code == 100) {
+          _this.hotArticles = res.data.data;
         } else {
           console.log(res.data.msg);
         }
@@ -212,6 +242,9 @@ export default {
           id: id,
         }
       });
+    },
+    getAvatarUrl(id) {
+      return 'http://localhost:8080/user/showPhotoById?userId=' + id;
     }
 
   }
@@ -219,6 +252,12 @@ export default {
 </script>
 
 <style>
+
+#mainpage {
+  background: url("../assets/mainpagebg.jpeg") no-repeat center;
+  background-size: 100% 100%;
+  position: page;
+}
 
 .el-carousel__item h3 {
   color: #475669;
@@ -240,13 +279,14 @@ export default {
   width: 100%;
 }
 
-.bg-purple-light {
-  background: #FFFFFF;
-}
 
-.grid-content {
-  border-radius: 4px;
-  min-height: 36px;
-}
+/*.bg-purple-light {*/
+/*  background: #FFFFFF;*/
+/*}*/
+
+/*.grid-content {*/
+/*  border-radius: 4px;*/
+/*  min-height: 36px;*/
+/*}*/
 
 </style>

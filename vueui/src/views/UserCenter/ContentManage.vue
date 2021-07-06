@@ -25,7 +25,7 @@
     <el-main>
       <el-tabs v-model="activeName">
         <el-tab-pane label="我的文章" name="MyArticle" v-loading="loading">
-          <div v-for="item in blogs" :key="item" class="el-card" style="text-align: left">
+          <div v-for="(item,i) in blogs" :key="i" class="el-card" style="text-align: left">
             <h4>
               <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
                            style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
@@ -39,23 +39,23 @@
             </div>
             <div style="text-align: right;display: inline-block;float: right">
               <el-button type="primary" icon="el-icon-edit" circle style="margin-right: 20px"
-                         @click="updateArticle(item.id)"></el-button>
+                         @click="updateArticle(i)"></el-button>
               <el-button type="danger" icon="el-icon-delete" circle style="margin-right: 10px"
-                         @click="deleteArticle(item.id)"></el-button>
+                         @click="deleteArticle(i)"></el-button>
             </div>
           </div>
           <div class="block">
             <el-pagination
                 layout="prev, pager, next"
-                :current-page="pageNum"
-                :page-size="pageSize"
-                :total="total"
-                @current-change="pageChange">
+                :current-page="blog.pageNum"
+                :page-size="blog.pageSize"
+                :total="blog.total"
+                @current-change="blogPage">
             </el-pagination>
           </div>
         </el-tab-pane>
         <el-tab-pane label="我的收藏" name="MyCollection">
-          <div v-for="collection in collections" :key="collection" class="el-card" style="text-align: left">
+          <div v-for="(collection,j) in collections" :key="j" class="el-card" style="text-align: left">
             <h4>
               <router-link :to="{name: 'BlogShow', params: {blogId: collection.id}}"
                            style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
@@ -69,16 +69,16 @@
             </div>
             <div style="text-align: right;display: inline-block;float: right">
               <el-button type="danger" icon="el-icon-delete" circle style="margin-right: 10px"
-                         @click="cancelCollection(collection.id)"></el-button>
+                         @click="cancelCollection(j)"></el-button>
             </div>
           </div>
           <div class="block">
             <el-pagination
                 layout="prev, pager, next"
-                :current-page="collectionPage.colpageNum"
-                :page-size="collectionPage.colpageSize"
-                :total="collectionPage.coltotal"
-                @current-change="collectionPageChange">
+                :current-page="collection.colpageNum"
+                :page-size="collection.colpageSize"
+                :total="collection.coltotal"
+                @current-change="collectionPage">
             </el-pagination>
           </div>
         </el-tab-pane>
@@ -96,14 +96,16 @@ export default {
     return {
       blogs: [],
       collections: [],
-      collectionPage: {
+      collection: {
         colpageNum: 1,
         colpageSize: 5,
         coltotal: 0,
       },
-      pageNum: 1,
-      pageSize: 0,
-      total: 0,
+      blog: {
+        pageNum: 1,
+        pageSize: 0,
+        total: 0,
+      },
       loading: false,
       activeName: 'MyArticle',
       user: {
@@ -116,59 +118,79 @@ export default {
     if (this.$store.getters.getUser.id) {
       this.user.id = this.$store.getters.getUser.id;
     }
-    const _this = this;
-    this.$axios.get('http://localhost:8080/articles/findByUserId', {
-      params: {
-        id: this.user.id,
-        pageNum: this.pageNum,
-      }
-    }).then(res => {
-      if (res.data.code == 100) {
-        _this.blogs = res.data.data.list;
-        _this.pageNum = res.data.data.pageNum;
-        _this.total = res.data.data.total;
-        _this.pageSize = res.data.data.pageSize;
-      } else {
-        console.log(res.data.msg);
-      }
-    });
-    this.$axios.get('http://localhost:8080/articles/collectList', {
-      params: {
-        id: this.user.id,
-        pageNum: 1,
-      }
-    }).then(res => {
-      if (res.data.code == 100) {
-        _this.collections = res.data.data.list;
-        _this.collectionPage.colpageNum = res.data.data.pageNum;
-        _this.collectionPage.coltotal = res.data.data.total;
-        _this.collectionPage.colpageSize = res.data.data.pageSize;
-      } else {
-        console.log(res.data.msg);
-      }
-    });
+    this.blogPage(1);
+    this.collectionPage(1);
     this.loading = false;
   },
   methods: {
-    pageChange() {
-
-    },
-    collectionPageChange(){
-
-    },
-    deleteArticle(id) {
-      this.$message("删除成功");
-    },
-    updateArticle(id) {
-      this.$router.push({
-        name: 'NewBlog',
+    blogPage(current) {
+      const _this = this;
+      this.$axios.get('http://localhost:8080/articles/findByUserId', {
         params: {
-          blogId: id,
+          id: this.user.id,
+          pageNum: current,
+        }
+      }).then(res => {
+        if (res.data.code == 100) {
+          _this.blogs = res.data.data.list;
+          _this.blog.pageNum = res.data.data.pageNum;
+          _this.blog.total = res.data.data.total;
+          _this.blog.pageSize = res.data.data.pageSize;
+        } else {
+          console.log(res.data.msg);
         }
       });
     },
-    cancelCollection(id) {
-      this.$message("取消收藏");
+    collectionPage(current) {
+      const _this = this;
+      this.$axios.get('http://localhost:8080/articles/collectList', {
+        params: {
+          id: this.user.id,
+          pageNum: current,
+        }
+      }).then(res => {
+        if (res.data.code == 100) {
+          _this.collections = res.data.data.list;
+          _this.collection.colpageNum = res.data.data.pageNum;
+          _this.collection.coltotal = res.data.data.total;
+          _this.collection.colpageSize = res.data.data.pageSize;
+        } else {
+          console.log(res.data.msg);
+        }
+      });
+    },
+    deleteArticle(index) {
+      const _this = this;
+      this.$axios.delete('http://localhost:8080/article/deleteById', {
+        params: {
+          id: this.blogs[index].id
+        }
+      }).then(res => {
+        if (res.data.code == 100) {
+          _this.blogs.splice(index,1);
+          _this.$message('删除成功');
+        }
+      })
+    },
+    updateArticle(index) {
+      this.$router.push({
+        name: 'NewBlog',
+        params: {
+          blogId: this.blogs[index].id,
+        }
+      });
+    },
+    cancelCollection(index) {
+      const _this = this;
+      let data = new FormData();
+      data.append('userId',this.user.id);
+      data.append(' articleId',this.collections[index].id);
+      this.$axios.put('http://localhost:8080/article/changeCollection', data).then(res => {
+        if (res.data.code == 100) {
+          _this.collections.splice(index,1);
+          _this.$message('删除收藏成功');
+        }
+      })
     },
     formatDate(date) {
       let time = new Date(date);

@@ -18,8 +18,13 @@
                   blog.classify.name
                 }}</span>
               <el-divider direction="vertical"></el-divider>
-              <el-button type="text" style="color: #7d7d7d;font-size: small" @click="collectArticle"><i
+              <el-button v-if="blog.isCollection == false" type="text" style="color: #7d7d7d;font-size: small"
+                         @click="collectArticle"><i
                   class="el-icon-collection"></i> 收藏
+              </el-button>
+              <el-button v-if="blog.isCollection != false" type="text" style="color: #7d7d7d;font-size: small"
+                         @click="collectArticle"><i
+                  class="el-icon-collection"></i> 取消收藏
               </el-button>
               <br>
               <span style="color: #7d7d7d;font-size: small"><i class="el-icon-collection-tag"></i> 标签：</span>
@@ -50,7 +55,8 @@
            style="text-align: left;margin-top: 0px;margin-left: 50px;width: 1060px"
            class="el-card">
         <div>
-          <el-avatar size="large" :src="getAvatar(item.fromUserId)" style="margin-top: 10px;margin-left: 10px"></el-avatar>
+          <el-avatar size="large" :src="getAvatar(item.fromUserId)"
+                     style="margin-top: 10px;margin-left: 10px"></el-avatar>
           <span style=" color: black;font-size: 18px;font-weight: bold;margin-left: 2px;">{{
               item.fromUserNickName
             }}</span>
@@ -61,12 +67,13 @@
           </el-button>
         </div>
         <div style="margin-top: 10px;margin-left: 10px">
-          <span>{{item.content}}</span>
+          <span>{{ item.content }}</span>
         </div>
         <div>
           <div v-for="(reply,j) in item.childList" :key="j" class="el-card" style="margin-left: 20px">
             <div>
-              <el-avatar size="large" :src="getAvatar(reply.fromUserId)" style="margin-top: 10px;margin-left: 10px"></el-avatar>
+              <el-avatar size="large" :src="getAvatar(reply.fromUserId)"
+                         style="margin-top: 10px;margin-left: 10px"></el-avatar>
               <span
                   style=" color: black;font-size: 18px;font-weight: bold;margin-left: 2px;">{{
                   reply.fromUserNickName
@@ -77,10 +84,11 @@
               </el-button>
             </div>
             <div style="margin-top: 10px;margin-left: 10px">
-              <span>回复@{{reply.toUserNickName}}: {{reply.content}}</span>
+              <span>回复@{{ reply.toUserNickName }}: {{ reply.content }}</span>
             </div>
           </div>
-          <div v-show="replyInputShow">
+          <div
+              v-if="commentInputs[i].inputValue != undefined && commentInputs[i].inputValue != null && commentInputs[i].inputValue == true">
             <el-input type="textarea" autosize contenteditable="true" placeholder="请输入内容"
                       style="max-width: 500px;margin-left: 30px;margin-top: 5px" v-model="comment"></el-input>
             <el-button size="small" type="primary" @click="pushCommentReply(i)" style="margin-left: 10px">发表评论
@@ -95,6 +103,7 @@
 
 <script>
 import marked from "marked";
+import axios from "axios";
 
 
 let rendererMD = new marked.Renderer();
@@ -129,14 +138,17 @@ export default {
         classify: {},
         tags: [],
         timestamp: '',
-        content: ''
+        content: '',
+        isCollection: false
       },
       user: {
         id: '',
         nickName: '',
         avatar: '',
+        privilege: 0
       },
       comments: [],
+      commentInputs: [],
     }
   },
   created() {
@@ -148,6 +160,7 @@ export default {
       this.blog.id = this.$route.params.blogId;
       this.user.id = this.$store.getters.getUser.id;
       this.user.nickName = this.$store.getters.getUser.nickname;
+      this.user.privilege = this.$store.getters.getUser.privilege;
       this.user.avatar = 'http://localhost:8080/user/showPhotoById?userId=' + this.user.id;
       const _this = this
       this.$axios.get('http://localhost:8080/article/findById', {
@@ -163,7 +176,13 @@ export default {
           _this.blog.tags = res.data.data.tagList;
           _this.blog.timestamp = _this.formatDate(res.data.data.date);
           _this.blog.content = marked(res.data.data.content);
+          _this.blog.isCollection = res.data.data.myCollection;
           _this.comments = res.data.data.commentList;
+          for (let i = 0; i < _this.comments.length; i++) {
+            let a = {};
+            a.inputValue = false;
+            _this.commentInputs.push(a);
+          }
           _this.loading = false;
         }
       });
@@ -175,126 +194,109 @@ export default {
       let d = time.getDate();
       return `${y}-${m}-${d}`;
     },
-    getAvatar(id){
+    getAvatar(id) {
       return 'http://localhost:8080/user/showPhotoById?userId=' + id;
     },
     collectArticle() {
-      this.$message('已收藏');
+      const _this = this;
+      let data = new FormData();
+      data.append('userId', this.user.id);
+      data.append(' articleId', this.blog.id);
+      this.$axios.put('http://localhost:8080/article/changeCollection', data).then(res => {
+        if (res.data.code == 100) {
+          _this.blog.isCollection = !(_this.blog.isCollection);
+          _this.$message('修改收藏成功');
+        }
+      })
     },
     showCommentInput(i, toId, to) {
-      this.replyInputShow = true;
+      this.commentInputs[i].inputValue = true;
       this.from = this.user.nickName;
       this.fromId = this.user.id;
       this.to = to;
       this.toId = toId;
     },
     showReplyCommentInput(i, toId, to) {
-      this.replyInputShow = true;
+      this.commentInputs[i].inputValue = true;
       this.from = this.user.nickName;
       this.fromId = this.user.id;
       this.to = to;
       this.toId = toId;
     },
-    closeCommentInput(i) {
-      this.replyInputShow = false;
-    },
-    closeReplyCommentInput() {
-      this.replyInputShow = false;
+    closeReplyCommentInput(i) {
+      this.commentInputs[i].inputValue = false;
     },
     addComment() {
-      const _this = this;
-      let comment = new FormData();
-      const date = this.formatDate(new Date().getTime());
-      comment.append('articleId', this.blog.id);
-      comment.append('userId', this.user.id);
-      comment.append('date', new Date());
-      comment.append('fromName', this.user.nickName);
-      comment.append('toName', '');
-      comment.append('toId', '');
-      comment.append('fatherId', '');
-      comment.append('content', this.mycomment);
-      this.$axios.post('http://localhost:8080/comment/new', comment).then(res => {
-        if (res.data.code == 100) {
-          _this.$message('评论成功');
-          let a = {};
-          a.commentId = '';
-          a.fromUserId = _this.user.id;
-          a.fromUserNickName = _this.user.nickName;
-          a.toUserId = '';
-          a.toUserNickName = '';
-          a.photo = _this.user.avatar;
-          a.date = date;
-          a.content = _this.mycomment;
-          a.fatherId = '';
-          a.childList = '';
-          _this.comments.push(a);
-        }
-      });
-    },
-    pushComment(i) {
-      this.closeCommentInput(i);
-      const _this = this;
-      let comment = new FormData();
-      const date = this.formatDate(new Date().getTime());
-      comment.append('articleId', this.blog.id);
-      comment.append('userId', this.fromId);
-      comment.append('date', new Date());
-      comment.append('fromName', this.from);
-      comment.append('toName', this.to);
-      comment.append('toId', this.toId);
-      comment.append('fatherId', this.comments[i].commentId);
-      comment.append('content', this.comment);
-      this.$axios.post('http://localhost:8080/comment/new', comment).then(res => {
-        if (res.data.code == 100) {
-          _this.$message('评论成功');
-          let a = {};
-          a.commentId = '';
-          a.fromUserId = _this.fromId;
-          a.fromUserNickName = _this.from;
-          a.toUserId = _this.toId;
-          a.toUserNickName = _this.to;
-          a.photo = _this.user.avatar;
-          a.date = date;
-          a.content = _this.comment1;
-          a.fatherId = _this.comments[i].commentId;
-          a.childList = '';
-          let b = {};
-          b.inputShow = false;
-          _this.commentInputs.push(b);
-          _this.comments[i].childList.push(a);
-        }
-      });
+      if (this.user.privilege == -1) {
+        this.$message('处于禁言状态无法评论，请联系管理员解除禁言');
+      } else {
+        const _this = this;
+        let comment = new FormData();
+        const date = this.formatDate(new Date().getTime());
+        comment.append('articleId', this.blog.id);
+        comment.append('userId', this.user.id);
+        comment.append('date', new Date());
+        comment.append('fromName', this.user.nickName);
+        comment.append('toName', '');
+        comment.append('toId', '');
+        comment.append('fatherId', '');
+        comment.append('content', this.mycomment);
+        this.$axios.post('http://localhost:8080/comment/new', comment).then(res => {
+          if (res.data.code == 100) {
+            _this.$message('评论成功');
+            let a = {};
+            a.commentId = '';
+            a.fromUserId = _this.user.id;
+            a.fromUserNickName = _this.user.nickName;
+            a.toUserId = '';
+            a.toUserNickName = '';
+            a.photo = _this.user.avatar;
+            a.date = date;
+            a.content = _this.mycomment;
+            a.fatherId = '';
+            a.childList = '';
+            _this.comments.push(a);
+            let b = {};
+            b.inputValue = false;
+            _this.commentInputs.push(b);
+          }
+        });
+      }
     },
     pushCommentReply(i) {
-      this.closeReplyCommentInput();
-      const _this = this;
-      let comment = new FormData();
-      const date = this.formatDate(new Date().getTime());
-      comment.append('articleId', this.blog.id);
-      comment.append('userId', this.fromId);
-      comment.append('date', new Date());
-      comment.append('fromName', this.from);
-      comment.append('toName', this.to);
-      comment.append('toId', this.toId);
-      comment.append('fatherId', this.comments[i].commentId);
-      comment.append('content', this.comment);
-      this.$axios.post('http://localhost:8080/comment/new', comment).then(res => {
-        if (res.data.code == 100) {
-          _this.$message('评论成功');
-          let a = {};
-          a.commentId = '';
-          a.fromUserId = _this.fromId;
-          a.fromUserNickName = _this.from;
-          a.toUserId = _this.toId;
-          a.toUserNickName = _this.to;
-          a.photo = _this.user.avatar;
-          a.date = date;
-          a.content = _this.comment2;
-          a.fatherId = _this.comments[i].commentId;
-          a.childList = '';
-          _this.comments[i].childList.push(a);
-        }
-      });
+      this.closeReplyCommentInput(i);
+      if (this.user.privilege == -1) {
+        this.$message('处于禁言状态无法评论，请联系管理员解除禁言');
+      } else {
+        const _this = this;
+        let comment = new FormData();
+        const date = this.formatDate(new Date().getTime());
+        comment.append('articleId', this.blog.id);
+        comment.append('userId', this.fromId);
+        comment.append('date', new Date());
+        comment.append('fromName', this.from);
+        comment.append('toName', this.to);
+        comment.append('toId', this.toId);
+        comment.append('fatherId', this.comments[i].commentId);
+        comment.append('content', this.comment);
+        this.$axios.post('http://localhost:8080/comment/new', comment).then(res => {
+          if (res.data.code == 100) {
+            _this.$message('评论成功');
+            let a = {};
+            a.commentId = '';
+            a.fromUserId = _this.fromId;
+            a.fromUserNickName = _this.from;
+            a.toUserId = _this.toId;
+            a.toUserNickName = _this.to;
+            a.photo = _this.user.avatar;
+            a.date = date;
+            a.content = _this.comment2;
+            a.fatherId = _this.comments[i].commentId;
+            a.childList = '';
+            _this.comments[i].childList.push(a);
+          }
+        });
+      }
     }
   },
 

@@ -148,7 +148,7 @@ public class ArticleController {
         return ResultVO.throwError(ResponseState.NOT_FOUND);
     }
 
-    @GetMapping("/admin/changeFeature")
+    @PutMapping("/admin/changeFeature")
     public ResultVO changeFeature(Integer id) {
         articleServiceImpl.changeFeature(id);
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
