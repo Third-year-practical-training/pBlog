@@ -42,15 +42,12 @@ let globalSettings = {
 }
 
 // 演示&开发环境开启全部功能（这部分代码可删除，仅方便作者打包演示环境）
-if (process.env.VUE_APP_TYPE == 'example' || process.env.NODE_ENV == 'development') {
-    globalSettings.openPermission = true
+if (process.env.NODE_ENV == 'development') {
+    globalSettings.openPermission = false
     globalSettings.enableSidebarCollapse = true
     globalSettings.enableFullscreen = true
     globalSettings.enablePageReload = true
     globalSettings.enableDynamicTitle = true
-    if (process.env.VUE_APP_TYPE == 'example') {
-        globalSettings.copyrightWebsite = '/fantastic-admin'
-    }
 }
 
 export default globalSettings

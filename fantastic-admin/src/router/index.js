@@ -67,7 +67,7 @@ const constantRoutes = [
     }
 ]
 
-import ArticleManage from "@/router/modules/article.manage";
+import ArticleManage from '@/router/modules/article.manage'
 
 // 当 children 不为空的主导航只有一项时，则隐藏
 let asyncRoutes = [
@@ -125,7 +125,7 @@ router.beforeEach(async(to, from, next) => {
         accessRoutes.forEach(route => {
             router.addRoute(route)
         })
-        next({ ...to, replace: true })
+        next({...to, replace: true})
     }
     if (store.state.menu.isGenerate) {
         store.commit('menu/setHeaderActived', to.path)

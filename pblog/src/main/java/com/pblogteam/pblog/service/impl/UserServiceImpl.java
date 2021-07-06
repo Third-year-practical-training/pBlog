@@ -85,6 +85,7 @@ public class UserServiceImpl implements UserService
             user.setPassword(password);
             user.setEmail(email);
             user.setSex((byte) 1);
+            user.setPrivilege(0);
             userMapper.insert(user);
             return true;
         }

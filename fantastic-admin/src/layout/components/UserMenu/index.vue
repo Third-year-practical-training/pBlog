@@ -3,35 +3,39 @@
         <div class="tools">
             <el-tooltip v-if="$store.state.settings.enableNavSearch" effect="dark" content="搜索页面" placement="bottom">
                 <span class="item" @click="$eventBus.$emit('global-search-toggle')">
-                    <svg-icon name="search" />
+                    <svg-icon name="search"/>
                 </span>
             </el-tooltip>
-            <el-tooltip v-if="$store.state.settings.mode == 'pc' && isFullscreenEnable && $store.state.settings.enableFullscreen" effect="dark" content="全屏" placement="bottom">
+            <el-tooltip
+                v-if="$store.state.settings.mode == 'pc' && isFullscreenEnable && $store.state.settings.enableFullscreen"
+                effect="dark" content="全屏" placement="bottom"
+            >
                 <span class="item" @click="fullscreen">
-                    <svg-icon :name="isFullscreen ? 'fullscreen-exit' : 'fullscreen'" />
+                    <svg-icon :name="isFullscreen ? 'fullscreen-exit' : 'fullscreen'"/>
                 </span>
             </el-tooltip>
             <el-tooltip v-if="$store.state.settings.enablePageReload" effect="dark" content="刷新页面" placement="bottom">
                 <span class="item" @click="reload(2)">
-                    <svg-icon name="reload" />
+                    <svg-icon name="reload"/>
                 </span>
             </el-tooltip>
             <el-tooltip v-if="$store.state.settings.enableThemeSetting" effect="dark" content="主题配置" placement="bottom">
                 <span class="item" @click="$eventBus.$emit('global-theme-toggle')">
-                    <svg-icon name="theme" />
+                    <svg-icon name="theme"/>
                 </span>
             </el-tooltip>
         </div>
         <el-dropdown class="user-container" @command="handleCommand">
             <div class="user-wrapper">
                 <el-avatar size="medium">
-                    <i class="el-icon-user-solid" />
+                    <i class="el-icon-user-solid"/>
                 </el-avatar>
                 {{ $store.state.user.account }}
-                <i class="el-icon-caret-bottom" />
+                <i class="el-icon-caret-bottom"/>
             </div>
             <el-dropdown-menu slot="dropdown" class="user-dropdown">
-                <el-dropdown-item v-if="$store.state.settings.enableDashboard" command="dashboard">控制台</el-dropdown-item>
+                <el-dropdown-item v-if="$store.state.settings.enableDashboard" command="dashboard">控制台
+                </el-dropdown-item>
                 <el-dropdown-item command="setting">个人设置</el-dropdown-item>
                 <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
@@ -88,7 +92,7 @@ export default {
                     })
                     break
             }
-        },
+        }
     }
 }
 </script>
