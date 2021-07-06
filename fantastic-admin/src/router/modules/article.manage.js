@@ -6,7 +6,7 @@ export default {
     redirect: '/articlemanage/article_show',
     name: 'articleManage',
     meta: {
-        title: '文章管理',
+        title: '后台管理',
         icon: 'sidebar-component'
     },
     children: [
@@ -15,7 +15,7 @@ export default {
             name: 'articleShow',
             component: () => import('@/views/article_manage/article.show'),
             meta: {
-                title: '文章展示'
+                title: '文章管理'
             }
         },
         {
@@ -23,7 +23,7 @@ export default {
             name: 'classify',
             component: () => import('@/views/article_manage/classify'),
             meta: {
-                title: '分类展示'
+                title: '分类管理'
             }
         },
         {

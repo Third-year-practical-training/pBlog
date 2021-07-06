@@ -213,8 +213,9 @@ public class UserServiceImpl implements UserService
         userVO.setEdu_bg(user.getEduBg());
         userVO.setPhotoUrl(user.getPhotoUrl());
         userVO.setDescription(user.getDescription());
-        userVO.setAttentionCount(user.getAttentionCount());
+        userVO.setAttentionCount(user.getAttentionCount() == null ? 0 : user.getAttentionCount());
         userVO.setMyAttention(false);
+        userVO.setPrivilege(user.getPrivilege());
         return userVO;
     }
 

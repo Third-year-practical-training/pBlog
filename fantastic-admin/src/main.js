@@ -6,6 +6,9 @@ import store from './store/index'
 import api from './api'
 Vue.prototype.$api = api
 
+import axios from "axios"
+Vue.prototype.$axios = axios
+
 import dayjs from 'dayjs'
 Vue.prototype.$dayjs = dayjs
 
