@@ -17,21 +17,6 @@
     </el-aside>
     <el-main>
       <el-tabs v-model="activeName">
-        <el-tab-pane name="OtherComments" label="别人的评论">
-          <div v-for="item in othercomments" :key="item" class="el-card" style="text-align: left;">
-            <div>
-              <el-avatar :src="getAvatar(item.fromUserId)" size="medium" class="avatar"></el-avatar>
-              <el-link v-text="item.fromUserNickName"
-                       style="margin-left: 5px;color: #7d7d7d;font-size: medium"></el-link>
-              <span style="color:#7d7d7d;">评论了你的博客</span>
-            </div>
-            <div style="margin-top: 10px">
-              <span style="font-size: large;margin-left: 40px;margin-top: 50px;background-color:gray ">{{
-                  item.content
-                }}</span>
-            </div>
-          </div>
-        </el-tab-pane>
         <el-tab-pane name="MyComments" label="我的评论">
           <div v-for="item in mycomments" :key="item" class="el-card" style="text-align: left">
             <div>
@@ -86,7 +71,6 @@ export default {
         pageSize: 0,
       },
       mycomments: [],
-      othercomments: [],
     }
   },
   created() {

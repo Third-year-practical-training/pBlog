@@ -145,6 +145,7 @@ export default {
         id: '',
         nickName: '',
         avatar: '',
+        privilege: 0
       },
       comments: [],
       commentInputs: [],
@@ -159,6 +160,7 @@ export default {
       this.blog.id = this.$route.params.blogId;
       this.user.id = this.$store.getters.getUser.id;
       this.user.nickName = this.$store.getters.getUser.nickname;
+      this.user.privilege = this.$store.getters.getUser.privilege;
       this.user.avatar = 'http://localhost:8080/user/showPhotoById?userId=' + this.user.id;
       const _this = this
       this.$axios.get('http://localhost:8080/article/findById', {
@@ -198,8 +200,8 @@ export default {
     collectArticle() {
       const _this = this;
       let data = new FormData();
-      data.append('userId',this.user.id);
-      data.append(' articleId',this.blog.id);
+      data.append('userId', this.user.id);
+      data.append(' articleId', this.blog.id);
       this.$axios.put('http://localhost:8080/article/changeCollection', data).then(res => {
         if (res.data.code == 100) {
           _this.blog.isCollection = !(_this.blog.isCollection);
@@ -225,68 +227,76 @@ export default {
       this.commentInputs[i].inputValue = false;
     },
     addComment() {
-      const _this = this;
-      let comment = new FormData();
-      const date = this.formatDate(new Date().getTime());
-      comment.append('articleId', this.blog.id);
-      comment.append('userId', this.user.id);
-      comment.append('date', new Date());
-      comment.append('fromName', this.user.nickName);
-      comment.append('toName', '');
-      comment.append('toId', '');
-      comment.append('fatherId', '');
-      comment.append('content', this.mycomment);
-      this.$axios.post('http://localhost:8080/comment/new', comment).then(res => {
-        if (res.data.code == 100) {
-          _this.$message('评论成功');
-          let a = {};
-          a.commentId = '';
-          a.fromUserId = _this.user.id;
-          a.fromUserNickName = _this.user.nickName;
-          a.toUserId = '';
-          a.toUserNickName = '';
-          a.photo = _this.user.avatar;
-          a.date = date;
-          a.content = _this.mycomment;
-          a.fatherId = '';
-          a.childList = '';
-          _this.comments.push(a);
-          let b = {};
-          b.inputValue = false;
-          _this.commentInputs.push(b);
-        }
-      });
+      if (this.user.privilege == -1) {
+        this.$message('处于禁言状态无法评论，请联系管理员解除禁言');
+      } else {
+        const _this = this;
+        let comment = new FormData();
+        const date = this.formatDate(new Date().getTime());
+        comment.append('articleId', this.blog.id);
+        comment.append('userId', this.user.id);
+        comment.append('date', new Date());
+        comment.append('fromName', this.user.nickName);
+        comment.append('toName', '');
+        comment.append('toId', '');
+        comment.append('fatherId', '');
+        comment.append('content', this.mycomment);
+        this.$axios.post('http://localhost:8080/comment/new', comment).then(res => {
+          if (res.data.code == 100) {
+            _this.$message('评论成功');
+            let a = {};
+            a.commentId = '';
+            a.fromUserId = _this.user.id;
+            a.fromUserNickName = _this.user.nickName;
+            a.toUserId = '';
+            a.toUserNickName = '';
+            a.photo = _this.user.avatar;
+            a.date = date;
+            a.content = _this.mycomment;
+            a.fatherId = '';
+            a.childList = '';
+            _this.comments.push(a);
+            let b = {};
+            b.inputValue = false;
+            _this.commentInputs.push(b);
+          }
+        });
+      }
     },
     pushCommentReply(i) {
       this.closeReplyCommentInput(i);
-      const _this = this;
-      let comment = new FormData();
-      const date = this.formatDate(new Date().getTime());
-      comment.append('articleId', this.blog.id);
-      comment.append('userId', this.fromId);
-      comment.append('date', new Date());
-      comment.append('fromName', this.from);
-      comment.append('toName', this.to);
-      comment.append('toId', this.toId);
-      comment.append('fatherId', this.comments[i].commentId);
-      comment.append('content', this.comment);
-      this.$axios.post('http://localhost:8080/comment/new', comment).then(res => {
-        if (res.data.code == 100) {
-          _this.$message('评论成功');
-          let a = {};
-          a.commentId = '';
-          a.fromUserId = _this.fromId;
-          a.fromUserNickName = _this.from;
-          a.toUserId = _this.toId;
-          a.toUserNickName = _this.to;
-          a.photo = _this.user.avatar;
-          a.date = date;
-          a.content = _this.comment2;
-          a.fatherId = _this.comments[i].commentId;
-          a.childList = '';
-          _this.comments[i].childList.push(a);
-        }
-      });
+      if (this.user.privilege == -1) {
+        this.$message('处于禁言状态无法评论，请联系管理员解除禁言');
+      } else {
+        const _this = this;
+        let comment = new FormData();
+        const date = this.formatDate(new Date().getTime());
+        comment.append('articleId', this.blog.id);
+        comment.append('userId', this.fromId);
+        comment.append('date', new Date());
+        comment.append('fromName', this.from);
+        comment.append('toName', this.to);
+        comment.append('toId', this.toId);
+        comment.append('fatherId', this.comments[i].commentId);
+        comment.append('content', this.comment);
+        this.$axios.post('http://localhost:8080/comment/new', comment).then(res => {
+          if (res.data.code == 100) {
+            _this.$message('评论成功');
+            let a = {};
+            a.commentId = '';
+            a.fromUserId = _this.fromId;
+            a.fromUserNickName = _this.from;
+            a.toUserId = _this.toId;
+            a.toUserNickName = _this.to;
+            a.photo = _this.user.avatar;
+            a.date = date;
+            a.content = _this.comment2;
+            a.fatherId = _this.comments[i].commentId;
+            a.childList = '';
+            _this.comments[i].childList.push(a);
+          }
+        });
+      }
     }
   },
 

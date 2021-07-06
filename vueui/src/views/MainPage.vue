@@ -36,7 +36,7 @@
                   </div>
                   <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
                                style="font-size: x-large;font-family: 'Arial Black';color: #333333;text-decoration: none">
-                    {{ item.title }}
+                    {{ item.title }}<i v-if="item.isFeature == true" class="el-icon-reading"></i>
                   </router-link>
                   <div
                       style="min-height: 100px;text-align: left;max-width: 600px;margin-left: 50px;float: left;margin-top: 30px">
