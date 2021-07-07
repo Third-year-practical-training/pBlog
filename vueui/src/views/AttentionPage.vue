@@ -105,8 +105,8 @@ export default {
   },
   created() {
     this.loading = true;
-    if (this.$route.params.id) {
-      let id = this.$route.params.id;
+    if (this.$route.query.id) {
+      let id = this.$route.query.id;
       this.getUser(id);
       this.getBlogs(id, 1);
       this.getCollections(id, 1);

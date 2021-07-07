@@ -34,7 +34,7 @@
                               :src="item.photoUrl">
                     </el-image>
                   </div>
-                  <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
+                  <router-link :to="{path: '/blogshow', query: {blogId: item.id}}"
                                style="font-size: x-large;font-family: 'Arial Black';color: #333333;text-decoration: none;">
                     {{ item.title }}<i v-if="item.isFeature == true" class="el-icon-reading"></i>
                   </router-link>
@@ -233,12 +233,7 @@ export default {
       }
     },
     toAttentionPage(id) {
-      this.$router.push({
-        name: 'AttentionPage',
-        params: {
-          id: id,
-        }
-      });
+      this.$router.push({path: '/attentionpage', query: {id: id}});
     },
     getAvatarUrl(id) {
       let url = '';
