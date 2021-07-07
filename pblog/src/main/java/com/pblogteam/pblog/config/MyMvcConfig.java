@@ -16,11 +16,11 @@ public class MyMvcConfig implements WebMvcConfigurer {
         return new RedisSessionInterceptor();
     }
 
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(new RedisSessionInterceptor()).addPathPatterns("/**") //拦截任意多层路径下的任意请求
-//                .excludePathPatterns("/user/signin", "/user/signup", "/druid", "/admin/signin", "/admin");    //放行登录页面
-//    }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new RedisSessionInterceptor()).addPathPatterns("/**") //拦截任意多层路径下的任意请求
+                .excludePathPatterns("/user/signin", "/user/signup", "/druid", "/admin/signin", "/admin");    //放行登录页面
+    }
 
     //所有的实现webMvcConfigurer接口的组件都会一起起作用
     //@Bean //两组件注册到容器

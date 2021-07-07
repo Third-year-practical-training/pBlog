@@ -13,6 +13,8 @@ import com.pblogteam.pblog.vo.ResultVO;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +31,7 @@ public class ArticleController {
     @Autowired
     private ArticleCollRelaService articleCollRelaService;
 
+    @Cacheable(value="artByIdPageNum" + "#id", key = "'id:' + #id + ',pageNum' + #pageNum")
     @GetMapping("/articles/findByUserId")
     public ResultVO<PageInfo<ArticleTitleVO>> getArticleListByUser(Integer id, int pageNum) {
         if (id != null) {
@@ -48,7 +51,7 @@ public class ArticleController {
         return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
     }
 
-
+    @Cacheable(value="artByTypePageNum", key = "'id:' + #id + ',pageNum' + #pageNum")
     @GetMapping("/articles/findByType")
     public ResultVO<PageInfo<ArticleTitleVO>> getArticleListByType(Integer id, int pageNum) {
         if (id != null) {
@@ -58,6 +61,7 @@ public class ArticleController {
         return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
     }
 
+    @Cacheable(value="artCollByIdPageNum", key = "'id:' + #id + ',pageNum' + #pageNum")
     @GetMapping("/articles/collectList")
     public ResultVO<PageInfo<ArticleTitleVO>> getCollArtByUserId(Integer id, int pageNum) {
         ResultVO<PageInfo<ArticleTitleVO>> resultVO = new ResultVO<>();
@@ -68,7 +72,7 @@ public class ArticleController {
         return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
     }
 
-
+//    @Cacheable(value="artByTypePageNum", key = "'id:' + #id + ',pageNum' + #pageNum")
     @GetMapping("/article/findById")
     public ResultVO<ArticleAndCommentVO> getArticleContentById(Integer id, HttpServletRequest request) {
         if (!articleServiceImpl.isArticle(id, -1) || id == null)

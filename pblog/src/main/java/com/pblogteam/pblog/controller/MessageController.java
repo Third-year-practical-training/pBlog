@@ -6,6 +6,7 @@ import com.pblogteam.pblog.entity.Message;
 import com.pblogteam.pblog.entity.User;
 import com.pblogteam.pblog.service.BlackListService;
 import com.pblogteam.pblog.service.MessageService;
+import com.pblogteam.pblog.vo.MessageVO;
 import com.pblogteam.pblog.vo.ResultVO;
 import com.pblogteam.pblog.vo.UserVO;
 import org.apache.ibatis.annotations.Delete;
@@ -27,7 +28,7 @@ public class MessageController {
     private BlackListService blackListService;
 
     @GetMapping("/message/find")
-    public ResultVO<PageInfo<Message>> findMessage(Integer fromId, Integer toId, Integer pageNum, HttpServletRequest request) {
+    public ResultVO<PageInfo<MessageVO>> findMessage(Integer fromId, Integer toId, Integer pageNum, HttpServletRequest request) {
         if (!isMyId(fromId, request)) return ResultVO.throwError(ResponseState.UNKNOWN_ERROR);
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, messageService.findMessage(fromId, toId, pageNum));
     }
