@@ -8,6 +8,8 @@ import com.pblogteam.pblog.entity.MessageExample;
 import com.pblogteam.pblog.mapper.MessageMapper;
 import com.pblogteam.pblog.service.MessageService;
 import com.pblogteam.pblog.service.UserService;
+import com.pblogteam.pblog.util.CopyPageInfo;
+import com.pblogteam.pblog.vo.MessageVO;
 import com.pblogteam.pblog.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +36,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public PageInfo<Message> findMessage(Integer fromId, Integer toId, Integer pageNum) {
+    public PageInfo<MessageVO> findMessage(Integer fromId, Integer toId, Integer pageNum) {
         MessageExample messageExample = new MessageExample();
         MessageExample.Criteria criteria1 = messageExample.createCriteria();
         criteria1.andFromIdEqualTo(fromId);
@@ -44,7 +46,14 @@ public class MessageServiceImpl implements MessageService {
         criteria2.andToIdEqualTo(fromId);
         messageExample.or(criteria2);
         PageHelper.startPage(pageNum, Config.MESSAGE_SIZE);
-        return new PageInfo<>(messageMapper.selectByExampleWithBLOBs(messageExample));
+        List<Message> messages = messageMapper.selectByExampleWithBLOBs(messageExample);
+        List<MessageVO> messageVOS = new ArrayList<>();
+        String fromUrl = userService.selectByPrimaryKey(fromId).getPhotoUrl();
+        String toUrl = userService.selectByPrimaryKey(toId).getPhotoUrl();
+        for(Message message:messages) {
+            messageVOS.add(new MessageVO(message, fromUrl, toUrl));
+        }
+        return CopyPageInfo.covertPageInfo(messageVOS, messages);
     }
 
     @Override
