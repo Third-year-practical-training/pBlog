@@ -21,7 +21,7 @@
 
     <el-main>
       <div v-for="(item,i) in attention" :key="i" class="el-card" style="height: 80px" v-loading="loading">
-        <el-avatar :size="50" :src="getAvatar(item.id)"
+        <el-avatar :size="50" :src="item.photoUrl"
                    style="float: left;margin-top: 20px;margin-left: 10px"></el-avatar>
         <el-link type="primary" style="float: left;margin-top: 40px;margin-left: 10px" @click="toAttention(item.id)">
           {{ item.nickname }}
@@ -100,7 +100,7 @@ export default {
           _this.$message('取消成功');
         }
       });
-      this.attention.splice(i,1);
+      this.attention.splice(i, 1);
     },
     getAvatar(id) {
       return 'http://localhost:8080/user/showPhotoById?userId=' + id;

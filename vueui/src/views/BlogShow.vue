@@ -55,7 +55,7 @@
            style="text-align: left;margin-top: 0px;margin-left: 50px;width: 1060px"
            class="el-card">
         <div>
-          <el-avatar size="large" :src="getAvatar(item.fromUserId)"
+          <el-avatar size="large" :src="item.photoUrl"
                      style="margin-top: 10px;margin-left: 10px"></el-avatar>
           <span style=" color: black;font-size: 18px;font-weight: bold;margin-left: 2px;">{{
               item.fromUserNickName
@@ -72,7 +72,7 @@
         <div>
           <div v-for="(reply,j) in item.childList" :key="j" class="el-card" style="margin-left: 20px">
             <div>
-              <el-avatar size="large" :src="getAvatar(reply.fromUserId)"
+              <el-avatar size="large" :src="reply.photoUrl"
                          style="margin-top: 10px;margin-left: 10px"></el-avatar>
               <span
                   style=" color: black;font-size: 18px;font-weight: bold;margin-left: 2px;">{{
@@ -161,7 +161,7 @@ export default {
       this.user.id = this.$store.getters.getUser.id;
       this.user.nickName = this.$store.getters.getUser.nickname;
       this.user.privilege = this.$store.getters.getUser.privilege;
-      this.user.avatar = 'http://localhost:8080/user/showPhotoById?userId=' + this.user.id;
+      this.user.avatar = this.$store.getters.getUser.photoUrl;
       const _this = this
       this.$axios.get('http://localhost:8080/article/findById', {
         params: {

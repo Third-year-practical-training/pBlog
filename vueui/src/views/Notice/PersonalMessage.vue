@@ -16,43 +16,35 @@
       </el-col>
     </el-aside>
     <el-main>
-      <el-tabs v-model="activeName">
-        <el-tab-pane name="toMyMsg" label="我收到的私信">
-          <div v-for="item in toMyMsg" :key="item" class="el-card" style="text-align: left">
-            <div>
-              <el-avatar v-if="item.fromId !== '' &&  item.fromId != null" :src="getAvatar(item.fromId)"
-                         size="medium"
-                         style="margin-top: 5px;margin-left: 5px"></el-avatar>
-              <span style="color:cornflowerblue;">{{ item.fromName }}</span>
-              <span>{{ formatDate(item.date) }}</span>
-              <span>发来的私信: </span>
-              <span style="color:lightcoral;">{{ item.content }}</span>
-              <el-button type="primary" icon="el-icon-message" circle
-                         style="float: right;margin-right: 5px"></el-button>
-              <el-button type="danger" icon="el-icon-delete" circle style="float: right;margin-right: 5px"></el-button>
+      <el-container>
+        <el-aside>
+          <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleMessage">
+            <div v-for="(item,i) in users" :key="i">
+              <el-menu-item index="i">
+                <template slot="title">
+                  <el-avatar :src="item.photoUrl"></el-avatar>
+                  <span>{{ item.nickname }}</span>
+                </template>
+              </el-menu-item>
             </div>
-            <div style="margin-top: 10px">
-              <span style="font-size: large;margin-left: 40px;margin-top: 50px;background-color:gray ">{{
-                  item.content
-                }}</span>
+          </el-menu>
+        </el-aside>
+        <el-main>
+          <div style="border-radius: 0px" class="el-card">
+            <div v-for="(item,i) in messages">
+                <span>{{item.fromName}}</span>
+                <span>{{formatDate(item.date)}}</span>
+                <span>{{item.content}}</span>
             </div>
-            <el-link style="margin-left: 10px;margin-top: 20px;margin-bottom: 10px">文章链接: {{
-                item.articleTitle
-              }}
-            </el-link>
-            <el-button type="danger" icon="el-icon-delete" circle style="float: right;margin-right: 5px"></el-button>
           </div>
-          <div class="block" style="text-align: center;">
-            <el-pagination
-                layout="prev, pager, next"
-                :current-page="pageNum"
-                :page-size="pageSize"
-                :total="total"
-                @current-change="page">
-            </el-pagination>
-          </div>
-        </el-tab-pane>
-      </el-tabs>
+          <el-input
+              type="textarea"
+              autosize
+              placeholder="请输入内容"
+              v-model="inputs">
+          </el-input>
+        </el-main>
+      </el-container>
     </el-main>
   </el-container>
 </template>
@@ -66,15 +58,32 @@ export default {
       pageNum: 1,
       pageSize: 0,
       total: 0,
-      toMyMsg: []
+      curUser: {},
+      users: [],
+      messages: [],
+      inputs: ''
     }
   },
   created() {
+    this.curUser = _this.$store.getters.getUser;
+    this.getUsers();
     this.page(1);
   },
   methods: {
-    page(pageNum){
-      this.$axios.get()
+    page(pageNum) {
+
+    },
+    getUsers() {
+      const _this = this;
+      this.$axios.get('http://localhost:8080/message/getMyUser', {
+        params: {
+          id: this.curUser.id
+        }
+      }).then(res => {
+        if (res.data.code == 100) {
+          _this.users = res.data.data;
+        }
+      })
     },
     menuClick(menuItem) {
       if (menuItem.index == 1) {
@@ -97,6 +106,18 @@ export default {
       let d = time.getDate();
       return `${y}-${m}-${d}`;
     },
+    handleMessage(index) {
+      const _this = this;
+      this.$axios.get('http://localhost:8080/message/find', {
+        params: {
+          fromId: this.curUser.id,
+          toId: this.users[index].id,
+          pageNum: 1
+        }
+      }).then(res => {
+        _this.messages = res.data.data.list;
+      })
+    }
   }
 }
 </script>

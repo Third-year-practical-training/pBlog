@@ -107,7 +107,7 @@ export default {
       this.user.birthday = this.$store.getters.getUser.birthday;
       this.user.edu_bg = this.$store.getters.getUser.edu_bg;
       this.user.description = this.$store.getters.getUser.description;
-      this.url = 'http://localhost:8080/user/showPhotoById?userId=' + this.$store.getters.getUser.id;
+      this.url = this.$store.getters.getUser.photoUrl;
     }
   },
   methods: {

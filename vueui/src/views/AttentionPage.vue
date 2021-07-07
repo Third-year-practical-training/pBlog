@@ -2,7 +2,7 @@
   <el-container>
     <el-aside>
       <el-card v-model="user">
-        <el-avatar :size="150" :src="avatarUrl"></el-avatar>
+        <el-avatar :size="150" :src="user.photoUrl"></el-avatar>
         <div class="text item" style="font-family: 'Arial Black';font-size: large">{{ user.nickname }}</div>
         <div class="text item" style="font-family: 'Arial Black';font-size: large">{{ user.description }}</div>
         <div style="display: inline-block">
@@ -94,7 +94,6 @@ export default {
       buttonLoading: false,
       activeName: 'otherArticle',
       loading: false,
-      avatarUrl: '',
       show1: true,
       show2: false,
     }
@@ -103,7 +102,6 @@ export default {
     this.loading = true;
     if (this.$route.params.id) {
       let id = this.$route.params.id;
-      this.avatarUrl = this.getAvatar(id);
       this.getUser(id);
       this.getBlogs(id, 1);
       this.getCollections(id, 1);

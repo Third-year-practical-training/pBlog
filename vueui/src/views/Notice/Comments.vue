@@ -24,7 +24,7 @@
                     style="color:#7d7d7d;margin-left: 5px">你评论了以下内容:</span>
               <span v-if="item.toUserId !== '' &&  item.toUserId != null"
                     style="color:#7d7d7d;margin-left: 5px">你回复了</span>
-              <el-avatar v-if="item.toUserId !== '' &&  item.toUserId != null" :src="getAvatar(item.toUserId)"
+              <el-avatar v-if="item.toUserId !== '' &&  item.toUserId != null" :src="item.toPhotoUrl"
                          size="medium"
                          style="margin-top: 5px;margin-left: 5px"></el-avatar>
               <el-link v-if="item.toUserId !== '' &&  item.toUserId != null"

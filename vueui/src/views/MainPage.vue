@@ -31,7 +31,7 @@
                 <div>
                   <div>
                     <el-image style="width: 200px;height: 200px;float: left;margin-bottom: 10px"
-                              :src="getAvatarUrl(item.userId)">
+                              :src="item.photoUrl">
                     </el-image>
                   </div>
                   <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
@@ -146,7 +146,7 @@ export default {
     const _this = this;
     if (this.$store.getters.getUser.id) {
       this.user.id = this.$store.getters.getUser.id;
-      this.user.url = 'http://localhost:8080/user/showPhotoById?userId=' + this.user.id;
+      this.user.url = this.$store.getters.getUser.photoUrl;
       this.user.description = this.$store.getters.getUser.description;
       this.user.nickname = this.$store.getters.getUser.nickname;
       this.page(1);
