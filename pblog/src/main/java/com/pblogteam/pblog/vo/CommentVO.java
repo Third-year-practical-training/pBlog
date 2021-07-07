@@ -13,7 +13,7 @@ public class CommentVO {
     private String fromUserNickName;
     private Integer toUserId;
     private String toUserNickName;
-    private String photo;
+    private String photoUrl;
     private Date date;
     private String content;
     private Integer fatherId;

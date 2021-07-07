@@ -220,6 +220,7 @@ public class UserServiceImpl implements UserService {
         userVO.setPassword(user.getPassword());
         userVO.setReal_name(user.getRealName());
         userVO.setNickname(user.getNickname());
+        userVO.setPhotoUrl(user.getPhotoUrl());
         userVO.setEmail(user.getEmail());
         if (user.getSex() == 0) {
             userVO.setSex("女");

@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -76,10 +75,11 @@ public class CommentServiceImpl implements CommentService {
         commentVO.setDate(comment.getDate());
         commentVO.setFromUserId(comment.getUserId());
         User fromUser = userMapper.selectByPrimaryKey(comment.getUserId());
-        commentVO.setPhoto(fromUser.getPhotoUrl());
+        commentVO.setPhotoUrl(fromUser.getPhotoUrl());
         commentVO.setFromUserNickName(fromUser.getNickname());
         commentVO.setFromUserId(fromUser.getId());
         commentVO.setFatherId(comment.getFatherId());
+        commentVO.setPhotoUrl(userMapper.selectByPrimaryKey(comment.getUserId()).getPhotoUrl());
         commentVO.setChildList(null);
         if (comment.getToId() != null) {
             commentVO.setToUserId(comment.getToId());
@@ -120,7 +120,7 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> commentList = commentMapper.selectByExampleWithBLOBs(commentExample);
         List<MyComment> myComments = new ArrayList<>();
         for (Comment comment : commentList) {
-            myComments.add(new MyComment(comment, articleMapper.selectByPrimaryKey(comment.getArticleId()).getTitle()));
+            myComments.add(new MyComment(comment, articleMapper.selectByPrimaryKey(comment.getArticleId()).getTitle(), userMapper.selectByPrimaryKey(comment.getToId()).getPhotoUrl()));
         }
         return CopyPageInfo.covertPageInfo(myComments, commentList);
     }

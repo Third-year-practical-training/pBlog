@@ -86,6 +86,7 @@ public class ArticleServiceImpl implements ArticleService {
                 articleTitleVO.setId(a.getId());
                 articleTitleVO.setUserId(a.getUserId());
                 articleTitleVO.setIsFeature(a.getIsFeature() == 1);
+                articleTitleVO.setPhotoUrl(userServiceImpl.selectByPrimaryKey(a.getUserId()).getPhotoUrl());
                 // 查nickname
                 articleTitleVO.setUserNickname(userServiceImpl.selectByPrimaryKey(a.getUserId()).getNickname());
                 articleTitleVO.setTitle(a.getTitle());
