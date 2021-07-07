@@ -17,6 +17,7 @@ public class ArticleAndCommentVO {
     private Date date;
     private String content;
     private Integer collectCount;
+    private String summary;
     private boolean myCollection;
     private boolean published;
     private ArticleType articleType;

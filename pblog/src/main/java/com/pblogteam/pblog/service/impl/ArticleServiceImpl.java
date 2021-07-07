@@ -38,7 +38,6 @@ public class ArticleServiceImpl implements ArticleService {
     private TypeServiceImpl typeServiceImpl;
 
 
-    private static final Integer ARTICLE_SUMMARY_LENGTH = 50;
 
     // 查询文章列表
 
@@ -149,10 +148,10 @@ public class ArticleServiceImpl implements ArticleService {
         article.setContent(articleNewVO.getContent());
         article.setId(articleNewVO.getId());
         article.setSummary(articleNewVO.getSummary());
-        article.setIsFeature(0);
         // 添加文章
         if (article.getId() == null) {
             // 添加新文章
+            article.setIsFeature(0);
             article.setPublished(published);
             article.setCollectionCount(0);
             article.setCommentCount(0);
@@ -206,6 +205,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleAndCommentVO.setMyCollection(articleCollRelaServiceImpl.isExist(new ArticleCollectorRela(curUserId, article.getId())));
         articleAndCommentVO.setPublished(article.getPublished() != 0x00);
         articleAndCommentVO.setTagList(selectTagListByArticleId(article.getId()));
+        articleAndCommentVO.setSummary(article.getSummary());
         articleAndCommentVO.setArticleType(typeServiceImpl.findTypeById(article.getArticleTypeId()));
         articleAndCommentVO.setCommentList(commentServiceImpl.selectByArticleId(id));
         return articleAndCommentVO;
