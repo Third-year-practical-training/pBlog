@@ -3,15 +3,18 @@ package com.pblogteam.pblog.controller;
 import com.github.pagehelper.PageInfo;
 import com.pblogteam.pblog.constant.ResponseState;
 import com.pblogteam.pblog.entity.Message;
+import com.pblogteam.pblog.entity.User;
 import com.pblogteam.pblog.service.BlackListService;
 import com.pblogteam.pblog.service.MessageService;
 import com.pblogteam.pblog.vo.ResultVO;
+import com.pblogteam.pblog.vo.UserVO;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 @RestController
@@ -28,6 +31,13 @@ public class MessageController {
         if (!isMyId(fromId, request)) return ResultVO.throwError(ResponseState.UNKNOWN_ERROR);
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, messageService.findMessage(fromId, toId, pageNum));
     }
+
+    @GetMapping("/message/getMyUser")
+    public ResultVO<List<UserVO>> findMyUser(Integer id, HttpServletRequest request) {
+        if(!isMyId(id, request)) return ResultVO.throwError(ResponseState.SIGNATURE_NOT_MATCH);
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, messageService.findMyUser(id));
+    }
+
 
     @PutMapping("/message/new")
     public ResultVO newMessage(Message message, HttpServletRequest request) {

@@ -7,13 +7,21 @@ import com.pblogteam.pblog.entity.Message;
 import com.pblogteam.pblog.entity.MessageExample;
 import com.pblogteam.pblog.mapper.MessageMapper;
 import com.pblogteam.pblog.service.MessageService;
+import com.pblogteam.pblog.service.UserService;
+import com.pblogteam.pblog.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MessageServiceImpl implements MessageService {
     @Autowired
     private MessageMapper messageMapper;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public void addMessage(Message message) {
@@ -33,5 +41,15 @@ public class MessageServiceImpl implements MessageService {
         criteria.andToIdEqualTo(toId);
         PageHelper.startPage(pageNum, Config.MESSAGE_SIZE);
         return new PageInfo<>(messageMapper.selectByExampleWithBLOBs(messageExample));
+    }
+
+    @Override
+    public List<UserVO> findMyUser(Integer id) {
+        List<Integer> userIdList = messageMapper.findMyUser(id);
+        List<UserVO> userVOS = new ArrayList<>();
+        for(Integer userId: userIdList) {
+            userVOS.add(userService.findByUserId(userId, id));
+        }
+        return userVOS;
     }
 }

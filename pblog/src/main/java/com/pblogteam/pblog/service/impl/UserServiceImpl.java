@@ -12,16 +12,24 @@ import com.pblogteam.pblog.mapper.UserFollowerRelaMapper;
 import com.pblogteam.pblog.mapper.UserMapper;
 import com.pblogteam.pblog.service.UserService;
 import com.pblogteam.pblog.util.CopyPageInfo;
+import com.pblogteam.pblog.util.FtpUtil;
 import com.pblogteam.pblog.vo.UserNewVO;
 import com.pblogteam.pblog.vo.UserVO;
+import org.apache.commons.net.ftp.FTPClient;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.support.CustomSQLErrorCodesTranslation;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,6 +124,33 @@ public class UserServiceImpl implements UserService {
     @Override
     public User selectByPrimaryKey(Integer id) {
         return userMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public void getImageBuf(Integer id, HttpServletResponse response) {
+        FTPClient ftp = null;
+        InputStream in = null;
+        OutputStream os = null;
+        String imgPath = selectByPrimaryKey(id).getPhotoUrl();
+        try {
+            ftp = FtpUtil.initFTP(ftp);
+            in = ftp.retrieveFileStream(new String(imgPath.getBytes("UTF-8"), "iso-8859-1"));
+            String picType = imgPath.split("\\.")[1];
+            BufferedImage bufImg = null;
+            bufImg = ImageIO.read(in);
+            os = response.getOutputStream();
+            ImageIO.write(bufImg, picType, os);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                    FtpUtil.destroy(ftp);
+                } catch (IOException e) {
+                }
+            }
+        }
     }
 
     @Override

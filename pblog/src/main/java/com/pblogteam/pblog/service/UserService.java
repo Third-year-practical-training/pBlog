@@ -5,6 +5,9 @@ import com.pblogteam.pblog.entity.User;
 import com.pblogteam.pblog.vo.UserNewVO;
 import com.pblogteam.pblog.vo.UserVO;
 
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.OutputStream;
 import java.util.List;
 
 public interface UserService {
@@ -21,6 +24,8 @@ public interface UserService {
     void changeAttention(Integer id, Integer signedinUserId);
 
     User selectByPrimaryKey(Integer id);
+
+    void getImageBuf(Integer id, HttpServletResponse response);
 
     void changePhoto(Integer userId, String photoUrl);
 
