@@ -32,7 +32,7 @@
           <el-tab-pane label="我的文章" name="MyArticle" v-loading="loading">
             <div v-for="(item,i) in blogs" :key="i" class="el-card" style="text-align: left">
               <h4>
-                <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
+                <router-link :to="{path: '/blogshow', query: {blogId: item.id}}"
                              style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
                   {{ item.title }}
                 </router-link>
@@ -178,12 +178,7 @@ export default {
       })
     },
     updateArticle(index) {
-      this.$router.push({
-        name: 'NewBlog',
-        params: {
-          blogId: this.blogs[index].id,
-        }
-      });
+      this.$router.push({path: '/newblog', query: {blogId: this.blogs[index].id}});
     },
     cancelCollection(index) {
       const _this = this;

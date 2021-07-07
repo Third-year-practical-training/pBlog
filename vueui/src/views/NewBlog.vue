@@ -12,7 +12,7 @@
         <el-form-item label="简介" prop="summary" style="margin-top: 10px">
           <el-input v-model="editForm.summary"></el-input>
         </el-form-item>
-        <el-form-item label="分类" prop="articleTypeId">
+        <el-form-item label="分类" prop="articleTypeId" style="text-align: left">
           <el-select v-model="editForm.articleTypeId" placeholder="请选择">
             <el-option
                 v-for="item in select"
@@ -22,7 +22,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="标签" prop="tag">
+        <el-form-item label="标签" prop="tag" style="text-align: left;">
           <el-tag
               :key="tag"
               v-for="tag in editForm.tag"
@@ -39,6 +39,7 @@
               size="small"
               @keyup.enter.native="handleInputConfirm"
               @blur="handleInputConfirm"
+              style="max-width: 100px"
           >
           </el-input>
           <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
@@ -89,8 +90,8 @@ export default {
     if (this.$store.getters.getUser.id) {
       this.editForm.userId = this.$store.getters.getUser.id;
     }
-    if (this.$route.params.blogId) {
-      this.editForm.id = this.$route.params.blogId;
+    if (this.$route.query.blogId) {
+      this.editForm.id = this.$route.query.blogId;
     }
     const _this = this;
     this.$axios.get('http://localhost:8080/type/findall').then(res => {
@@ -107,6 +108,7 @@ export default {
         _this.editForm.userId = res.data.data.userId;
         _this.editForm.articleTypeId = res.data.data.articleType.id;
         _this.editForm.title = res.data.data.title;
+        _this.editForm.summary = res.data.data.summary;
         _this.editForm.date = _this.formatDate(res.data.data.date);
         _this.editForm.content = res.data.data.content;
         _this.editForm.tag = res.data.data.tagList;

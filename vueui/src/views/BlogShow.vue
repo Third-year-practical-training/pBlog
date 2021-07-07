@@ -46,7 +46,7 @@
         </el-col>
       </el-row>
       <div style="margin-top: 10px;text-align: left">
-        <el-avatar :size="40" :src="user.avatar" style="margin-left: 22px;float: left;margin-left: 50px"></el-avatar>
+        <el-avatar :size="40" :src="user.photoUrl" style="margin-left: 22px;float: left;margin-left: 50px"></el-avatar>
         <div>
           <el-input type="textarea" autosize contenteditable="true" placeholder="请输入内容"
                     style="max-width: 1000px;margin-left: 10px" v-model="mycomment"></el-input>
@@ -145,12 +145,7 @@ export default {
         content: '',
         isCollection: false
       },
-      user: {
-        id: '',
-        nickName: '',
-        avatar: '',
-        privilege: 0
-      },
+      user: {},
       comments: [],
       commentInputs: [],
     }
@@ -161,11 +156,8 @@ export default {
   methods: {
     getBlog() {
       this.loading = true;
-      this.blog.id = this.$route.params.blogId;
-      this.user.id = this.$store.getters.getUser.id;
-      this.user.nickName = this.$store.getters.getUser.nickname;
-      this.user.privilege = this.$store.getters.getUser.privilege;
-      this.user.avatar = this.$store.getters.getUser.photoUrl;
+      this.blog.id = this.$route.query.blogId;
+      this.user = this.$store.getters.getUser;
       const _this = this
       this.$axios.get('http://localhost:8080/article/findById', {
         params: {
@@ -258,7 +250,8 @@ export default {
             a.date = date;
             a.content = _this.mycomment;
             a.fatherId = '';
-            a.childList = '';
+            a.childList = [];
+            a.photoUrl = _this.user.photoUrl
             _this.comments.push(a);
             let b = {};
             b.inputValue = false;
