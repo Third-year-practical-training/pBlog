@@ -190,9 +190,8 @@ export default {
       this.inputVisible = false;
       this.inputValue = '';
     },
-
     goBack() {
-      this.$router.push('/contentmanage')
+      this.$router.push('/user-center/contentmanage')
     }
   },
 

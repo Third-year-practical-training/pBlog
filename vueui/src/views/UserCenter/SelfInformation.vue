@@ -26,7 +26,7 @@
 
       <el-main>
         <el-card class="box-card">
-          <el-avatar :size="150" :src="url"></el-avatar>
+          <el-avatar :size="150" :src="user.photoUrl"></el-avatar>
           <div class="text item" style="font-family: 'Arial Black';font-size: large">{{ user.nickname }}</div>
           <div>
             <el-upload
@@ -89,31 +89,15 @@ export default {
   data() {
     return {
       user: {
-        username: '',
-        nickname: '',
-        real_name: '',
-        email: '',
-        sex: '',
-        birthday: '',
-        edu_bg: '',
-        description: '',
+
       },
-      url: '',
       avatarLoading: false,
       infoLoading: false,
     }
   },
   created() {
     if (this.$store.getters.getUser.id) {
-      this.user.username = this.$store.getters.getUser.username;
-      this.user.nickname = this.$store.getters.getUser.nickname;
-      this.user.real_name = this.$store.getters.getUser.real_name;
-      this.user.email = this.$store.getters.getUser.email;
-      this.user.sex = this.$store.getters.getUser.sex;
-      this.user.birthday = this.$store.getters.getUser.birthday;
-      this.user.edu_bg = this.$store.getters.getUser.edu_bg;
-      this.user.description = this.$store.getters.getUser.description;
-      this.url = this.$store.getters.getUser.photoUrl;
+      this.user = this.$store.getters.getUser;
     }
   },
   methods: {
@@ -149,7 +133,8 @@ export default {
       })
     },
     handleAvatarSuccess(res, file, fileList) {
-      this.url = URL.createObjectURL(file.raw);
+      this.user.photoUrl = URL.createObjectURL(file.raw);
+      this.$store.commit("SET_USERINFO" , this.user);
       this.updateAvatar(file);
       this.avatarLoading = false;
     },

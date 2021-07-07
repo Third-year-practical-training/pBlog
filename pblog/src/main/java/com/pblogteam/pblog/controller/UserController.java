@@ -200,7 +200,7 @@ public class UserController {
      * @param id
      * @param privilege 权限， -1 禁止评论，0正常用户， 1管理员
      * @param request
-     * @return
+     * @returnl
      */
     @Caching(evict = {
             @CacheEvict(value = "userAll", key = "'*'")
