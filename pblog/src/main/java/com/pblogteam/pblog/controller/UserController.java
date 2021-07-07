@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.pblogteam.pblog.constant.ResponseState;
 import com.pblogteam.pblog.service.UserService;
 import com.pblogteam.pblog.util.FtpUtil;
+import com.pblogteam.pblog.util.GiteeFile;
 import com.pblogteam.pblog.vo.ResultVO;
 import com.pblogteam.pblog.vo.UserNewVO;
 import com.pblogteam.pblog.vo.UserVO;
@@ -153,20 +154,22 @@ public class UserController {
     }
 
     @PostMapping("/user/changePhoto")
-    public ResultVO<Boolean> changePhoto(@RequestParam("photo") MultipartFile file,
+    public ResultVO changePhoto(@RequestParam("photo") MultipartFile file,
                                          HttpSession session) throws IOException {
         InputStream inputStream = file.getInputStream();
-
         String filename = file.getOriginalFilename();
         //截取后缀
         String suffix = filename.substring(filename.lastIndexOf("."));
         //使用UUID拼接后缀，定义一个不重复的文件名
         String finalname = UUID.randomUUID() + suffix;
 
-        boolean flag = FtpUtil.uploadFile(finalname, inputStream);
-        if (flag == true)
-            userService.changePhoto((Integer) session.getAttribute("userId"), finalname);
-        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, flag);
+        String url = GiteeFile.uploadImage(file, finalname);
+        if (url != null) {
+            userService.changePhoto((Integer) session.getAttribute("userId"), url);
+            return ResultVO.throwSuccess(ResponseState.SUCCESS);
+        } else {
+            return ResultVO.throwError(400, "文件上传失败");
+        }
     }
 
     /**
@@ -190,31 +193,32 @@ public class UserController {
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.findAllUser(pageNum));
     }
 
-
+//
     @GetMapping("/user/showPhotoById")
-    public void showPicture(HttpServletRequest request, HttpServletResponse response, @RequestParam("userId") int userId) {
-        FTPClient ftp = null;
-        InputStream in = null;
-        OutputStream os = null;
+    public ResultVO<String> showPicture(HttpServletRequest request, HttpServletResponse response, @RequestParam("userId") int userId) {
+//        FTPClient ftp = null;
+//        InputStream in = null;
+//        OutputStream os = null;
         String imgPath = userService.selectByPrimaryKey(userId).getPhotoUrl();
-        try {
-            ftp = FtpUtil.initFTP(ftp);
-            in = ftp.retrieveFileStream(new String(imgPath.getBytes("UTF-8"), "iso-8859-1"));
-            String picType = imgPath.split("\\.")[1];
-            BufferedImage bufImg = null;
-            bufImg = ImageIO.read(in);
-            os = response.getOutputStream();
-            ImageIO.write(bufImg, picType, os);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                    FtpUtil.destroy(ftp);
-                } catch (IOException e) {
-                }
-            }
-        }
+        return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, imgPath);
+//        try {
+//            ftp = FtpUtil.initFTP(ftp);
+//            in = ftp.retrieveFileStream(new String(imgPath.getBytes("UTF-8"), "iso-8859-1"));
+//            String picType = imgPath.split("\\.")[1];
+//            BufferedImage bufImg = null;
+//            bufImg = ImageIO.read(in);
+//            os = response.getOutputStream();
+//            ImageIO.write(bufImg, picType, os);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            if (in != null) {
+//                try {
+//                    in.close();
+//                    FtpUtil.destroy(ftp);
+//                } catch (IOException e) {
+//                }
+//            }
+//        }
     }
 }

@@ -12,6 +12,15 @@
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.pblogteam.pblog.entity.Message">
     <result column="content" jdbcType="LONGVARCHAR" property="content" />
   </resultMap>
+<!--  my own start-->
+  <resultMap id="UserId" type="java.lang.Integer">
+    <result column="from_id" jdbcType="INTEGER"/>
+  </resultMap>
+
+  <select id="findMyUser" parameterType="java.lang.Integer" resultMap="UserId">
+    select distinct from_id from message where to_id = #{id, jdbcType=INTEGER}
+  </select>
+<!--  my own end-->
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">

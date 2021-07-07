@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 @RestController
+@RequestMapping("/")
 public class CommentController {
 
     @Autowired
