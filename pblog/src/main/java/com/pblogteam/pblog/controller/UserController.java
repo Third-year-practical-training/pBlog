@@ -10,9 +10,13 @@ import com.pblogteam.pblog.vo.UserNewVO;
 import com.pblogteam.pblog.vo.UserVO;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sun.font.TrueTypeFont;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +44,7 @@ public class UserController {
     //@PutMapping
     //@DeleteMapping
     //@RequestMapping(value = "/user/login", method = RequestMethod.POST)  等价于@PostMapping
+    @Cacheable(value = "userByName", key = "'username' + #username")
     @PostMapping("/user/signin")
     public ResultVO<UserVO> signin(@RequestParam("username") String username,
                                    @RequestParam("password") String password,
@@ -65,7 +70,7 @@ public class UserController {
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userVO);
         }
     }
-
+    @Cacheable(value = "admin", key = "'username' + #username")
     @PostMapping(value = {"/admin/signin", "/admin"})
     public ResultVO<UserVO> signin(String username, String password, HttpServletRequest request, HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
@@ -92,7 +97,7 @@ public class UserController {
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userVO);
         }
     }
-
+    @Cacheable(value = "userById", key = "'id' + #id")
     @GetMapping("/user/findByUserId")
     public ResultVO<UserVO> findByUserId(@RequestParam("id") Integer id,
                                          HttpSession session) {
@@ -129,19 +134,30 @@ public class UserController {
             return ResultVO.throwError(400, "用户名已存在");
         }
     }
-
+    @Cacheable(value = "attById", key = "'id' + #id + ':pageNum' + #pageNum")
     @GetMapping("/users/attentionList")
     public ResultVO<PageInfo<UserVO>> attentionList(@RequestParam("id") Integer id, int pageNum) {
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.myAttentionList(id, pageNum));
     }
-
+    @CacheEvict(value = "attById", key = "'id' + #id + ':*'")
     @PutMapping("/user/changeAttention")
     public ResultVO changeAttention(@RequestParam("id") Integer id,
                                     HttpServletRequest request) {
         userService.changeAttention(id, (Integer) request.getSession().getAttribute("userId"));
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
-
+    @Caching(evict = {
+            @CacheEvict(value = "userByName", key = "'username' + #userNewVO.username"),
+            @CacheEvict(value = "userAll", allEntries = true),
+            @CacheEvict(value = "userById", allEntries = true),
+            @CacheEvict(value = "comById", allEntries = true),
+            @CacheEvict(value = "userById", allEntries = true),
+            @CacheEvict(value = "artByIdPageNum", allEntries = true),
+            @CacheEvict(value = "artByTypePageNum", allEntries = true),
+            @CacheEvict(value = "artCollByIdPageNum", allEntries = true),
+            @CacheEvict(value = "artAll", allEntries = true),
+            @CacheEvict(value = "artHot", allEntries = true),
+    })
     @PutMapping("/user/updateinfo")
     public ResultVO updateInfo(@RequestBody UserNewVO userNewVO, HttpSession session) {
         Integer userId = (Integer) session.getAttribute("userId");
@@ -152,7 +168,18 @@ public class UserController {
         }
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.updateInfo(userId, userNewVO));
     }
-
+    @Caching(evict = {
+            @CacheEvict(value = "userByName", allEntries = true),
+            @CacheEvict(value = "userAll", allEntries = true),
+            @CacheEvict(value = "userById", allEntries = true),
+            @CacheEvict(value = "comById", allEntries = true),
+            @CacheEvict(value = "userById", allEntries = true),
+            @CacheEvict(value = "artByIdPageNum", allEntries = true),
+            @CacheEvict(value = "artByTypePageNum", allEntries = true),
+            @CacheEvict(value = "artCollByIdPageNum", allEntries = true),
+            @CacheEvict(value = "artAll", allEntries = true),
+            @CacheEvict(value = "artHot", allEntries = true),
+    })
     @PostMapping("/user/changePhoto")
     public ResultVO changePhoto(@RequestParam("photo") MultipartFile file,
                                          HttpSession session) throws IOException {
@@ -178,6 +205,10 @@ public class UserController {
      * @param request
      * @return
      */
+    @Caching(evict = {
+            @CacheEvict(value = "userByName", key = "'*'"),
+            @CacheEvict(value = "userAll", key = "'*'")
+    })
     @PutMapping("/admin/changeUserPrivilege")
     public ResultVO changeUserPrivilege(Integer id, Integer privilege, HttpServletRequest request) {
         int curId = (int) request.getSession().getAttribute("userId");
@@ -187,13 +218,13 @@ public class UserController {
         userService.changeAdmin(id, privilege);
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
-
+    @Cacheable(value = "userAll", key = "'pageNum' + #pageNum")
     @GetMapping("/admin/getAllUser")
     public ResultVO<PageInfo<UserVO>> getAllUser(int pageNum) {
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.findAllUser(pageNum));
     }
 
-//
+
     @GetMapping("/user/showPhotoById")
     public ResultVO<String> showPicture(HttpServletRequest request, HttpServletResponse response, @RequestParam("userId") int userId) {
 //        FTPClient ftp = null;

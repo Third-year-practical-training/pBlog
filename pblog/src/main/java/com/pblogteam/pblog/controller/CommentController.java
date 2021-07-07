@@ -10,6 +10,9 @@ import com.pblogteam.pblog.service.CommentService;
 import com.pblogteam.pblog.vo.MyComment;
 import com.pblogteam.pblog.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +31,7 @@ public class CommentController {
     @Autowired
     private ArticleService articleService;
 
-
+    @CacheEvict(value = "comById", key = "'id' + #comment.getUserId() + ':*'")
     @RequestMapping(value = "/comment/new", method = {RequestMethod.POST})
     public ResultVO addComment(Comment comment, HttpSession session) {
         Integer id = (Integer) session.getAttribute("userId");
@@ -39,6 +42,7 @@ public class CommentController {
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
+    @CacheEvict(value = "comById", key = "'*'")
     @DeleteMapping("/comment/delete")
     public ResultVO deleteComment(Integer id, HttpServletRequest request) {
         if (id != null) {
@@ -49,6 +53,7 @@ public class CommentController {
         }
     }
 
+    @Cacheable(value = "comById", key = "'id' + #id + ':pageNum' + #pageNum")
     @GetMapping("/comment/selectById")
     public ResultVO<PageInfo<MyComment>> getCommentListByUserId(Integer id, int pageNum) {
         if (id == null) ResultVO.throwError(ResponseState.BODY_NOT_MATCH);

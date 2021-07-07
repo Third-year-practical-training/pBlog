@@ -15,6 +15,7 @@ import org.apache.ibatis.annotations.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +32,9 @@ public class ArticleController {
     @Autowired
     private ArticleCollRelaService articleCollRelaService;
 
-    @Cacheable(value="artByIdPageNum" + "#id", key = "'id:' + #id + ',pageNum' + #pageNum")
+    @Cacheable(value="artByIdPageNum", key = "'id' + #id + ':pageNum' + #pageNum")
     @GetMapping("/articles/findByUserId")
-    public ResultVO<PageInfo<ArticleTitleVO>> getArticleListByUser(Integer id, int pageNum) {
+    public ResultVO<PageInfo<ArticleTitleVO>> getArticleListByUser(Integer id, Integer pageNum) {
         if (id != null) {
             PageInfo<ArticleTitleVO> articleTitleVOList = articleServiceImpl.selectArtOrDraListByUserId(id, 1, pageNum);
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleTitleVOList);
@@ -51,7 +52,7 @@ public class ArticleController {
         return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
     }
 
-    @Cacheable(value="artByTypePageNum", key = "'id:' + #id + ',pageNum' + #pageNum")
+    @Cacheable(value="artByTypePageNum", key = "'id' + #id + ':pageNum' + #pageNum")
     @GetMapping("/articles/findByType")
     public ResultVO<PageInfo<ArticleTitleVO>> getArticleListByType(Integer id, int pageNum) {
         if (id != null) {
@@ -61,7 +62,7 @@ public class ArticleController {
         return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
     }
 
-    @Cacheable(value="artCollByIdPageNum", key = "'id:' + #id + ',pageNum' + #pageNum")
+    @Cacheable(value="artCollByIdPageNum", key = "'id' + #id + ':pageNum' + #pageNum")
     @GetMapping("/articles/collectList")
     public ResultVO<PageInfo<ArticleTitleVO>> getCollArtByUserId(Integer id, int pageNum) {
         ResultVO<PageInfo<ArticleTitleVO>> resultVO = new ResultVO<>();
@@ -72,7 +73,6 @@ public class ArticleController {
         return ResultVO.throwError(ResponseState.BODY_NOT_MATCH);
     }
 
-//    @Cacheable(value="artByTypePageNum", key = "'id:' + #id + ',pageNum' + #pageNum")
     @GetMapping("/article/findById")
     public ResultVO<ArticleAndCommentVO> getArticleContentById(Integer id, HttpServletRequest request) {
         if (!articleServiceImpl.isArticle(id, -1) || id == null)
@@ -80,6 +80,7 @@ public class ArticleController {
         int userId = (int) request.getSession().getAttribute("userId");
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.selectByArticleId(id, userId));
     }
+
 
     @GetMapping("/draft/findById")
     public ResultVO<ArticleAndCommentVO> getDraftContentById(Integer id, HttpServletRequest request) {
@@ -90,6 +91,7 @@ public class ArticleController {
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.selectByArticleId(id, userId));
     }
 
+    @CacheEvict(value = "artCollByIdPageNum", key = "'id' + #userId + ':*'")
     @PutMapping("/article/changeCollection")
     public ResultVO changeCollectStatus(Integer userId, Integer articleId) {
         if (!articleServiceImpl.isArticle(articleId, -1) || userId == null || articleId == null)
@@ -98,6 +100,13 @@ public class ArticleController {
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
+    // 1.自己的缓存删除，
+    // 2.全部文章的缓存删除
+    @Caching(evict = {
+            @CacheEvict(value = "artByIdPageNum", key = "'id' + #articleNewVO.userId + ':*'"),
+            @CacheEvict(value = "artAll", key = "'*'"),
+            @CacheEvict(value = "hotTag", key = "'*'")
+    })
     @PostMapping(value = "/article/new")
     public ResultVO addArticle(@RequestBody ArticleNewVO articleNewVO) {
         articleServiceImpl.addAndUpdate(articleNewVO, (byte) 1);
@@ -110,6 +119,11 @@ public class ArticleController {
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "artByIdPageNum", key = "'id' + #articleNewVO.userId + ':*'"),
+            @CacheEvict(value = "artAll", key = "'*'"),
+            @CacheEvict(value = "hotTag", key = "'*'")
+    })
     @PutMapping("/article/update")
     public ResultVO updateArticle(@RequestBody ArticleNewVO articleNewVO, HttpServletRequest request) {
         int userId = (int) request.getSession().getAttribute("userId");
@@ -130,6 +144,12 @@ public class ArticleController {
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "artByIdPageNum", key = "'*'"),
+            @CacheEvict(value = "artAll", key = "'*'"),
+            @CacheEvict(value = "comById", key = "'*'"),
+            @CacheEvict(value = "hotTag", key = "'*'")
+    })
     @DeleteMapping("/article/deleteById")
     public ResultVO deleteArticle(Integer id, HttpServletRequest request) {
         Integer curId = (Integer) request.getSession().getAttribute("userId");
@@ -143,6 +163,12 @@ public class ArticleController {
         }
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "artByIdPageNum", key = "'*'"),
+            @CacheEvict(value = "artAll", key = "'*'"),
+            @CacheEvict(value = "comById", key = "'*'"),
+            @CacheEvict(value = "hotTag", key = "'*'")
+    })
     @DeleteMapping("/admin/deleteArticle")
     public ResultVO deleteArticleAdmin(Integer id) {
         if (articleServiceImpl.isArticle(id, -1)) {
@@ -196,6 +222,7 @@ public class ArticleController {
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleServiceImpl.selectArticleByKeyWord(keyWord, type, id, pageNum));
     }
 
+    @Cacheable(value = "artAll", key = "'pageNum' + #pageNum")
     @GetMapping("/article/findAllArticle")
     public ResultVO<PageInfo<ArticleTitleVO>> findAllArticle(int pageNum) {
         System.out.println(System.currentTimeMillis());
@@ -204,9 +231,9 @@ public class ArticleController {
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, tmp);
     }
 
+    @Cacheable(value = "artHot")
     @GetMapping("/article/getHotArticles")
     public ResultVO<List<ArticleTitleVO>> getHotArticles() {
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleCollRelaService.getHotList());
-//        return null;
     }
 }
