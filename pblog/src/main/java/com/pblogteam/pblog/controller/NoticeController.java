@@ -25,7 +25,7 @@ public class NoticeController {
      * @param notice, 只需要传入date，content
      * @return
      */
-    @PutMapping("/admin/notice/new")
+    @PostMapping("/admin/notice/new")
     public ResultVO addNotice(Notice notice) {
         noticeService.publicNotice(notice);
         return ResultVO.throwSuccess(ResponseState.SUCCESS);

@@ -4,7 +4,7 @@
         <page-main>
             <el-table :data="dataList" border stripe highlight-current-row>
                 <el-table-column type="index" width="50"/>
-                <el-table-column prop="date" label="日期" width="180"/>
+                <el-table-column prop="date" label="日期" width="180" :formatter="formatDate"/>
                 <el-table-column prop="title" label="标题" width="180"/>
                 <el-table-column prop="userNickname" label="作者" width="180"/>
                 <el-table-column prop="collectCount" label="收藏数"/>
@@ -133,6 +133,15 @@ export default {
                         _this.$message('取消加精')
                     }
                 })
+            }
+        },
+        formatDate(row) {
+            if (row.date) {
+                let time = new Date(row.date.toString())
+                let y = time.getFullYear()
+                let m = time.getMonth() + 1
+                let d = time.getDate()
+                return `${y}-${m}-${d}`
             }
         }
     }

@@ -33,6 +33,14 @@ export default {
             meta: {
                 title: '用户管理'
             }
+        },
+        {
+            path: 'notice',
+            name: 'notice',
+            component: () => import('@/views/article_manage/notice'),
+            meta: {
+                title: '系统通知'
+            }
         }
     ]
 }

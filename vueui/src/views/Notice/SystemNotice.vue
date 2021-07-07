@@ -23,7 +23,7 @@
       <el-main>
         <el-tabs v-model="activeName">
           <el-tab-pane name="SystemNotice" label="系统通知">
-            <div v-for="item in myNotice" :key="item" class="el-card" style="text-align: left">
+            <div v-for="item in myNotice" :key="item" class="el-card" style="text-align: left;min-height: 100px">
               <span style="color:red;margin-left: 5px">{{ item.content }}</span>
             </div>
             <div class="block" style="text-align: center;">

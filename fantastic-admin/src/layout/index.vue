@@ -111,7 +111,7 @@ export default {
         SidebarItem,
         Topbar,
         ThemeSetting,
-        UserMenu,
+        UserMenu
     },
     provide() {
         return {

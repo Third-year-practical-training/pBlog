@@ -36,21 +36,24 @@
           </el-aside>
           <el-main>
             <div style="border-radius: 0px;max-width: 600px" class="el-card">
-              <div v-for="(item,i) in messages" style="min-height: 50px;">
-                <div v-if="item.fromId != curUser.id" style="float: left">
+              <div v-for="(item,i) in messages" style="min-height: 70px;">
+                <div v-if="item.fromId != curUser.id" style="float: left;display: inline-block">
+                  <el-avatar :src="users[activeIndex].photoUrl" :size="small"></el-avatar>
                   <span style="color: #333333">{{ item.fromName }}  </span>
                   <span style="font-size: x-small;color: #7d7d7d">{{ formatDate(item.date) }}</span>
+                  <div style="margin-top: 5px">
+                    <span>{{ item.content }}</span>
+                  </div>
                 </div>
-                <div v-if="item.fromId != curUser.id" style="margin-top: 20px;float: left">
-                  <span>{{ item.content }}</span>
-                </div>
-                <div v-if="item.fromId == curUser.id" style="float: right">
+                <div v-if="item.fromId == curUser.id" style="float: right;display:inline-block">
                   <span style="font-size: x-small;color: #7d7d7d">{{ formatDate(item.date) }}</span>
                   <span style="color: #333333">  {{ item.fromName }}</span>
+                  <el-avatar :src="curUser.photoUrl" :size="small"></el-avatar>
+                  <div  style="margin-top: 5px">
+                    <span>{{ item.content }}</span>
+                  </div>
                 </div>
-                <div v-if="item.fromId == curUser.id" style="margin-top: 20px;float: right">
-                  <span>{{ item.content }}</span>
-                </div>
+
               </div>
             </div>
             <div style="text-align: left">
