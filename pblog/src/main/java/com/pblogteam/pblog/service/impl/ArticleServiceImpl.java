@@ -90,6 +90,8 @@ public class ArticleServiceImpl implements ArticleService {
                 articleTitleVO.setUserNickname(userServiceImpl.selectByPrimaryKey(a.getUserId()).getNickname());
                 articleTitleVO.setTitle(a.getTitle());
                 articleTitleVO.setDate(a.getDate());
+                articleTitleVO.setCollectCount(a.getCollectionCount());
+                articleTitleVO.setCommentCount(a.getCommentCount());
                 // 查文章简介
                 articleTitleVO.setSummary(a.getSummary());
                 articleTitleVO.setCollectCount(a.getCollectionCount());

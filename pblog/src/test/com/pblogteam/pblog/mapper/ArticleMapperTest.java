@@ -18,6 +18,10 @@ import java.util.List;
 public class ArticleMapperTest {
     @Autowired
     private ArticleMapper articleMapper;
+
+    @Autowired
+    private MessageMapper messageMapper;
+
     @Test
     public void selectByUserIdTest() {
         Integer id = 1;
@@ -54,6 +58,11 @@ public class ArticleMapperTest {
         ArticleExample.Criteria criteria = articleExample.createCriteria();
         articleMapper.selectByExample(articleExample);
         System.out.println(System.currentTimeMillis() - start);
+    }
+
+    @Test
+    public void message() {
+        System.out.println(messageMapper.findMyUser(19));
     }
 
 }

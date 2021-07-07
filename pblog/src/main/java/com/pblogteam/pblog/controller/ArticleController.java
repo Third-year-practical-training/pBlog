@@ -203,5 +203,6 @@ public class ArticleController {
     @GetMapping("/article/getHotArticles")
     public ResultVO<List<ArticleTitleVO>> getHotArticles() {
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleCollRelaService.getHotList());
+//        return null;
     }
 }
