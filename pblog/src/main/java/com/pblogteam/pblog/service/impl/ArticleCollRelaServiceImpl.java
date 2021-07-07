@@ -28,11 +28,13 @@ public class ArticleCollRelaServiceImpl implements ArticleCollRelaService {
     private ArticleMapper articleMapper;
 
     @Override
-    public void changeCollStatus(ArticleCollectorRela articleCollectorRela) {
+    public boolean changeCollStatus(ArticleCollectorRela articleCollectorRela) {
         if (isExist(articleCollectorRela)) {
             delete(articleCollectorRela);
+            return false;
         } else {
             insert(articleCollectorRela);
+            return true;
         }
     }
 

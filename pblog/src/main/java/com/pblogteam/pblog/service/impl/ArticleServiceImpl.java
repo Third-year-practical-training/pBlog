@@ -229,9 +229,14 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public void changeCollection(Integer userId, Integer articleId) {
-        articleCollRelaServiceImpl.changeCollStatus(new ArticleCollectorRela(userId, articleId));
+        boolean flag = articleCollRelaServiceImpl.changeCollStatus(new ArticleCollectorRela(userId, articleId));
         Article article = articleMapper.selectByPrimaryKey(articleId);
-        article.setCollectionCount(article.getCollectionCount() + 1);
+        int curCnt = article.getCollectionCount();
+        if(flag)
+            curCnt += 1;
+        else
+            curCnt -= 1;
+        article.setCollectionCount(curCnt);
         articleMapper.updateByPrimaryKey(article);
     }
 

@@ -6,7 +6,7 @@ import com.pblogteam.pblog.vo.ArticleTitleVO;
 import java.util.List;
 
 public interface ArticleCollRelaService {
-    void changeCollStatus(ArticleCollectorRela articleCollectorRela);
+    boolean changeCollStatus(ArticleCollectorRela articleCollectorRela);
 
     boolean isExist(ArticleCollectorRela articleCollectorRela);
 
