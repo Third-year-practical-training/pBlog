@@ -35,12 +35,14 @@
                     </el-image>
                   </div>
                   <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
-                               style="font-size: x-large;font-family: 'Arial Black';color: #333333;text-decoration: none">
+                               style="font-size: x-large;font-family: 'Arial Black';color: #333333;text-decoration: none;">
                     {{ item.title }}<i v-if="item.isFeature == true" class="el-icon-reading"></i>
                   </router-link>
-                  <div
-                      style="min-height: 100px;text-align: left;max-width: 600px;margin-left: 50px;float: left;margin-top: 30px">
-                    <span>{{ item.summary }}</span>
+                  <div>
+                    <span
+                        style="min-height: 100px;text-align: left;max-width: 600px;margin-left: 50px;float: left;margin-top: 30px">{{
+                        item.summary
+                      }}</span>
                   </div>
                   <div style="float: right">
                   <span style="color: #7d7d7d;font-size: small"><i class="el-icon-date"></i> 发表于：{{
@@ -135,7 +137,7 @@ export default {
       },
       images: [
         'https://gitee.com/luobuyu/BlogImg/raw/master/img/20210707100241.jpg',
-		'https://gitee.com/luobuyu/BlogImg/raw/master/img/20210707100230.jpg'
+        'https://gitee.com/luobuyu/BlogImg/raw/master/img/20210707100230.jpg'
       ]
     }
   },
@@ -239,7 +241,17 @@ export default {
       });
     },
     getAvatarUrl(id) {
-      return 'http://localhost:8080/user/showPhotoById?userId=' + id;
+      let url = '';
+      this.$axios.get('http://localhost:8080/user/showPhotoById', {
+        params: {
+          userId: id
+        }
+      }).then(res => {
+        if (res.data.code == 100) {
+          url = res.data.data;
+          return url;
+        }
+      })
     }
 
   }

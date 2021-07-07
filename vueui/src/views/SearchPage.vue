@@ -37,7 +37,7 @@
           {{ tag.name }}
         </div>
       </div>
-      <div class="block">
+      <div class="block" style="text-align: center;">
         <el-pagination
             layout="prev, pager, next"
             :current-page="resultPage.pageNum"

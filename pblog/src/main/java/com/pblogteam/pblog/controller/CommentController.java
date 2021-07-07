@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 
@@ -38,10 +39,10 @@ public class CommentController {
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
 
-    @RequestMapping(value = "/comment/delete", method = {RequestMethod.DELETE})
-    public ResultVO deleteComment(@RequestParam("id") Integer id, Comment comment, HttpSession session) {
+    @DeleteMapping("/comment/delete")
+    public ResultVO deleteComment(Integer id, HttpServletRequest request) {
         if (id != null) {
-            commentService.deleteCommentById(comment.getId());
+            commentService.deleteCommentById(id);
             return ResultVO.throwSuccess(ResponseState.SUCCESS);
         } else {
             return ResultVO.throwError(ResponseState.NOT_FOUND);

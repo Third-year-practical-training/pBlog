@@ -2,7 +2,7 @@
   <el-container>
     <el-aside width="200px">
       <el-col :span="12">
-        <el-menu default-active="1" class="el-menu-vertical-demo">
+        <el-menu default-active="3" class="el-menu-vertical-demo">
           <el-menu-item index="1" @click="menuClick">
             <span slot="title">评论</span>
           </el-menu-item>
@@ -17,11 +17,11 @@
     </el-aside>
     <el-main>
       <el-tabs v-model="activeName">
-        <el-tab-pane name="MyComments" label="我的评论">
+        <el-tab-pane name="SystemNotice" label="系统通知">
           <div v-for="item in myNotice" :key="item" class="el-card" style="text-align: left">
-
+               <span style="color:red;margin-left: 5px">{{item.content}}</span>
           </div>
-          <div class="block">
+          <div class="block" style="text-align: center;">
             <el-pagination
                 layout="prev, pager, next"
                 :current-page="user.pageNum"
@@ -39,9 +39,9 @@
 <script>
 export default {
   name: "SystemNotice",
-  data(){
-    return{
-      activeName: 'MyNotice',
+  data() {
+    return {
+      activeName: 'SystemNotice',
       user: {
         id: '',
         pageNum: 1,
@@ -55,14 +55,13 @@ export default {
     if (this.$store.getters.getUser.id) {
       this.user.id = this.$store.getters.getUser.id;
     }
-    // this.page(1);
+    this.page(1);
   },
   methods: {
     page(current) {
       const _this = this;
-      this.$axios.get('http://localhost:8080/comment/selectById', {
+      this.$axios.get('http://localhost:8080/notice/getAll', {
         params: {
-          id: this.user.id,
           pageNum: current,
         }
       }).then(res => {
