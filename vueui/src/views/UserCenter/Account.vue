@@ -1,39 +1,49 @@
 <template>
   <el-container>
-    <el-aside width="200px">
-      <el-col :span="12">
-        <el-menu default-active="2" class="el-menu-vertical-demo">
-          <el-menu-item index="1" @click="menuClick">
-            <span slot="title">个人信息</span>
-          </el-menu-item>
-          <el-menu-item index="2" @click="menuClick">
-            <span slot="title">账号信息</span>
-          </el-menu-item>
-          <el-menu-item index="3" @click="menuClick">
-            <span slot="title">我的关注</span>
-          </el-menu-item>
-          <el-menu-item index="4" @click="menuClick">
-            <span slot="title">内容管理</span>
-          </el-menu-item>
-        </el-menu>
-      </el-col>
-    </el-aside>
+    <el-header style="background-color: white">
+      <el-page-header @back="goBack" content="个人中心页面" style="background-color: white">
+      </el-page-header>
+    </el-header>
+    <el-container>
+      <el-aside width="200px">
+        <el-col :span="12">
+          <el-menu default-active="2" class="el-menu-vertical-demo">
+            <el-menu-item index="1" @click="menuClick">
+              <span slot="title">个人信息</span>
+            </el-menu-item>
+            <el-menu-item index="2" @click="menuClick">
+              <span slot="title">账号信息</span>
+            </el-menu-item>
+            <el-menu-item index="3" @click="menuClick">
+              <span slot="title">我的关注</span>
+            </el-menu-item>
+            <el-menu-item index="4" @click="menuClick">
+              <span slot="title">内容管理</span>
+            </el-menu-item>
+          </el-menu>
+        </el-col>
+      </el-aside>
 
-    <el-main>
-      <el-form :model="account" label-width="80px" :rules="rules" ref="account">
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="account.email" style="width: 40%;float: left"></el-input>
-          <el-button type="primary" v-loading="loading" style="float: left;margin-left: 5px" @click="updateEmail('account')">修改邮箱</el-button>
-        </el-form-item>
-        <el-form-item label="用户名">
-          <el-input v-model="account.username" :disabled="true" style="width: 40%;float: left"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="account.password" :disabled="true" style="width: 40%;float: left" type="password"></el-input>
-          <el-button type="text" disabled style="float: left;margin-left: 5px" @click="updatePassword('user')">修改密码</el-button>
-        </el-form-item>
-      </el-form>
-    </el-main>
+      <el-main>
+        <el-form :model="account" label-width="80px" :rules="rules" ref="account">
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="account.email" style="width: 40%;float: left"></el-input>
+            <el-button type="primary" v-loading="loading" style="float: left;margin-left: 5px"
+                       @click="updateEmail('account')">修改邮箱
+            </el-button>
+          </el-form-item>
+          <el-form-item label="用户名">
+            <el-input v-model="account.username" :disabled="true" style="width: 40%;float: left"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input v-model="account.password" :disabled="true" style="width: 40%;float: left"
+                      type="password"></el-input>
+            <el-button type="text" disabled style="float: left;margin-left: 5px" @click="updatePassword('user')">修改密码
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </el-main>
+    </el-container>
   </el-container>
 </template>
 
@@ -42,13 +52,13 @@ export default {
   name: "Account",
   data() {
     return {
-      loading:false,
+      loading: false,
       account: {
         username: '',
         password: '********',
         email: '',
       },
-      user:{
+      user: {
         username: '',
         nickname: '',
         real_name: '',
@@ -84,8 +94,8 @@ export default {
   },
   methods: {
     updateEmail(formName) {
-      if(this.$refs[formName].validate((valid)=>{
-        if(valid){
+      if (this.$refs[formName].validate((valid) => {
+        if (valid) {
           this.loading = true;
           this.user.email = this.account.email;
           const _this = this;
@@ -102,10 +112,10 @@ export default {
             _this.loading = false;
             _this.$message('修改成功');
           });
-        }else {
+        } else {
           this.$message('请注意格式');
         }
-      }));
+      })) ;
     },
     updatePassword(formName) {
 
@@ -123,6 +133,9 @@ export default {
       if (menuItem.index == 4) {
         this.$router.push('/user-center/contentmanage');
       }
+    },
+    goBack() {
+      this.$router.push('/mainpage')
     }
   }
 }

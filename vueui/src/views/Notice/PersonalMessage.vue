@@ -1,51 +1,72 @@
 <template>
   <el-container>
-    <el-aside width="200px">
-      <el-col :span="12">
-        <el-menu default-active="2" class="el-menu-vertical-demo">
-          <el-menu-item index="1" @click="menuClick">
-            <span slot="title">评论</span>
-          </el-menu-item>
-          <el-menu-item index="2" @click="menuClick">
-            <span slot="title">私信</span>
-          </el-menu-item>
-          <el-menu-item index="3" @click="menuClick">
-            <span slot="title">系统通知</span>
-          </el-menu-item>
-        </el-menu>
-      </el-col>
-    </el-aside>
-    <el-main>
-      <el-container>
-        <el-aside>
-          <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleMessage">
-            <div v-for="(item,i) in users" :key="i">
-              <el-menu-item index="i">
-                <template slot="title">
-                  <el-avatar :src="item.photoUrl"></el-avatar>
-                  <span>{{ item.nickname }}</span>
-                </template>
-              </el-menu-item>
-            </div>
+    <el-header style="background-color: white">
+      <el-page-header  style="background-color: white" @back="goBack" content="通知页面" >
+      </el-page-header>
+    </el-header>
+    <el-container>
+      <el-aside width="200px">
+        <el-col :span="12">
+          <el-menu default-active="2" class="el-menu-vertical-demo">
+            <el-menu-item index="1" @click="menuClick">
+              <span slot="title">评论</span>
+            </el-menu-item>
+            <el-menu-item index="2" @click="menuClick">
+              <span slot="title">私信</span>
+            </el-menu-item>
+            <el-menu-item index="3" @click="menuClick">
+              <span slot="title">系统通知</span>
+            </el-menu-item>
           </el-menu>
-        </el-aside>
-        <el-main>
-          <div style="border-radius: 0px" class="el-card">
-            <div v-for="(item,i) in messages">
-                <span>{{item.fromName}}</span>
-                <span>{{formatDate(item.date)}}</span>
-                <span>{{item.content}}</span>
+        </el-col>
+      </el-aside>
+      <el-main>
+        <el-container>
+          <el-aside>
+            <el-menu default-active="1" class="el-menu-vertical-demo">
+              <div v-for="(item,i) in users" :key="i">
+                <el-menu-item index="i" @click="handleMessage(i)">
+                  <template slot="title">
+                    <el-avatar :src="item.photoUrl"></el-avatar>
+                    <span>{{ item.nickname }}</span>
+                  </template>
+                </el-menu-item>
+              </div>
+            </el-menu>
+          </el-aside>
+          <el-main>
+            <div style="border-radius: 0px;max-width: 600px" class="el-card">
+              <div v-for="(item,i) in messages" style="min-height: 50px;">
+                <div v-if="item.fromId != curUser.id" style="float: left">
+                  <span style="color: #333333">{{ item.fromName }}  </span>
+                  <span style="font-size: x-small;color: #7d7d7d">{{ formatDate(item.date) }}</span>
+                </div>
+                <div v-if="item.fromId != curUser.id" style="margin-top: 20px;float: left">
+                  <span>{{ item.content }}</span>
+                </div>
+                <div v-if="item.fromId == curUser.id" style="float: right">
+                  <span style="font-size: x-small;color: #7d7d7d">{{ formatDate(item.date) }}</span>
+                  <span style="color: #333333">  {{ item.fromName }}</span>
+                </div>
+                <div v-if="item.fromId == curUser.id" style="margin-top: 20px;float: right">
+                  <span>{{ item.content }}</span>
+                </div>
+              </div>
             </div>
-          </div>
-          <el-input
-              type="textarea"
-              autosize
-              placeholder="请输入内容"
-              v-model="inputs">
-          </el-input>
-        </el-main>
-      </el-container>
-    </el-main>
+            <div style="text-align: left">
+              <el-input
+                  type="textarea"
+                  autosize
+                  placeholder="请输入内容"
+                  v-model="inputs"
+                  style="max-width: 600px;float: left">
+              </el-input>
+              <el-button type="primary" size="small" style="margin-left: 5px" @click="sendMessage">发送</el-button>
+            </div>
+          </el-main>
+        </el-container>
+      </el-main>
+    </el-container>
   </el-container>
 </template>
 
@@ -61,11 +82,12 @@ export default {
       curUser: {},
       users: [],
       messages: [],
-      inputs: ''
+      inputs: '',
+      activeIndex: 1,
     }
   },
   created() {
-    this.curUser = _this.$store.getters.getUser;
+    this.curUser = this.$store.getters.getUser;
     this.getUsers();
     this.page(1);
   },
@@ -108,6 +130,7 @@ export default {
     },
     handleMessage(index) {
       const _this = this;
+      this.activeIndex = index;
       this.$axios.get('http://localhost:8080/message/find', {
         params: {
           fromId: this.curUser.id,
@@ -117,6 +140,34 @@ export default {
       }).then(res => {
         _this.messages = res.data.data.list;
       })
+    },
+    sendMessage() {
+      const _this = this;
+      let message = new FormData();
+      let a = {};
+      a.id = null;
+      a.fromId = this.curUser.id;
+      a.fromName = this.curUser.nickname;
+      a.toId = this.users[this.activeIndex].id;
+      a.toName = this.users[this.activeIndex].nickname;
+      a.date = new Date();
+      a.content = this.inputs;
+      message.append('fromId', this.curUser.id);
+      message.append('fromName', this.curUser.nickname);
+      message.append('toId', this.users[this.activeIndex].id);
+      message.append('toName', this.users[this.activeIndex].nickname);
+      message.append('date', new Date());
+      message.append('content', this.inputs);
+      this.$axios.put('http://localhost:8080/message/new', message).then(res => {
+        if (res.data.code == 100) {
+          _this.$message('发送成功');
+          _this.inputs = '';
+          _this.messages.push(a);
+        }
+      })
+    },
+    goBack() {
+      this.$router.push('/mainpage')
     }
   }
 }

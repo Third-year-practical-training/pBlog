@@ -1,53 +1,54 @@
 <template>
-  <div>
-    <div>
-      <el-main>
-        <div>
-          <el-input v-model="searchInfo.keyWord" placeholder="请输入搜索内容" style="max-width: 500px"></el-input>
-          <el-button type="primary" @click="Search(1)" icon="el-icon-search" style="margin-left: 10px">搜索</el-button>
-        </div>
+  <el-container>
+    <el-header style="background-color: white">
+      <el-page-header @back="goBack" content="搜索页面" style="background-color: white"></el-page-header>
+    </el-header>
+    <el-main>
+      <div>
+        <el-input v-model="searchInfo.keyWord" placeholder="请输入搜索内容" style="max-width: 500px"></el-input>
+        <el-button type="primary" @click="Search(1)" icon="el-icon-search" style="margin-left: 10px">搜索</el-button>
+      </div>
 
-        <div style="text-align: center">
-          <el-select v-model="searchInfo.type" placeholder="请选择搜索范围" @change="changeShow">
-            <el-option label="全站" value="0"></el-option>
-            <el-option label="分类" value="1"></el-option>
-          </el-select>
-          <el-select v-model="searchInfo.typeId" placeholder="请选择分类" v-show="show">
-            <el-option
-                v-for="item in articleTypes"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id">
-            </el-option>
-          </el-select>
-        </div>
-      </el-main>
-    </div>
-    <el-card>
-      <div v-for="item in result" :key="item" class="el-card" style="text-align: left">
-        <h4>
-          <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
-                       style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px"
-                       v-html="item.title">
-          </router-link>
-        </h4>
-        <span style="margin-left: 30px">{{ formatDate(item.date) }}</span>
-        <span style="font-size: small;color: gray;margin-left: 10px">标签: </span>
-        <div style="display: inline" v-for="tag in item.articleTagList" :key="tag" class="el-tag">
-          {{ tag.name }}
-        </div>
+      <div style="text-align: center">
+        <el-select v-model="searchInfo.type" placeholder="请选择搜索范围" @change="changeShow">
+          <el-option label="全站" value="0"></el-option>
+          <el-option label="分类" value="1"></el-option>
+        </el-select>
+        <el-select v-model="searchInfo.typeId" placeholder="请选择分类" v-show="show">
+          <el-option
+              v-for="item in articleTypes"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+          </el-option>
+        </el-select>
       </div>
-      <div class="block" style="text-align: center;">
-        <el-pagination
-            layout="prev, pager, next"
-            :current-page="resultPage.pageNum"
-            :page-size="resultPage.pageSize"
-            :total="resultPage.total"
-            @current-change="Search">
-        </el-pagination>
-      </div>
-    </el-card>
-  </div>
+      <el-card>
+        <div v-for="item in result" :key="item" class="el-card" style="text-align: left">
+          <h4>
+            <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
+                         style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px"
+                         v-html="item.title">
+            </router-link>
+          </h4>
+          <span style="margin-left: 30px">{{ formatDate(item.date) }}</span>
+          <span style="font-size: small;color: gray;margin-left: 10px">标签: </span>
+          <div style="display: inline" v-for="tag in item.articleTagList" :key="tag" class="el-tag">
+            {{ tag.name }}
+          </div>
+        </div>
+        <div class="block" style="text-align: center;">
+          <el-pagination
+              layout="prev, pager, next"
+              :current-page="resultPage.pageNum"
+              :page-size="resultPage.pageSize"
+              :total="resultPage.total"
+              @current-change="Search">
+          </el-pagination>
+        </div>
+      </el-card>
+    </el-main>
+  </el-container>
 </template>
 
 <script>
@@ -112,6 +113,9 @@ export default {
         this.show = false;
       }
       console.log(this.show);
+    },
+    goBack() {
+      this.$router.push('/mainpage')
     }
   }
 }

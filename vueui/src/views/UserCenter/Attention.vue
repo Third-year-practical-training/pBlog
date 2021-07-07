@@ -1,45 +1,51 @@
 <template>
   <el-container>
-    <el-aside width="200px">
-      <el-col :span="12">
-        <el-menu default-active="3" class="el-menu-vertical-demo">
-          <el-menu-item index="1" @click="menuClick">
-            <span slot="title">个人信息</span>
-          </el-menu-item>
-          <el-menu-item index="2" @click="menuClick">
-            <span slot="title">账号信息</span>
-          </el-menu-item>
-          <el-menu-item index="3" @click="menuClick">
-            <span slot="title">我的关注</span>
-          </el-menu-item>
-          <el-menu-item index="4" @click="menuClick">
-            <span slot="title">内容管理</span>
-          </el-menu-item>
-        </el-menu>
-      </el-col>
-    </el-aside>
+    <el-header style="background-color: white">
+      <el-page-header @back="goBack" content="个人中心页面" style="background-color: white">
+      </el-page-header>
+    </el-header>
+    <el-container>
+      <el-aside width="200px">
+        <el-col :span="12">
+          <el-menu default-active="3" class="el-menu-vertical-demo">
+            <el-menu-item index="1" @click="menuClick">
+              <span slot="title">个人信息</span>
+            </el-menu-item>
+            <el-menu-item index="2" @click="menuClick">
+              <span slot="title">账号信息</span>
+            </el-menu-item>
+            <el-menu-item index="3" @click="menuClick">
+              <span slot="title">我的关注</span>
+            </el-menu-item>
+            <el-menu-item index="4" @click="menuClick">
+              <span slot="title">内容管理</span>
+            </el-menu-item>
+          </el-menu>
+        </el-col>
+      </el-aside>
 
-    <el-main>
-      <div v-for="(item,i) in attention" :key="i" class="el-card" style="height: 80px" v-loading="loading">
-        <el-avatar :size="50" :src="item.photoUrl"
-                   style="float: left;margin-top: 20px;margin-left: 10px"></el-avatar>
-        <el-link type="primary" style="float: left;margin-top: 40px;margin-left: 10px" @click="toAttention(item.id)">
-          {{ item.nickname }}
-        </el-link>
-        <el-button type="primary" style="display: inline;float: right;margin-top: 20px;margin-right: 10px"
-                   @click="cancelAttention(item.id,i)">取消关注
-        </el-button>
-      </div>
-      <div class="block">
-        <el-pagination
-            layout="prev, pager, next"
-            :current-page="pageNum"
-            :page-size="pageSize"
-            :total="total"
-            @current-change="attentionPage">
-        </el-pagination>
-      </div>
-    </el-main>
+      <el-main>
+        <div v-for="(item,i) in attention" :key="i" class="el-card" style="height: 80px" v-loading="loading">
+          <el-avatar :size="50" :src="item.photoUrl"
+                     style="float: left;margin-top: 20px;margin-left: 10px"></el-avatar>
+          <el-link type="primary" style="float: left;margin-top: 40px;margin-left: 10px" @click="toAttention(item.id)">
+            {{ item.nickname }}
+          </el-link>
+          <el-button type="primary" style="display: inline;float: right;margin-top: 20px;margin-right: 10px"
+                     @click="cancelAttention(item.id,i)">取消关注
+          </el-button>
+        </div>
+        <div class="block">
+          <el-pagination
+              layout="prev, pager, next"
+              :current-page="pageNum"
+              :page-size="pageSize"
+              :total="total"
+              @current-change="attentionPage">
+          </el-pagination>
+        </div>
+      </el-main>
+    </el-container>
   </el-container>
 </template>
 
@@ -118,6 +124,9 @@ export default {
       if (menuItem.index == 4) {
         this.$router.push('/user-center/contentmanage');
       }
+    },
+    goBack() {
+      this.$router.push('/mainpage')
     }
   }
 }

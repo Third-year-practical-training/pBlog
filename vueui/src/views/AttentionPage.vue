@@ -1,75 +1,80 @@
 <template>
   <el-container>
-    <el-aside>
-      <el-card v-model="user">
-        <el-avatar :size="150" :src="user.photoUrl"></el-avatar>
-        <div class="text item" style="font-family: 'Arial Black';font-size: large">{{ user.nickname }}</div>
-        <div class="text item" style="font-family: 'Arial Black';font-size: large">{{ user.description }}</div>
-        <div style="display: inline-block">
-          <el-button round size="small" @click="sendMessage">私信</el-button>
-          <el-button round size="small" :loading="buttonLoading" @click="changeAttention(user.id)" v-show="show1">
-            关注
-          </el-button>
-          <el-button round size="small" :loading="buttonLoading" @click="changeAttention(user.id)" v-show="show2">
-            取消关注
-          </el-button>
-        </div>
-      </el-card>
-    </el-aside>
-    <el-main>
-      <el-tabs v-model="activeName">
-        <el-tab-pane label="他的文章" name="otherArticle" v-loading="loading">
-          <div v-for="item in blogs" :key="item" class="el-card" style="text-align: left">
-            <h4>
-              <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
-                           style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
-                {{ item.title }}
-              </router-link>
-            </h4>
-            <span style="margin-left: 30px">{{ formatDate(item.date) }}</span>
-            <span style="font-size: small;color: gray;margin-left: 10px">标签: </span>
-            <div style="display: inline" v-for="tag in item.articleTagList" :key="tag" class="el-tag">
-              {{ tag.name }}
+    <el-header style="background-color: white">
+      <el-page-header style="background-color: white" @back="goBack" content="个人信息页面">
+      </el-page-header>
+    </el-header>
+    <el-container>
+      <el-aside>
+        <el-card v-model="user">
+          <el-avatar :size="150" :src="user.photoUrl"></el-avatar>
+          <div class="text item" style="font-family: 'Arial Black';font-size: large">{{ user.nickname }}</div>
+          <div class="text item" style="font-family: 'Arial Black';font-size: large">{{ user.description }}</div>
+          <div style="display: inline-block">
+            <el-button round size="small" @click="sendMessage">私信</el-button>
+            <el-button round size="small" :loading="buttonLoading" @click="changeAttention(user.id)" v-show="show1">
+              关注
+            </el-button>
+            <el-button round size="small" :loading="buttonLoading" @click="changeAttention(user.id)" v-show="show2">
+              取消关注
+            </el-button>
+          </div>
+        </el-card>
+      </el-aside>
+      <el-main>
+        <el-tabs v-model="activeName">
+          <el-tab-pane label="他的文章" name="otherArticle" v-loading="loading">
+            <div v-for="item in blogs" :key="item" class="el-card" style="text-align: left">
+              <h4>
+                <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
+                             style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
+                  {{ item.title }}
+                </router-link>
+              </h4>
+              <span style="margin-left: 30px">{{ formatDate(item.date) }}</span>
+              <span style="font-size: small;color: gray;margin-left: 10px">标签: </span>
+              <div style="display: inline" v-for="tag in item.articleTagList" :key="tag" class="el-tag">
+                {{ tag.name }}
+              </div>
             </div>
-          </div>
-          <div class="block">
-            <el-pagination
-                layout="prev, pager, next"
-                :current-page="blogPage.blogPageNum"
-                :page-size="blogPage.blogPageSize"
-                :total="blogPage.blogTotal"
-                @current-change="blogPageChange">
-            </el-pagination>
-          </div>
-        </el-tab-pane>
-        <el-tab-pane label="他的收藏" name="otherCollection">
-          <div v-for="collection in collections" :key="collection" class="el-card" style="text-align: left">
-            <h4>
-              <router-link :to="{name: 'BlogShow', params: {blogId: collection.id}}"
-                           style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
-                {{ collection.title }}
-              </router-link>
-            </h4>
-            <span style="margin-left: 30px">{{ formatDate(collection.date) }}</span>
-            <span style="font-size: small;color: gray;margin-left: 10px">标签: </span>
-            <div style="display: inline" v-for="tag in collection.articleTagList" :key="tag" class="el-tag">
-              {{ tag.name }}
+            <div class="block">
+              <el-pagination
+                  layout="prev, pager, next"
+                  :current-page="blogPage.blogPageNum"
+                  :page-size="blogPage.blogPageSize"
+                  :total="blogPage.blogTotal"
+                  @current-change="blogPageChange">
+              </el-pagination>
             </div>
-          </div>
-          <div class="block">
-            <el-pagination
-                layout="prev, pager, next"
-                :current-page="collectionPage.colpageNum"
-                :page-size="collectionPage.colpageSize"
-                :total="collectionPage.coltotal"
-                @current-change="collectionPageChange">
-            </el-pagination>
-          </div>
-        </el-tab-pane>
-      </el-tabs>
-    </el-main>
+          </el-tab-pane>
+          <el-tab-pane label="他的收藏" name="otherCollection">
+            <div v-for="collection in collections" :key="collection" class="el-card" style="text-align: left">
+              <h4>
+                <router-link :to="{name: 'BlogShow', params: {blogId: collection.id}}"
+                             style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
+                  {{ collection.title }}
+                </router-link>
+              </h4>
+              <span style="margin-left: 30px">{{ formatDate(collection.date) }}</span>
+              <span style="font-size: small;color: gray;margin-left: 10px">标签: </span>
+              <div style="display: inline" v-for="tag in collection.articleTagList" :key="tag" class="el-tag">
+                {{ tag.name }}
+              </div>
+            </div>
+            <div class="block">
+              <el-pagination
+                  layout="prev, pager, next"
+                  :current-page="collectionPage.colpageNum"
+                  :page-size="collectionPage.colpageSize"
+                  :total="collectionPage.coltotal"
+                  @current-change="collectionPageChange">
+              </el-pagination>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </el-main>
+    </el-container>
   </el-container>
-
 </template>
 
 <script>
@@ -261,6 +266,9 @@ export default {
           message: '取消输入'
         });
       });
+    },
+    goBack() {
+      this.$router.back()
     }
   }
 }

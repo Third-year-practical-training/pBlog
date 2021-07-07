@@ -1,5 +1,9 @@
 <template>
   <el-container>
+    <el-header style="background-color: white">
+      <el-page-header  style="background-color: white" @back="goBack" content="文章展示页面" >
+      </el-page-header>
+    </el-header>
     <el-main v-loading="loading">
       <el-row type="flex" class="row-bg" justify="space-around">
         <el-col :span="21">
@@ -297,6 +301,9 @@ export default {
           }
         });
       }
+    },
+    goBack() {
+        this.$router.back()
     }
   },
 

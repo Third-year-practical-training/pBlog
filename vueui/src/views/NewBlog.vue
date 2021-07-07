@@ -1,53 +1,59 @@
 <template>
   <el-container>
-    <el-form v-loading.fullscreen.lock="loading" ref="editForm" status-icon :model="editForm" :rules="rules" label-width="100px">
-      <el-form-item label="标题" prop="title" style="margin-top: 10px">
-        <el-input v-model="editForm.title"></el-input>
-      </el-form-item>
-      <el-form-item label="简介" prop="summary" style="margin-top: 10px">
-        <el-input v-model="editForm.summary"></el-input>
-      </el-form-item>
-      <el-form-item label="分类" prop="articleTypeId">
-        <el-select v-model="editForm.articleTypeId" placeholder="请选择">
-          <el-option
-              v-for="item in select"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="标签" prop="tag">
-        <el-tag
-            :key="tag"
-            v-for="tag in editForm.tag"
-            closable
-            :disable-transitions="false"
-            @close="handleClose(tag)">
-          {{ tag.name }}
-        </el-tag>
-        <el-input
-            class="input-new-tag"
-            v-if="inputVisible"
-            v-model="inputValue"
-            ref="saveTagInput"
-            size="small"
-            @keyup.enter.native="handleInputConfirm"
-            @blur="handleInputConfirm"
-        >
-        </el-input>
-        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
-      </el-form-item>
-      <el-form-item label="内容" prop="content">
-        <mavon-editor style="height:500px;width: 1200px" v-model="editForm.content"/>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" v-loading.fullscreen.lock="loading" @click="submitForm('editForm')"
-                   style="margin-left: 550px">立即创建
-        </el-button>
+    <el-header style="background-color: white">
+      <el-page-header @back="goBack" content="博客撰写" style="background-color: white"></el-page-header>
+    </el-header>
+    <el-main>
+      <el-form v-loading.fullscreen.lock="loading" ref="editForm" status-icon :model="editForm" :rules="rules"
+               label-width="100px">
+        <el-form-item label="标题" prop="title" style="margin-top: 10px">
+          <el-input v-model="editForm.title"></el-input>
+        </el-form-item>
+        <el-form-item label="简介" prop="summary" style="margin-top: 10px">
+          <el-input v-model="editForm.summary"></el-input>
+        </el-form-item>
+        <el-form-item label="分类" prop="articleTypeId">
+          <el-select v-model="editForm.articleTypeId" placeholder="请选择">
+            <el-option
+                v-for="item in select"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="标签" prop="tag">
+          <el-tag
+              :key="tag"
+              v-for="tag in editForm.tag"
+              closable
+              :disable-transitions="false"
+              @close="handleClose(tag)">
+            {{ tag.name }}
+          </el-tag>
+          <el-input
+              class="input-new-tag"
+              v-if="inputVisible"
+              v-model="inputValue"
+              ref="saveTagInput"
+              size="small"
+              @keyup.enter.native="handleInputConfirm"
+              @blur="handleInputConfirm"
+          >
+          </el-input>
+          <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+        </el-form-item>
+        <el-form-item label="内容" prop="content">
+          <mavon-editor style="height:500px;width: 1200px" v-model="editForm.content"/>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" v-loading.fullscreen.lock="loading" @click="submitForm('editForm')"
+                     style="margin-left: 550px">立即创建
+          </el-button>
 
-      </el-form-item>
-    </el-form>
+        </el-form-item>
+      </el-form>
+    </el-main>
   </el-container>
 </template>
 
@@ -66,7 +72,7 @@ export default {
         title: '',
         date: '',
         content: '',
-        summary:'',
+        summary: '',
         tag: [],
       },
       select: [],
@@ -181,6 +187,10 @@ export default {
       }
       this.inputVisible = false;
       this.inputValue = '';
+    },
+
+    goBack() {
+      this.$router.push('/contentmanage')
     }
   },
 

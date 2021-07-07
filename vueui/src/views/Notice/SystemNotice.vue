@@ -1,38 +1,44 @@
 <template>
   <el-container>
-    <el-aside width="200px">
-      <el-col :span="12">
-        <el-menu default-active="3" class="el-menu-vertical-demo">
-          <el-menu-item index="1" @click="menuClick">
-            <span slot="title">评论</span>
-          </el-menu-item>
-          <el-menu-item index="2" @click="menuClick">
-            <span slot="title">私信</span>
-          </el-menu-item>
-          <el-menu-item index="3" @click="menuClick">
-            <span slot="title">系统通知</span>
-          </el-menu-item>
-        </el-menu>
-      </el-col>
-    </el-aside>
-    <el-main>
-      <el-tabs v-model="activeName">
-        <el-tab-pane name="SystemNotice" label="系统通知">
-          <div v-for="item in myNotice" :key="item" class="el-card" style="text-align: left">
-               <span style="color:red;margin-left: 5px">{{item.content}}</span>
-          </div>
-          <div class="block" style="text-align: center;">
-            <el-pagination
-                layout="prev, pager, next"
-                :current-page="user.pageNum"
-                :page-size="user.pageSize"
-                :total="user.total"
-                @current-change="page">
-            </el-pagination>
-          </div>
-        </el-tab-pane>
-      </el-tabs>
-    </el-main>
+    <el-header style="background-color: white">
+      <el-page-header @back="goBack" content="通知页面"style="background-color: white">
+      </el-page-header>
+    </el-header>
+    <el-container>
+      <el-aside width="200px">
+        <el-col :span="12">
+          <el-menu default-active="3" class="el-menu-vertical-demo">
+            <el-menu-item index="1" @click="menuClick">
+              <span slot="title">评论</span>
+            </el-menu-item>
+            <el-menu-item index="2" @click="menuClick">
+              <span slot="title">私信</span>
+            </el-menu-item>
+            <el-menu-item index="3" @click="menuClick">
+              <span slot="title">系统通知</span>
+            </el-menu-item>
+          </el-menu>
+        </el-col>
+      </el-aside>
+      <el-main>
+        <el-tabs v-model="activeName">
+          <el-tab-pane name="SystemNotice" label="系统通知">
+            <div v-for="item in myNotice" :key="item" class="el-card" style="text-align: left">
+              <span style="color:red;margin-left: 5px">{{ item.content }}</span>
+            </div>
+            <div class="block" style="text-align: center;">
+              <el-pagination
+                  layout="prev, pager, next"
+                  :current-page="user.pageNum"
+                  :page-size="user.pageSize"
+                  :total="user.total"
+                  @current-change="page">
+              </el-pagination>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </el-main>
+    </el-container>
   </el-container>
 </template>
 
@@ -87,6 +93,9 @@ export default {
     getAvatar(id) {
       return 'http://localhost:8080/user/showPhotoById?userId=' + id;
     },
+    goBack() {
+      this.$router.push('/mainpage')
+    }
   }
 }
 </script>
