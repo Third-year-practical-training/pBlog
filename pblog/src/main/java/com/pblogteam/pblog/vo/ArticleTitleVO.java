@@ -13,6 +13,7 @@ public class ArticleTitleVO {
     private Integer id;
     private Integer userId;
     private String userNickname;
+    private String photoUrl;
     private String title;
     private Date date;
     private String summary;
