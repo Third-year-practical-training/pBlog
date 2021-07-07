@@ -120,6 +120,7 @@ export default {
           }
       ).then(res => {
         _this.infoLoading = false;
+        _this.$store.commit("SET_USERINFO" , this.user);
         _this.$message('修改成功');
       });
     },
