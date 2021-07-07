@@ -136,8 +136,10 @@ export default {
         url: '',
       },
       images: [
-        'https://gitee.com/luobuyu/BlogImg/raw/master/img/20210707100241.jpg',
-        'https://gitee.com/luobuyu/BlogImg/raw/master/img/20210707100230.jpg'
+        'https://gitee.com/luobuyu/BlogImg/raw/master/img/20210707223946.jpg',
+        'https://gitee.com/luobuyu/BlogImg/raw/master/img/20210707223959.jpg',
+		'https://gitee.com/luobuyu/BlogImg/raw/master/img/20210707224015.jpg',
+		'https://gitee.com/luobuyu/BlogImg/raw/master/img/20210707224110.png'
       ]
     }
   },
