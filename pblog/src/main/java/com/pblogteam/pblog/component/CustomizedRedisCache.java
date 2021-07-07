@@ -23,6 +23,10 @@ public class CustomizedRedisCache extends RedisCache {
     public void evict(Object key) {
         if (key instanceof String) {
             String keyString = key.toString();
+            if (keyString.endsWith(WILD_CARD)) {
+                evictLikeSuffix(keyString);
+                return;
+            }
             if (keyString.startsWith(WILD_CARD)) {
                 evictLikePrefix(keyString);
                 return;
@@ -41,5 +45,14 @@ public class CustomizedRedisCache extends RedisCache {
         this.cacheWriter.clean(this.name, pattern);
     }
 
+    /**
+     * 后缀匹配
+     *
+     * @param key
+     */
+    public void evictLikeSuffix(String key) {
+        byte[] pattern = this.conversionService.convert(this.createCacheKey(key), byte[].class);
+        this.cacheWriter.clean(this.name, pattern);
+    }
 
 }

@@ -44,7 +44,6 @@ public class UserController {
     //@PutMapping
     //@DeleteMapping
     //@RequestMapping(value = "/user/login", method = RequestMethod.POST)  等价于@PostMapping
-    @Cacheable(value = "userByName", key = "'username' + #username")
     @PostMapping("/user/signin")
     public ResultVO<UserVO> signin(@RequestParam("username") String username,
                                    @RequestParam("password") String password,
@@ -70,7 +69,6 @@ public class UserController {
             return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userVO);
         }
     }
-    @Cacheable(value = "admin", key = "'username' + #username")
     @PostMapping(value = {"/admin/signin", "/admin"})
     public ResultVO<UserVO> signin(String username, String password, HttpServletRequest request, HttpServletResponse response) {
         response.setCharacterEncoding("UTF-8");
@@ -147,7 +145,6 @@ public class UserController {
         return ResultVO.throwSuccess(ResponseState.SUCCESS);
     }
     @Caching(evict = {
-            @CacheEvict(value = "userByName", key = "'username' + #userNewVO.username"),
             @CacheEvict(value = "userAll", allEntries = true),
             @CacheEvict(value = "userById", allEntries = true),
             @CacheEvict(value = "comById", allEntries = true),
@@ -169,7 +166,6 @@ public class UserController {
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, userService.updateInfo(userId, userNewVO));
     }
     @Caching(evict = {
-            @CacheEvict(value = "userByName", allEntries = true),
             @CacheEvict(value = "userAll", allEntries = true),
             @CacheEvict(value = "userById", allEntries = true),
             @CacheEvict(value = "comById", allEntries = true),
@@ -179,6 +175,7 @@ public class UserController {
             @CacheEvict(value = "artCollByIdPageNum", allEntries = true),
             @CacheEvict(value = "artAll", allEntries = true),
             @CacheEvict(value = "artHot", allEntries = true),
+            @CacheEvict(value = "attById", allEntries = true),
     })
     @PostMapping("/user/changePhoto")
     public ResultVO changePhoto(@RequestParam("photo") MultipartFile file,
@@ -206,7 +203,6 @@ public class UserController {
      * @return
      */
     @Caching(evict = {
-            @CacheEvict(value = "userByName", key = "'*'"),
             @CacheEvict(value = "userAll", key = "'*'")
     })
     @PutMapping("/admin/changeUserPrivilege")
