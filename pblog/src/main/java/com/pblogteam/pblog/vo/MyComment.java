@@ -17,11 +17,10 @@ public class MyComment {
     private Integer commentId;
     private Date date;
     private Integer toUserId;
-    private String toPhotoUrl;
     private String toUserNickname;
     private String content;
 
-    public MyComment(Comment comment, String articleTitle, String toPhotoUrl) {
+    public MyComment(Comment comment, String articleTitle) {
         this.articleId = comment.getArticleId();
         this.commentId = comment.getId();
         this.articleTitle = articleTitle;
@@ -29,6 +28,5 @@ public class MyComment {
         this.toUserId = comment.getToId();
         this.toUserNickname = comment.getToName();
         this.content = comment.getContent();
-        this.toPhotoUrl = toPhotoUrl;
     }
 }

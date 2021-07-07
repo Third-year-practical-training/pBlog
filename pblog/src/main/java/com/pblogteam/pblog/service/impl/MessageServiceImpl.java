@@ -36,9 +36,13 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public PageInfo<Message> findMessage(Integer fromId, Integer toId, Integer pageNum) {
         MessageExample messageExample = new MessageExample();
-        MessageExample.Criteria criteria = messageExample.createCriteria();
-        criteria.andFromIdEqualTo(fromId);
-        criteria.andToIdEqualTo(toId);
+        MessageExample.Criteria criteria1 = messageExample.createCriteria();
+        criteria1.andFromIdEqualTo(fromId);
+        criteria1.andToIdEqualTo(toId);
+        MessageExample.Criteria criteria2 = messageExample.createCriteria();
+        criteria2.andFromIdEqualTo(toId);
+        criteria2.andToIdEqualTo(fromId);
+        messageExample.or(criteria2);
         PageHelper.startPage(pageNum, Config.MESSAGE_SIZE);
         return new PageInfo<>(messageMapper.selectByExampleWithBLOBs(messageExample));
     }

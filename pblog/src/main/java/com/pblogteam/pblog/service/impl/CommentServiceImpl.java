@@ -45,6 +45,7 @@ public class CommentServiceImpl implements CommentService {
         commentMapper.insertSelective(comment);
         Article article = articleMapper.selectByPrimaryKey(comment.getArticleId());
         article.setCommentCount(article.getCommentCount() + 1);
+        articleMapper.updateByPrimaryKey(article);
     }
 
     @Override
@@ -120,7 +121,8 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> commentList = commentMapper.selectByExampleWithBLOBs(commentExample);
         List<MyComment> myComments = new ArrayList<>();
         for (Comment comment : commentList) {
-            myComments.add(new MyComment(comment, articleMapper.selectByPrimaryKey(comment.getArticleId()).getTitle(), userMapper.selectByPrimaryKey(comment.getToId()).getPhotoUrl()));
+            String title = articleMapper.selectByPrimaryKey(comment.getArticleId()).getTitle();
+            myComments.add(new MyComment(comment, title));
         }
         return CopyPageInfo.covertPageInfo(myComments, commentList);
     }
