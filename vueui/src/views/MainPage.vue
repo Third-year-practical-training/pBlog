@@ -35,12 +35,11 @@
                     </el-image>
                   </div>
                   <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
-                               style="font-size: x-large;font-family: 'Arial Black';color: #333333;text-decoration: none">
+                               style="font-size: x-large;font-family: 'Arial Black';color: #333333;text-decoration: none;">
                     {{ item.title }}<i v-if="item.isFeature == true" class="el-icon-reading"></i>
                   </router-link>
-                  <div
-                      style="min-height: 100px;text-align: left;max-width: 600px;margin-left: 50px;float: left;margin-top: 30px">
-                    <span>{{ item.summary }}</span>
+                  <div>
+                    <span style="min-height: 100px;text-align: left;max-width: 600px;margin-left: 50px;float: left;margin-top: 30px">{{ item.summary }}</span>
                   </div>
                   <div style="float: right">
                   <span style="color: #7d7d7d;font-size: small"><i class="el-icon-date"></i> 发表于：{{

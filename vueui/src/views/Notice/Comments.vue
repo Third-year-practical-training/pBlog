@@ -18,7 +18,7 @@
     <el-main>
       <el-tabs v-model="activeName">
         <el-tab-pane name="MyComments" label="我的评论">
-          <div v-for="item in mycomments" :key="item" class="el-card" style="text-align: left">
+          <div v-for="(item,i) in mycomments" :key="i" class="el-card" style="text-align: left">
             <div>
               <span v-if="item.toUserId === '' || item.toUserId == null"
                     style="color:#7d7d7d;margin-left: 5px">你评论了以下内容:</span>
@@ -41,9 +41,10 @@
                 item.articleTitle
               }}
             </el-link>
-            <el-button type="danger" icon="el-icon-delete" circle style="float: right;margin-right: 5px"></el-button>
+            <el-button type="danger" icon="el-icon-delete" circle style="float: right;margin-right: 5px"
+                       @click="deleteComment(i)"></el-button>
           </div>
-          <div class="block">
+          <div class="block" style="text-align: center;">
             <el-pagination
                 layout="prev, pager, next"
                 :current-page="user.pageNum"
@@ -110,6 +111,20 @@ export default {
     getAvatar(id) {
       return 'http://localhost:8080/user/showPhotoById?userId=' + id;
     },
+    deleteComment(index) {
+      const _this = this;
+      console.log(this.mycomments[index].id);
+      this.$axios.delete('http://localhost:8080/comment/delete', {
+        params: {
+          id: this.mycomments[index].commentId
+        }
+      }).then(res => {
+        if (res.data.code == 100) {
+          _this.mycomments.splice(index, 1);
+          _this.$message('删除成功');
+        }
+      })
+    }
   }
 }
 </script>

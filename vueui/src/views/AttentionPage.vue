@@ -6,7 +6,7 @@
         <div class="text item" style="font-family: 'Arial Black';font-size: large">{{ user.nickname }}</div>
         <div class="text item" style="font-family: 'Arial Black';font-size: large">{{ user.description }}</div>
         <div style="display: inline-block">
-          <el-button round size="small">私信</el-button>
+          <el-button round size="small" @click="sendMessage">私信</el-button>
           <el-button round size="small" :loading="buttonLoading" @click="changeAttention(user.id)" v-show="show1">
             关注
           </el-button>
@@ -239,6 +239,31 @@ export default {
         });
       }
     },
+    sendMessage() {
+      this.$prompt('请输入私信内容', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      }).then(({value}) => {
+        const _this = this;
+        let message = new FormData();
+        message.append('fromId', this.curUser.id);
+        message.append('fromName', this.curUser.nickname);
+        message.append('toId', this.user.id);
+        message.append('toName', this.user.nickname);
+        message.append('date', new Date());
+        message.append('content', value);
+        this.$axios.put('http://localhost:8080/message/new', message).then(res => {
+          if (res.data.code == 100) {
+            _this.$message('发送成功')
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        });
+      });
+    }
   }
 }
 </script>
