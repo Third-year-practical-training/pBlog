@@ -16,7 +16,7 @@ public class NoticeController {
     @Autowired
     private NoticeService noticeService;
 
-    @GetMapping("/admin/notice/getAll")
+    @GetMapping(value = {"/admin/notice/getAll", "/notice/getAll"})
     public ResultVO<PageInfo<Notice>> getAllNotice(Integer pageNum) {
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, noticeService.getAllNotice(pageNum));
     }

@@ -58,7 +58,8 @@ public class ArticleServiceImpl implements ArticleService {
     public PageInfo<ArticleTitleVO> pageHelperSelect(int pageNum, ArticleExample articleExample) {
         PageHelper.startPage(pageNum, Config.PAGE_SIZE, "date desc");
         List<Article> articleList = articleMapper.selectByExampleWithBLOBs(articleExample);
-        return covertPageInfo(fillArtTitVOByArtList(articleList), articleList);
+        List<ArticleTitleVO> articleTitleVOList = fillArtTitVOByArtList(articleList);
+        return CopyPageInfo.covertPageInfo(articleTitleVOList, articleList);
     }
 
     @Override
@@ -93,7 +94,6 @@ public class ArticleServiceImpl implements ArticleService {
                 articleTitleVO.setSummary(a.getSummary());
                 articleTitleVO.setCollectCount(a.getCollectionCount());
                 articleTitleVO.setCommentCount(a.getCommentCount());
-
                 articleTitleVO.setArticleTagList(selectTagListByArticleId(a.getId()));
                 articleTitleVOList.add(articleTitleVO);
             }
@@ -146,6 +146,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setContent(articleNewVO.getContent());
         article.setId(articleNewVO.getId());
         article.setSummary(articleNewVO.getSummary());
+        article.setIsFeature(0);
         // 添加文章
         if (article.getId() == null) {
             // 添加新文章

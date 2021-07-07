@@ -19,12 +19,12 @@
   <!--  my own start-->
   <insert id="insertAndReturnPrimaryKey" parameterType="com.pblogteam.pblog.entity.Article" useGeneratedKeys="true" keyProperty="id">
     insert into article (user_id, article_type_id,
-                         title, date, published,
-                         collection_count, comment_count, content
+                         title, summary, date, published,
+                         collection_count, comment_count, content, is_feature
     )
     values (#{userId,jdbcType=INTEGER}, #{articleTypeId,jdbcType=INTEGER},
-            #{title,jdbcType=VARCHAR}, #{date,jdbcType=TIMESTAMP}, #{published,jdbcType=TINYINT},
-            #{collectionCount,jdbcType=INTEGER}, #{commentCount,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}
+            #{title,jdbcType=VARCHAR}, #{summary, jdbcType=VARCHAR}, #{date,jdbcType=DATE}, #{published,jdbcType=TINYINT},
+            #{collectionCount,jdbcType=INTEGER}, #{commentCount,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}, #{isFeature, jdbcType=INTEGER}
            )
   </insert>
 

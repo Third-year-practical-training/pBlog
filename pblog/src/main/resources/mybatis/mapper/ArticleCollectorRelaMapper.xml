@@ -6,7 +6,7 @@
     <result column="article_id" property="articleId" jdbcType="INTEGER" />
   </resultMap>
 <!--  my own start-->
-  <resultMap id="GroupByTagId" type="com.pblogteam.pblog.entity.ArticleTagRela">
+  <resultMap id="GroupByTagId" type="com.pblogteam.pblog.entity.ArticleCollectorRela">
     <result column="count(*)" property="userId" javaType="Integer"/>
     <result column="article_id" property="articleId" jdbcType="INTEGER"/>
   </resultMap>
