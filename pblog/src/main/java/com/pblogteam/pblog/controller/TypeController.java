@@ -46,6 +46,7 @@ public class TypeController {
     }
 
     // 增加type
+    @CacheEvict(value = "typeAll")
     @PutMapping("/admin/saveType")
     public ResultVO saveType(String type) {
         if (typeServiceImpl.saveType(type)) {

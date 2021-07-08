@@ -26,7 +26,7 @@
           <el-tab-pane label="他的文章" name="otherArticle" v-loading="loading">
             <div v-for="item in blogs" :key="item" class="el-card" style="text-align: left">
               <h4>
-                <router-link :to="{name: 'BlogShow', params: {blogId: item.id}}"
+                <router-link :to="{path: '/blogshow', query: {blogId: item.id}}"
                              style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
                   {{ item.title }}
                 </router-link>
@@ -50,7 +50,7 @@
           <el-tab-pane label="他的收藏" name="otherCollection">
             <div v-for="collection in collections" :key="collection" class="el-card" style="text-align: left">
               <h4>
-                <router-link :to="{name: 'BlogShow', params: {blogId: collection.id}}"
+                <router-link :to="{path: '/blogshow', query: {blogId: item.id}}"
                              style="font-size: large;font-family: 'Arial Black';color: #333333;text-align: center;margin-left: 30px">
                   {{ collection.title }}
                 </router-link>
