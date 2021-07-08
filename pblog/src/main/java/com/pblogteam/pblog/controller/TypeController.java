@@ -25,7 +25,7 @@ public class TypeController {
         List<ArticleType> articleTypeList = typeServiceImpl.ListType();
         return ResultVO.throwSuccessAndData(ResponseState.SUCCESS, articleTypeList);
     }
-    @CacheEvict(value = "typeAll")
+    @CacheEvict(value = "typeAll", key="'*'")
     @PutMapping("/admin/updateTypeById")
     public ResultVO updateTypeById(Integer id, String type, HttpSession session) {
         if (typeServiceImpl.updateTypeById(type, id)) {
@@ -35,7 +35,7 @@ public class TypeController {
         }
     }
 
-    @CacheEvict(value = "typeAll")
+    @CacheEvict(value = "typeAll", key="'*'")
     @DeleteMapping("/admin/deleteTypeById")
     public ResultVO deleteTypeById(Integer id) {
         if (typeServiceImpl.deleteTypeById(id)) {
@@ -46,7 +46,7 @@ public class TypeController {
     }
 
     // 增加type
-    @CacheEvict(value = "typeAll")
+    @CacheEvict(value = "typeAll", key="'*'")
     @PutMapping("/admin/saveType")
     public ResultVO saveType(String type) {
         if (typeServiceImpl.saveType(type)) {
